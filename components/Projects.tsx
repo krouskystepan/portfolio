@@ -1,5 +1,3 @@
-import { projects } from '@/constants'
-
 export default function Projects() {
   return (
     <section
@@ -7,11 +5,9 @@ export default function Projects() {
       className="w-full scroll-mt-[5rem] bg-[#F9F9F9] px-4 py-[7.5rem] sm:scroll-mt-[10rem]"
     >
       <div className="mx-auto max-w-4xl text-center">
-        {projects.length ? (
-          <div>Project...</div>
-        ) : (
-          <h3 className="section-heading !mb-0">Projects coming soon...</h3>
-        )}
+        <h3 className="section-heading !mb-0">
+          Projects coming soon...
+        </h3>
       </div>
     </section>
   )
