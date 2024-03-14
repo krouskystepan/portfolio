@@ -27,7 +27,7 @@ export default function Navbar() {
             <li key={link.name}>
               <Link
                 href={link.to}
-                className="cursor-pointer outline-transparent transition-all duration-150 hover:text-[#228CDB] focus:text-[#228CDB]"
+                className="cursor-pointer outline-transparent transition-all duration-150 hover:text-[#228CDB] focus:text-[#228CDB] focus:outline-none"
               >
                 {link.name}
               </Link>

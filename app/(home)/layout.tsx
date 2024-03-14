@@ -5,7 +5,7 @@ import Footer from '@/components/Footer'
 import { ToastContainer } from 'react-toastify'
 
 import '../globals.css'
-import 'react-toastify/dist/ReactToastify.css'
+import 'react-toastify/dist/ReactToastify.min.css';
 
 const poppins = Poppins({
   subsets: ['latin'],

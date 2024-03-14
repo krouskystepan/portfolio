@@ -1,3 +1,10 @@
+export const socials = {
+  github: '',
+  linkedin: 'https://www.linkedin.com/in/štěpán-krouský-907782261/',
+  spotify: '',
+  instagram: '',
+}
+
 export const navLinks = [
   {
     name: 'Home',

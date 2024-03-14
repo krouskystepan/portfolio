@@ -14,19 +14,20 @@ export default function Footer() {
             href={'https://www.linkedin.com/in/štěpán-krouský-907782261/'}
             target="_blank"
             aria-label="Linkedin Link"
+            className='text-white transition-all duration-150 hover:text-[#228CDB] focus:text-[#228CDB]'
           >
-            <Outline_Linkedin className="size-6 cursor-pointer text-white transition-all duration-150 hover:text-[#228CDB]" />
+            <Outline_Linkedin className="size-6 cursor-pointer" />
           </Link>
           <Link
             href={'https://github.com/krouskystepan'}
             target="_blank"
             aria-label="GitHub Link"
+            className='text-white transition-all duration-150 hover:text-[#228CDB] focus:text-[#228CDB]'
           >
-            <Outline_Github className="size-6 cursor-pointer text-white transition-all duration-150 hover:text-[#228CDB]" />
+            <Outline_Github className="size-6 cursor-pointer" />
           </Link>
         </div>
       </div>
     </footer>
   )
 }
-//py-8

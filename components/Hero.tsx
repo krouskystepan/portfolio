@@ -15,15 +15,14 @@ export default function Hero() {
             Hey, I&apos;m Štěpán Krouský a{' '}
             <span className="font-semibold">Full-Stack Developer</span> from
             Czechia. I enjoy building <span className="italic">sites</span> and
-            contributing to <span className="italic">open source.</span> My
-            focus is <span className="italic underline">Next.js</span>
+            contributing to <span className="italic">open source.</span>
           </p>
         </div>
         <div className="mx-auto flex size-[250px] items-center justify-center md:size-[300px] lg:size-[350px]">
-          <div className="size-full animate-bubble-animation overflow-hidden bg-gradient-to-r from-[#228CDB] to-[#2B32B2] p-1" >
+          <div className="size-full animate-bubble overflow-hidden bg-gradient-to-r from-[#228CDB] to-[#2B32B2] p-1" >
             <Image
               priority
-              className="animate-bubble-animation"
+              className="animate-bubble"
               src="/profile.webp"
               width={350}
               height={350}

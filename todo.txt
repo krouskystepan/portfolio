@@ -1,0 +1,1 @@
+nav resize remove mobile from desktop
