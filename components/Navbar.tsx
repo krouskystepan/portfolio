@@ -46,7 +46,7 @@ export default function Navbar() {
 
         {/* Mobile Navigation */}
         <nav
-          className={`absolute left-0 top-0 h-screen w-full bg-white duration-500 ${
+          className={`absolute left-0 top-0 block h-screen w-full bg-white duration-500 sm:hidden ${
             isOpen ? '-translate-y-0' : '-translate-x-full'
           }`}
         >
