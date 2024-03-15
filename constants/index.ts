@@ -51,5 +51,3 @@ export const skills = [
     height: 48,
   },
 ] as const
-
-export const projects = []
