@@ -46,7 +46,7 @@ export const skills = [
     height: 48,
   },
   {
-    link: 'https://skillicons.dev/icons?i=linux,figma',
+    link: 'https://skillicons.dev/icons?i=mui,figma',
     width: 104,
     height: 48,
   },
