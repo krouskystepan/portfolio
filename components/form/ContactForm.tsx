@@ -5,11 +5,10 @@ import Outline_Linkedin from '../svg/Outline_Linkedin'
 import SubmitButton from './SubmitButton'
 import { sendEmail } from '@/actions/sendEmail'
 import { toast } from 'react-toastify'
-import { socials } from '@/constants'
 import { useState } from 'react'
 
 export default function ContactForm() {
-  const [formData, setformData] = useState<{
+  const [formData, setFormData] = useState<{
     senderEmail: string
     message: string
   }>({
@@ -48,7 +47,7 @@ export default function ContactForm() {
           maxLength={500}
           placeholder="Your email"
           onChange={(e) =>
-            setformData({ ...formData, senderEmail: e.target.value })
+            setFormData({ ...formData, senderEmail: e.target.value })
           }
         />
       </div>
@@ -57,7 +56,7 @@ export default function ContactForm() {
         placeholder="Your message"
         required
         maxLength={5000}
-        onChange={(e) => setformData({ ...formData, message: e.target.value })}
+        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
       />
       <SubmitButton />
     </form>
