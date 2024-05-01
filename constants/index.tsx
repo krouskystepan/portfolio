@@ -9,7 +9,8 @@ export const socials = [
   },
   {
     icon: <Outline_Linkedin className="cursor-pointer" />,
-    link: 'https://www.linkedin.com/in/štěpán-krouský-907782261',
+    // TODO: Add link
+    link: '',
     label: 'Linkedin Link',
   },
 ]

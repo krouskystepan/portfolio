@@ -12,7 +12,7 @@ export default function Footer() {
           {socials.map((social) => (
             <Link
               key={social.label}
-              href={'https://github.com/krouskystepan'}
+              href={social.link}
               target="_blank"
               aria-label={social.label}
               className="text-white transition-all duration-150 hover:text-[#228CDB] focus:text-[#228CDB] [&>*]:size-6"
