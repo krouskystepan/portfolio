@@ -15,7 +15,7 @@ export default function Footer() {
               href={'https://github.com/krouskystepan'}
               target="_blank"
               aria-label={social.label}
-              className="text-white transition-all duration-150 hover:text-[#228CDB] focus:text-[#228CDB]"
+              className="text-white transition-all duration-150 hover:text-[#228CDB] focus:text-[#228CDB] [&>*]:size-6"
             >
               {social.icon}
             </Link>
