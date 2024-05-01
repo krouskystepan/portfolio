@@ -19,7 +19,7 @@ export default function Hero() {
             Czechia. I enjoy building <span className="italic">sites</span> and
             contributing to <span className="italic">open source.</span>
           </p>
-          <div className="mt-3 flex gap-4">
+          <div className="mt-6 flex justify-center gap-4 lg:mt-3 lg:justify-start">
             {socials.map((social) => (
               <Link
                 key={social.label}
