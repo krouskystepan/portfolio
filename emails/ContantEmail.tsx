@@ -25,8 +25,8 @@ export default function ContactFormEmail({
     <Html>
       <Preview>New message from your portfolio</Preview>
       <Tailwind>
-        <Head />
         <Fragment>
+          <Head />
           <Body className="bg-gray-100 font-sans text-black">
             <Container>
               <Section className="my-10 rounded-lg border border-black bg-white px-10 py-4">
