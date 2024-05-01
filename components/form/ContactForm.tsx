@@ -33,7 +33,7 @@ export default function ContactForm() {
     >
       <div className="flex flex-row-reverse items-center gap-5">
         <Link
-          href={socials.linkedin}
+          href="https://www.linkedin.com/in/štěpán-krouský-907782261"
           target="_blank"
           className="mr-1 hidden min-[420px]:block"
           aria-label="Linkedin Link"

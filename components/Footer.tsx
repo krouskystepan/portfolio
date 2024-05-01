@@ -1,6 +1,5 @@
 import Link from 'next/link'
-import Outline_Linkedin from './svg/Outline_Linkedin'
-import Outline_Github from './svg/Outline_Github'
+import { socials } from '@/constants'
 
 export default function Footer() {
   return (
@@ -10,22 +9,17 @@ export default function Footer() {
           Copyright © 2024. All rights are reserved
         </p>
         <div className="flex justify-center gap-5">
-          <Link
-            href={'https://www.linkedin.com/in/štěpán-krouský-907782261/'}
-            target="_blank"
-            aria-label="Linkedin Link"
-            className='text-white transition-all duration-150 hover:text-[#228CDB] focus:text-[#228CDB]'
-          >
-            <Outline_Linkedin className="size-6 cursor-pointer" />
-          </Link>
-          <Link
-            href={'https://github.com/krouskystepan'}
-            target="_blank"
-            aria-label="GitHub Link"
-            className='text-white transition-all duration-150 hover:text-[#228CDB] focus:text-[#228CDB]'
-          >
-            <Outline_Github className="size-6 cursor-pointer" />
-          </Link>
+          {socials.map((social) => (
+            <Link
+              key={social.label}
+              href={'https://github.com/krouskystepan'}
+              target="_blank"
+              aria-label={social.label}
+              className="text-white transition-all duration-150 hover:text-[#228CDB] focus:text-[#228CDB] [&>*]:size-6"
+            >
+              {social.icon}
+            </Link>
+          ))}
         </div>
       </div>
     </footer>

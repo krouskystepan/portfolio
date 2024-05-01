@@ -1,9 +1,18 @@
-export const socials = {
-  github: '',
-  linkedin: 'https://www.linkedin.com/in/štěpán-krouský-907782261/',
-  spotify: '',
-  instagram: '',
-}
+import Outline_Github from '@/components/svg/Outline_Github'
+import Outline_Linkedin from '@/components/svg/Outline_Linkedin'
+
+export const socials = [
+  {
+    icon: <Outline_Github className="cursor-pointer" />,
+    link: 'https://github.com/krouskystepan',
+    label: 'GitHub Link',
+  },
+  {
+    icon: <Outline_Linkedin className="cursor-pointer" />,
+    link: 'https://www.linkedin.com/in/štěpán-krouský-907782261',
+    label: 'Linkedin Link',
+  },
+]
 
 export const navLinks = [
   {
@@ -46,7 +55,7 @@ export const skills = [
     height: 48,
   },
   {
-    link: 'https://skillicons.dev/icons?i=linux,figma',
+    link: 'https://skillicons.dev/icons?i=mui,figma',
     width: 104,
     height: 48,
   },

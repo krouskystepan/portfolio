@@ -4,10 +4,10 @@ export default function About() {
       <div className="mx-auto text-center">
         <h3 className="section-heading">About me</h3>
         <p className="!leading-[1.4] tracking-wider">
-          Hey, my name is Štěpán, I&apos;m a FullStack Developer based in the Czech Republic. My passion is to create a polished UI/UX. I like to create projects with an emphasis on perfectionism in the frontend and backend.
+          Hey, my name is <span className="font-semibold">Štěpán Krouský</span>, I&apos;m a <span className="font-semibold">FullStack Developer</span> based in the Czech Republic. My passion is to create a <span className="font-semibold">polished UI/UX.</span> I like to create projects with an <span className="font-semibold">emphasis on perfectionism</span> in the frontend and backend.
           <br />
           <br />
-          My main stack currently includes React/Next.js in combination with Tailwind CSS and TypeScript. I strongly believe in the importance of a high-quality user interface and experience. Therefore, I strive to integrate modern technologies into my work to achieve optimal results for my projects.
+          My main stack currently includes <span className="font-semibold">React/Next.js</span> in combination with <span className="font-semibold">Tailwind CSS</span> and <span className="font-semibold">TypeScript.</span> I strongly believe in the importance of a <span className="font-semibold">high-quality user interface and experience.</span> Therefore, I strive to integrate <span className="font-semibold">modern technologies</span> into my work to achieve optimal results for my projects.
         </p>
       </div>
     </section>
