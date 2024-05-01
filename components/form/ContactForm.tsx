@@ -5,21 +5,16 @@ import Outline_Linkedin from '../svg/Outline_Linkedin'
 import SubmitButton from './SubmitButton'
 import { sendEmail } from '@/actions/sendEmail'
 import { toast } from 'react-toastify'
-import { useState } from 'react'
+import { useRef } from 'react'
 
 export default function ContactForm() {
-  const [formData, setFormData] = useState<{
-    senderEmail: string
-    message: string
-  }>({
-    senderEmail: '',
-    message: '',
-  })
+  const formRef = useRef<HTMLFormElement>(null)
 
   return (
     <form
+      ref={formRef}
       className="mx-auto mt-8 flex max-w-2xl flex-col md:mt-10"
-      action={async () => {
+      action={async (formData: FormData) => {
         const { error } = await sendEmail(formData)
 
         if (error) {
@@ -27,6 +22,7 @@ export default function ContactForm() {
           return
         }
 
+        if (formRef.current) formRef.current.reset()
         toast.success('Email send successfully!')
       }}
     >
@@ -42,21 +38,19 @@ export default function ContactForm() {
         <span className="hidden min-[420px]:block">{' / '}</span>
         <input
           className="h-10 w-full rounded-xl border px-3 py-2 text-sm"
+          name="senderEmail"
           type="email"
           required
           maxLength={500}
           placeholder="Your email"
-          onChange={(e) =>
-            setFormData({ ...formData, senderEmail: e.target.value })
-          }
         />
       </div>
       <textarea
         className="my-3 h-52 rounded-xl border p-4 text-sm"
+        name="message"
         placeholder="Your message"
         required
         maxLength={5000}
-        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
       />
       <SubmitButton />
     </form>
