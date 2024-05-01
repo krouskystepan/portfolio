@@ -1,4 +1,6 @@
+import { socials } from '@/constants'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function Hero() {
   return (
@@ -17,9 +19,20 @@ export default function Hero() {
             Czechia. I enjoy building <span className="italic">sites</span> and
             contributing to <span className="italic">open source.</span>
           </p>
+          {socials.map((social) => (
+            <Link
+              key={social.label}
+              href={'https://github.com/krouskystepan'}
+              target="_blank"
+              aria-label={social.label}
+              className="text-white transition-all duration-150 hover:text-[#228CDB] focus:text-[#228CDB]"
+            >
+              {social.icon}
+            </Link>
+          ))}
         </div>
         <div className="mx-auto flex size-[250px] items-center justify-center md:size-[300px] lg:size-[350px]">
-          <div className="size-full animate-bubble overflow-hidden bg-gradient-to-r from-[#228CDB] to-[#2B32B2] p-1" >
+          <div className="size-full animate-bubble overflow-hidden bg-gradient-to-r from-[#228CDB] to-[#2B32B2] p-1">
             <Image
               priority
               className="animate-bubble"

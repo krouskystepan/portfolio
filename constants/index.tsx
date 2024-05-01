@@ -1,9 +1,18 @@
-export const socials = {
-  github: '',
-  linkedin: 'https://www.linkedin.com/in/štěpán-krouský-907782261/',
-  spotify: '',
-  instagram: '',
-}
+import Outline_Github from '@/components/svg/Outline_Github'
+import Outline_Linkedin from '@/components/svg/Outline_Linkedin'
+
+export const socials = [
+  {
+    icon: <Outline_Linkedin className="size-6 cursor-pointer" />,
+    link: 'https://github.com/krouskystepan',
+    label: 'GitHub Link',
+  },
+  {
+    icon: <Outline_Github className="size-6 cursor-pointer" />,
+    link: 'https://www.linkedin.com/in/štěpán-krouský-907782261',
+    label: 'Linkedin Link',
+  },
+]
 
 export const navLinks = [
   {
