@@ -13,7 +13,7 @@ export const socials = [
     link: '',
     label: 'Linkedin Link',
   },
-]
+] as const
 
 export const navLinks = [
   {
@@ -59,5 +59,41 @@ export const skills = [
     link: 'https://skillicons.dev/icons?i=mui,figma',
     width: 104,
     height: 48,
+  },
+] as const
+
+export const projects = [
+  {
+    title: 'Project 1',
+    description:
+      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt cupiditate debitis odit, et tempora nisi iusto quod nobis modi recusandae. Odit accusantium corrupti asperiores omnis incidunt, esse sequi porro, reprehenderit expedita rem sunt ullam quia at fuga architecto adipisci soluta recusandae dolor excepturi deserunt!',
+    image: '/placeholder.png',
+    path: 'https://www.github.com',
+    tags: ['Next.js', 'Tailwind CSS', 'Typescript'],
+  },
+  {
+    title: 'Project 2',
+    description:
+      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt cupiditate debitis odit, et tempora nisi iusto quod nobis modi recusandae. Odit accusantium corrupti asperiores omnis incidunt, esse sequi porro, reprehenderit expedita rem sunt ullam quia at fuga architecto adipisci soluta recusandae dolor excepturi deserunt!',
+    image: '/placeholder.png',
+    path: 'https://www.github.com',
+    tags: [
+      'Node.js',
+      'Express',
+      'Typescr',
+      'Node.js',
+      'Express',
+      'Express',
+      'Typescript',
+      'Typescript',
+    ],
+  },
+  {
+    title: 'Project 3',
+    description:
+      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt cupiditate debitis odit, et tempora nisi iusto quod nobis modi recusandae. Odit accusantium corrupti asperiores omnis incidunt, esse sequi porro, reprehenderit expedita rem sunt ullam quia at fuga architecto adipisci soluta recusandae dolor excepturi deserunt!',
+    image: '/placeholder.png',
+    path: 'https://www.github.com',
+    tags: ['Node.js', 'Express', 'Typescript'],
   },
 ] as const
