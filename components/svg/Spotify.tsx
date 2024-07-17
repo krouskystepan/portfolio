@@ -1,6 +1,4 @@
-import { TSVG } from '@/types'
-
-export default function Spotify({ size }: TSVG) {
+export default function Spotify({ size }: { size: number }) {
   return (
     <svg
       height={size}

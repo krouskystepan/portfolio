@@ -4,8 +4,8 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { ToastContainer } from 'react-toastify'
 
-import '../globals.css'
-import 'react-toastify/dist/ReactToastify.min.css';
+import './globals.css'
+import 'react-toastify/dist/ReactToastify.min.css'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -14,7 +14,7 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: 'Stepan Krousky | Personal Portfolio',
-  description: 'My personal portfolio',
+  description: 'Personal portfolio',
 }
 
 export default function RootLayout({
