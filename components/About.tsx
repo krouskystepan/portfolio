@@ -7,7 +7,7 @@ export default function About() {
       <div className="mx-auto text-center">
         <h3 className="section-heading">About me</h3>
         <p className="!leading-[1.4] tracking-wider">
-          Hey, my name is <span className="font-semibold">Štěpán Krouský</span>,
+          My name is <span className="font-semibold">Štěpán Krouský</span>,
           I&apos;m a <span className="font-semibold">FullStack Developer</span>{' '}
           based in the Czech Republic. My passion is to create a{' '}
           <span className="font-semibold">polished UI/UX.</span> I like to

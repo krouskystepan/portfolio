@@ -1,7 +1,5 @@
 import Outline_Github from '@/components/svg/Outline_Github'
 import Outline_Linkedin from '@/components/svg/Outline_Linkedin'
-import image from 'next/image'
-import path from 'path'
 
 export const socials = [
   {
@@ -66,27 +64,27 @@ export const skills = [
 
 export const projects = [
   {
-    title: 'Project 1',
+    title: 'Wassa',
     description:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt cupiditate debitis odit, et tempora nisi iusto quod nobis modi recusandae. Odit accusantium corrupti asperiores omnis incidunt, esse sequi porro, reprehenderit expedita rem sunt ullam quia at fuga architecto adipisci soluta recusandae dolor excepturi deserunt!',
-    image: '/projects/',
-    path: 'https://www.github.com',
-    tags: ['Next.js', 'Tailwind CSS', 'Typescript'],
+      'Wassa specializes in packaging development, offering custom paperboard solutions and logistics across the Czech Republic, Germany, Poland, and the EU. This project showcases their services.',
+    image: '/projects/wassa.png',
+    path: 'https://wassa.eu',
+    tags: ['Next.js', 'Tailwind', 'Shadcn', 'Prisma'],
   },
   {
-    title: 'Project 2',
+    title: 'MonkeyCovers',
     description:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt cupiditate debitis odit, et tempora nisi iusto quod nobis modi recusandae. Odit accusantium corrupti asperiores omnis incidunt, esse sequi porro, reprehenderit expedita rem sunt ullam quia at fuga architecto adipisci soluta recusandae dolor excepturi deserunt!',
-    image: '/projects/',
-    path: 'https://www.github.com',
-    tags: ['Node.js', 'Express', 'Typescr', 'Exress'],
+      'MonkeyCovers is a cutting-edge platform designed for creating and purchasing custom phone cases. Built with the latest technology, it offers a seamless and stylish shopping experience.',
+    image: '/projects/monkeycovers.png',
+    path: 'https://github.com/krouskystepan/monkeycovers',
+    tags: ['Next.js', 'Postgres', 'Tailwind', 'Kinde'],
   },
   {
     title: 'SK Clothing Shop',
     description:
       'This is a simple project created without the need for a database. It serves as a basic example of building an e-commerce website without relying on backend.',
-    image: '/projects/sk-clothing-shop.png',
+    image: '/projects/sk-clothing.png',
     path: 'https://github.com/krouskystepan/sk_clothing-shop',
-    tags: ['Next.js', 'Shadcn', 'Tailwind CSS', 'Stripe'],
+    tags: ['Next.js', 'Shadcn', 'Tailwind', 'Stripe'],
   },
 ] as const
