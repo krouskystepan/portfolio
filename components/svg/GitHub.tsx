@@ -1,6 +1,4 @@
-import { TSVG } from '@/types'
-
-export default function GitHub({ size }: TSVG) {
+export default function GitHub({ size }: { size: number }) {
   return (
     <svg
       height={size}

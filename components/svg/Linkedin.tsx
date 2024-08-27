@@ -1,6 +1,4 @@
-import { TSVG } from '@/types'
-
-export default function Linkedin({ size }: TSVG) {
+export default function Linkedin({ size }: { size: number }) {
   return (
     <svg height={size} width={size} viewBox="0 0 72 72">
       <path

@@ -1,14 +1,6 @@
-import { TSVG } from '@/types'
-import React from 'react'
-
-export default function Instagram({ size }: TSVG) {
+export default function Instagram({ size }: { size: number }) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 102 102"
-      id="instagram"
-    >
+    <svg width={size} height={size} viewBox="0 0 102 102" id="instagram">
       <defs>
         <radialGradient
           id="a"
