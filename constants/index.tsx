@@ -11,7 +11,7 @@ export const SOCIALS = [
     label: 'GitHub Link',
   },
   // {
-  //   icon: <Outline_Linkedin className="cursor-pointer" />,
+  //   icon: <Linkedin />,
   //   // TODO: Add link
   //   link: '',
   //   label: 'Linkedin Link',
