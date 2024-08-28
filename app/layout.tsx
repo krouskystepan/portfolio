@@ -2,10 +2,9 @@ import type { Metadata } from 'next'
 import { Poppins } from 'next/font/google'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
-import { ToastContainer } from 'react-toastify'
 
 import './globals.css'
-import 'react-toastify/dist/ReactToastify.min.css'
+import { BASE_URL } from '@/constants'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -14,7 +13,10 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: 'Stepan Krousky | Personal Portfolio',
-  description: 'Personal portfolio',
+  applicationName: 'Stepan Krousky | Personal Portfolio',
+  publisher: 'Stepan Krousky',
+  authors: [{ name: 'Stepan Krousky', url: BASE_URL }],
+  metadataBase: new URL(BASE_URL),
 }
 
 export default function RootLayout({
@@ -23,27 +25,13 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link
-          rel="icon"
-          href="/icon?<generated>"
-          type="image/<generated>"
-          sizes="<generated>"
-        />
-        <link
-          rel="apple-touch-icon"
-          href="/apple-icon?<generated>"
-          type="image/<generated>"
-          sizes="<generated>"
-        />
-      </head>
-      <body className={`${poppins.className} relative min-h-screen`}>
+    <html lang="en" className="scroll-smooth">
+      <body className={`${poppins.className}`}>
         <Navbar />
-        {children}
-        <Footer />
-        <ToastContainer position="bottom-right" autoClose={2000} closeOnClick />
+        <main className="flex min-h-[calc(100vh-5rem)] flex-col">
+          <div className="flex flex-1 flex-col">{children}</div>
+          <Footer />
+        </main>
       </body>
     </html>
   )

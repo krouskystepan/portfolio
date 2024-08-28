@@ -1,19 +1,15 @@
-import { MAX_PROJECTS, PROJECTS } from '@/constants'
+import { PROJECTS } from '@/constants'
 import Image from 'next/image'
-import Link from 'next/link'
 
-export default function Projects() {
+export default function ProjectsPage() {
   const sortedProjects = [...PROJECTS].sort((a, b) => b.priority - a.priority)
 
   return (
-    <section
-      id="projects"
-      className="w-full scroll-mt-[5rem] bg-[#F9F9F9] px-4 py-[5rem] md:px-0"
-    >
+    <section className="w-full scroll-mt-[5rem] bg-[#F9F9F9] px-4 pb-[4rem] pt-[3rem] md:px-0">
       <div className="mx-auto max-w-4xl py-0 text-center">
-        <h3 className="section-heading">Projects</h3>
+        <h3 className="section-heading">All My Projects</h3>
         <div className="space-y-6">
-          {sortedProjects.slice(0, MAX_PROJECTS).map((project) => (
+          {sortedProjects.map((project) => (
             <a
               key={project.title}
               href={project.path}
@@ -53,17 +49,6 @@ export default function Projects() {
               />
             </a>
           ))}
-          {sortedProjects.length > MAX_PROJECTS && (
-            <div className="mt-6 flex justify-center">
-              <Link
-                href="/projects"
-                className="cursor-pointer rounded-md border border-gray-300 px-3 py-1.5 text-lg transition-colors duration-200 hover:border-[#2b63b2] hover:bg-gray-100"
-                aria-label="Show more projects"
-              >
-                All My Projects
-              </Link>
-            </div>
-          )}
         </div>
       </div>
     </section>

@@ -1,15 +1,17 @@
 import Link from 'next/link'
-import { socials } from '@/constants'
+import { SOCIALS } from '@/constants'
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear()
+
   return (
     <footer className="bottom-0 left-0 bg-[#2D2C2D] p-10">
       <div className="mx-auto flex max-w-5xl flex-col justify-around gap-5 text-center md:flex-row">
         <p className=" font-bold text-white">
-          Copyright © 2024. All rights are reserved
+          Copyright © {currentYear}. All rights are reserved.
         </p>
         <div className="flex justify-center gap-5">
-          {socials.map((social) => (
+          {SOCIALS.map((social) => (
             <Link
               key={social.label}
               href={social.link}

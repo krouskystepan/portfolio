@@ -1,40 +1,43 @@
 import Outline_Github from '@/components/svg/Outline_Github'
 import Outline_Linkedin from '@/components/svg/Outline_Linkedin'
 
-export const socials = [
+export const BASE_URL = 'https://stepankrousky.com'
+export const MAX_PROJECTS = 3
+
+export const SOCIALS = [
   {
     icon: <Outline_Github className="cursor-pointer" />,
     link: 'https://github.com/krouskystepan',
     label: 'GitHub Link',
   },
-  {
-    icon: <Outline_Linkedin className="cursor-pointer" />,
-    // TODO: Add link
-    link: '',
-    label: 'Linkedin Link',
-  },
+  // {
+  //   icon: <Outline_Linkedin className="cursor-pointer" />,
+  //   // TODO: Add link
+  //   link: '',
+  //   label: 'Linkedin Link',
+  // },
 ] as const
 
-export const navLinks = [
+export const NAV_LINKS = [
   {
     name: 'Home',
-    to: '#home',
+    to: '/#home',
   },
   {
     name: 'About',
-    to: '#about',
+    to: '/#about',
   },
   {
     name: 'Projects',
-    to: '#projects',
+    to: '/#projects',
   },
   {
     name: 'Contact',
-    to: '#contact',
+    to: '/#contact',
   },
 ] as const
 
-export const skills = [
+export const SKILLS = [
   {
     link: 'https://skillicons.dev/icons?i=js,ts',
     width: 104,
@@ -62,7 +65,7 @@ export const skills = [
   },
 ] as const
 
-export const projects = [
+export const PROJECTS = [
   {
     title: 'Wassa',
     description:
@@ -70,6 +73,7 @@ export const projects = [
     image: '/projects/wassa.png',
     path: 'https://wassa.eu',
     tags: ['Next.js', 'Tailwind', 'Shadcn', 'Prisma'],
+    priority: 5,
   },
   {
     title: 'MonkeyCovers',
@@ -78,6 +82,7 @@ export const projects = [
     image: '/projects/monkeycovers.png',
     path: 'https://github.com/krouskystepan/monkeycovers',
     tags: ['Next.js', 'Postgres', 'Tailwind', 'Kinde'],
+    priority: 10,
   },
   {
     title: 'SK Clothing Shop',
@@ -86,5 +91,6 @@ export const projects = [
     image: '/projects/sk-clothing.png',
     path: 'https://github.com/krouskystepan/sk_clothing-shop',
     tags: ['Next.js', 'Shadcn', 'Tailwind', 'Stripe'],
+    priority: 0,
   },
 ] as const

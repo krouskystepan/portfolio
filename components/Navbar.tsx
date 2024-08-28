@@ -1,6 +1,6 @@
 'use client'
 
-import { navLinks } from '@/constants'
+import { NAV_LINKS } from '@/constants'
 import Link from 'next/link'
 import Burger from './svg/Burger'
 import CloseButton from './svg/CloseButton'
@@ -10,7 +10,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <header className="sticky left-0 top-0 z-10 bg-white p-6 shadow-sm">
+    <header className="sticky left-0 top-0 z-10 h-[5rem] bg-white p-6 shadow-sm">
       <nav className="mx-auto flex max-w-5xl items-center justify-between">
         {/* Desktop Navigation */}
 
@@ -23,7 +23,7 @@ export default function Navbar() {
           Skip to main content
         </a>
         <ul className="hidden items-center gap-5 text-xl font-medium sm:flex">
-          {navLinks.map((link) => (
+          {NAV_LINKS.map((link) => (
             <li key={link.name}>
               <Link
                 href={link.to}
@@ -58,7 +58,7 @@ export default function Navbar() {
             <CloseButton className="size-8" />
           </button>
           <ul className="flex h-full flex-col items-center justify-center gap-10 text-4xl font-medium">
-            {navLinks.map((link) => (
+            {NAV_LINKS.map((link) => (
               <li
                 key={link.name}
                 className="transition-all duration-150 hover:text-[#228CDB]"

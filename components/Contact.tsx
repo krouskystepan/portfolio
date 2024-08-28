@@ -4,7 +4,7 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="w-full max-w-4xl scroll-mt-[5rem] px-4 py-[7.5rem] sm:scroll-mt-[10rem]"
+      className="w-full max-w-4xl scroll-mt-[5rem] px-4 py-[5rem]"
     >
       <div className="mx-auto text-center">
         <h3 className="section-heading">Contact me</h3>

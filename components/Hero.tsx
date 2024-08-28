@@ -1,4 +1,4 @@
-import { socials } from '@/constants'
+import { SOCIALS } from '@/constants'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -20,7 +20,7 @@ export default function Hero() {
             contributing to <span className="italic">open source.</span>
           </p>
           <div className="mt-6 flex justify-center gap-4 lg:mt-3 lg:justify-start">
-            {socials.map((social) => (
+            {SOCIALS.map((social) => (
               <Link
                 key={social.label}
                 href={social.link}

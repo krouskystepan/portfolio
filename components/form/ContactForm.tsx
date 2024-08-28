@@ -4,7 +4,6 @@ import Link from 'next/link'
 import Outline_Linkedin from '../svg/Outline_Linkedin'
 import SubmitButton from './SubmitButton'
 import { sendEmail } from '@/actions/sendEmail'
-import { toast } from 'react-toastify'
 import { useRef } from 'react'
 
 export default function ContactForm() {
@@ -15,15 +14,9 @@ export default function ContactForm() {
       ref={formRef}
       className="mx-auto mt-8 flex max-w-2xl flex-col md:mt-10"
       action={async (formData: FormData) => {
-        const { error } = await sendEmail(formData)
-
-        if (error) {
-          toast.error(error)
-          return
-        }
+        await sendEmail(formData)
 
         if (formRef.current) formRef.current.reset()
-        toast.success('Email send successfully!')
       }}
     >
       <div className="flex flex-row-reverse items-center gap-5">
