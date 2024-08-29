@@ -1,21 +1,20 @@
 import Outline_Github from '@/components/svg/Outline_Github'
-import Outline_Linkedin from '@/components/svg/Outline_Linkedin'
+import { Linkedin } from 'lucide-react'
 
 export const BASE_URL = 'https://stepankrousky.com'
 export const MAX_PROJECTS = 3
 
 export const SOCIALS = [
   {
-    icon: <Outline_Github className="cursor-pointer" />,
+    icon: <Outline_Github />,
     link: 'https://github.com/krouskystepan',
     label: 'GitHub Link',
   },
-  // {
-  //   icon: <Linkedin />,
-  //   // TODO: Add link
-  //   link: '',
-  //   label: 'Linkedin Link',
-  // },
+  {
+    icon: <Linkedin />,
+    link: 'https://www.linkedin.com/in/štěpán-krouský-907782261/',
+    label: 'Linkedin Link',
+  },
 ] as const
 
 export const NAV_LINKS = [
@@ -40,28 +39,18 @@ export const NAV_LINKS = [
 export const SKILLS = [
   {
     link: 'https://skillicons.dev/icons?i=js,ts',
-    width: 104,
-    height: 48,
   },
   {
     link: 'https://skillicons.dev/icons?i=nextjs,tailwind',
-    width: 104,
-    height: 48,
   },
   {
-    link: 'https://skillicons.dev/icons?i=mysql,mongodb,postgres',
-    width: 161,
-    height: 48,
+    link: 'https://skillicons.dev/icons?i=mysql,prisma,mongodb,postgres',
   },
   {
     link: 'https://skillicons.dev/icons?i=express,nodejs',
-    width: 104,
-    height: 48,
   },
   {
     link: 'https://skillicons.dev/icons?i=mui,figma',
-    width: 104,
-    height: 48,
   },
 ] as const
 

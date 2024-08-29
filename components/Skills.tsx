@@ -1,5 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
 import { SKILLS } from '@/constants'
-import Image from 'next/image'
 
 export default function Skills() {
   return (
@@ -9,14 +9,13 @@ export default function Skills() {
         {SKILLS.map((skill) => (
           <li
             key={skill.link}
-            className={`relative sm:transition-all sm:duration-300 sm:hover:-translate-y-1 sm:hover:scale-110 sm:[&:not(:hover)]:group-hover:translate-y-2 sm:[&:not(:hover)]:group-hover:scale-95`}
+            className={`relative min-h-16 sm:transition-all sm:duration-300 sm:hover:-translate-y-1 sm:hover:scale-110 sm:[&:not(:hover)]:group-hover:translate-y-2 sm:[&:not(:hover)]:group-hover:scale-95`}
           >
-            <Image
+            <img
               src={skill.link}
-              sizes={`${skill.width}px`}
               alt="Skill icon"
-              height={skill.height}
-              width={skill.width}
+              fetchPriority="high"
+              loading="lazy"
             />
           </li>
         ))}
