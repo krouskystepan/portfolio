@@ -12,7 +12,7 @@ export const SOCIALS = [
   },
   {
     icon: <Linkedin />,
-    link: 'https://www.linkedin.com/in/štěpán-krouský-907782261/',
+    link: 'https://www.linkedin.com/in/krouskystepan/',
     label: 'Linkedin Link',
   },
 ] as const
