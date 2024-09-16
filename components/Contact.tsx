@@ -9,8 +9,8 @@ export default function Contact() {
     >
       <div className="mx-auto text-center">
         <h3 className="section-heading !mb-2">Contact me</h3>
-        <p className="mb-8 text-xl">Feel free to get in touch!</p>
-        <div className="flex flex-col items-center justify-center gap-8 sm:flex-row sm:gap-16">
+        <p className="mb-4 text-xl md:mb-6">Feel free to get in touch!</p>
+        <div className="flex flex-col flex-wrap items-center justify-center  gap-x-8 gap-y-4 sm:flex-row md:gap-x-12">
           <ContactBox
             icon={<MapPin size={26} />}
             title="Location"
@@ -39,8 +39,8 @@ function ContactBox({
   email?: string
 }) {
   return (
-    <div className="flex flex-1 gap-4 odd:justify-end">
-      <div className="flex size-14 items-center justify-center rounded-full border border-gray-200 p-2 shadow-md">
+    <div className="group flex gap-4 rounded-md border border-gray-200 bg-gray-50 p-4 odd:justify-end">
+      <div className="flex size-14 items-center justify-center rounded-full border border-gray-200 p-2 shadow-md duration-200 md:group-hover:-translate-y-2">
         {icon}
       </div>
       <div className="flex flex-col justify-center text-left">
