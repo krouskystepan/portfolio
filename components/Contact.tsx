@@ -1,4 +1,4 @@
-import { Linkedin, Mail, MapPin } from 'lucide-react'
+import { Mail, MapPin } from 'lucide-react'
 import Link from 'next/link'
 
 export default function Contact() {
@@ -10,7 +10,7 @@ export default function Contact() {
       <div className="mx-auto text-center">
         <h3 className="section-heading !mb-2">Contact me</h3>
         <p className="mb-8 text-xl">Feel free to get in touch!</p>
-        <div className="flex justify-center gap-16">
+        <div className="flex flex-col items-center justify-center gap-8 sm:flex-row sm:gap-16">
           <ContactBox
             icon={<MapPin size={26} />}
             title="Location"
