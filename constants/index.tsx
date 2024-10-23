@@ -55,15 +55,15 @@ export const SKILLS = [
 ] as const
 
 export const PROJECTS = [
-  // {
-  //   title: 'Wassa',
-  //   description:
-  //     'Wassa specializes in packaging development, offering custom paperboard solutions and logistics across the Czech Republic, Germany, Poland, and the EU. This project showcases their services.',
-  //   image: '/projects/wassa.png',
-  //   path: 'https://wassa.eu',
-  //   tags: ['Next.js', 'Tailwind', 'Shadcn', 'Prisma'],
-  //   priority: 5,
-  // },
+  {
+    title: 'Wassa',
+    description:
+      'Wassa specializes in packaging development, offering custom paperboard solutions and logistics across the Czech Republic, Germany, Poland, and the EU. This project showcases their services.',
+    image: '/projects/wassa.png',
+    path: 'https://wassa.eu',
+    tags: ['Next.js', 'Tailwind', 'Shadcn'],
+    priority: 10,
+  },
   {
     title: 'MonkeyCovers',
     description:
@@ -71,7 +71,7 @@ export const PROJECTS = [
     image: '/projects/monkeycovers.png',
     path: 'https://github.com/krouskystepan/monkeycovers',
     tags: ['Next.js', 'Postgres', 'Tailwind', 'Kinde'],
-    priority: 10,
+    priority: 5,
   },
   {
     title: 'SK Clothing Shop',
