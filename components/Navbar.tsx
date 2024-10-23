@@ -10,7 +10,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <header className="sticky left-0 top-0 z-10 h-[5rem] bg-white p-6 shadow-sm">
+    <header className="sticky left-0 top-0 z-10 h-20 bg-white p-6 shadow-sm">
       <nav className="mx-auto flex max-w-5xl items-center justify-between">
         {/* Desktop Navigation */}
 

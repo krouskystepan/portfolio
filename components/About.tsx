@@ -1,9 +1,6 @@
 export default function About() {
   return (
-    <section
-      id="about"
-      className="w-full max-w-4xl scroll-mt-[5rem] px-4 py-[5rem]"
-    >
+    <section id="about" className="w-full max-w-4xl scroll-mt-20 px-4 py-20">
       <div className="mx-auto text-center">
         <h3 className="section-heading">About me</h3>
         <p className="!leading-[1.4] tracking-wider">

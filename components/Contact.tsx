@@ -3,10 +3,7 @@ import Link from 'next/link'
 
 export default function Contact() {
   return (
-    <section
-      id="contact"
-      className="w-full max-w-4xl scroll-mt-[5rem] px-4 py-[5rem]"
-    >
+    <section id="contact" className="w-full max-w-4xl scroll-mt-20 px-4 py-20">
       <div className="mx-auto text-center">
         <h3 className="section-heading !mb-2">Contact me</h3>
         <p className="mb-4 text-xl md:mb-6">Feel free to get in touch!</p>

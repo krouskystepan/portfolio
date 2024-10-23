@@ -7,10 +7,10 @@ export default function Hero() {
     <div className="mx-auto flex max-w-5xl justify-center">
       <div
         id="home"
-        className="flex scroll-mt-[15rem] flex-col-reverse justify-center gap-[3rem] lg:flex-row lg:gap-[6.5rem]"
+        className="flex scroll-mt-60 flex-col-reverse justify-center gap-12 lg:flex-row lg:gap-[6.5rem]"
       >
         <div className="sm:w-[500px]">
-          <h1 className="text-gradient mt-7 text-center text-5xl font-bold !leading-[1.25] lg:text-left">
+          <h1 className="text-gradient mt-7 text-center text-5xl font-bold !leading-tight lg:text-left">
             Full-Stack React Developer
           </h1>
           <p className="mx-auto mt-5 max-w-[500px] text-center text-lg font-medium lg:text-left">
