@@ -63,6 +63,7 @@ export const PROJECTS = [
     path: 'https://wassa.eu',
     tags: ['Next.js', 'Tailwind', 'Shadcn'],
     priority: 10,
+    isDemo: false,
   },
   {
     title: 'MonkeyCovers',
@@ -72,6 +73,7 @@ export const PROJECTS = [
     path: 'https://github.com/krouskystepan/monkeycovers',
     tags: ['Next.js', 'Postgres', 'Tailwind', 'Kinde'],
     priority: 5,
+    isDemo: true,
   },
   {
     title: 'SK Clothing Shop',
@@ -81,5 +83,6 @@ export const PROJECTS = [
     path: 'https://github.com/krouskystepan/sk_clothing-shop',
     tags: ['Next.js', 'Shadcn', 'Tailwind', 'Stripe'],
     priority: 0,
+    isDemo: true,
   },
 ] as const

@@ -8,7 +8,7 @@ export default function Projects() {
   return (
     <section
       id="projects"
-      className="w-full scroll-mt-[5rem] bg-[#F9F9F9] px-4 py-[5rem] md:px-0"
+      className="w-full scroll-mt-20 bg-[#F9F9F9] px-4 py-20 md:px-0"
     >
       <div className="mx-auto max-w-4xl py-0 text-center">
         <h3 className="section-heading">Projects</h3>
@@ -18,8 +18,13 @@ export default function Projects() {
               key={project.title}
               href={project.path}
               target="_blank"
-              className="group/container relative mx-auto flex h-[28rem] w-full flex-col gap-0 overflow-hidden rounded-lg border-2 border-gray-200 bg-gray-100 text-center transition-colors duration-200 md:h-[20rem] md:max-w-[48rem] md:flex-row md:gap-10 md:text-start md:even:flex-row-reverse md:hover:border-2 md:hover:border-[#2b63b2] md:[&>*]:basis-1/2"
+              className="group/container relative mx-auto flex h-[28rem] w-full flex-col gap-0 overflow-hidden rounded-lg border-2 border-gray-200 bg-gray-100 text-center transition-colors duration-200 md:h-80 md:max-w-3xl md:flex-row md:gap-10 md:text-start md:even:flex-row-reverse md:hover:border-2 md:hover:border-[#2b63b2] md:[&>*]:basis-1/2"
             >
+              {project.isDemo && (
+                <span className="absolute top-0 bg-rose-600 px-2 py-1 text-xs font-semibold text-white group-odd/container:left-0 group-odd/container:rounded-br-lg group-even/container:rounded-bl-lg">
+                  Demo
+                </span>
+              )}
               <div className="flex flex-col px-4 py-7 md:pb-7 md:pl-10 md:pt-10 md:group-even/container:pl-4 md:group-even/container:pr-10">
                 <h4 className="text-2xl font-semibold">{project.title}</h4>
                 <p className="mt-3 line-clamp-6">{project.description}</p>
@@ -49,7 +54,7 @@ export default function Projects() {
                 quality={90}
                 width={500}
                 height={900}
-                className="mx-auto block max-w-[14rem] rounded-t-lg border border-gray-200 min-[380px]:max-w-[20rem] min-[480px]:max-w-[26rem]  sm:max-w-[32rem] md:hidden"
+                className="mx-auto block max-w-56 rounded-t-lg border border-gray-200 min-[380px]:max-w-[20rem] min-[480px]:max-w-[26rem]  sm:max-w-lg md:hidden"
               />
             </a>
           ))}
