@@ -7,7 +7,7 @@ import Contact from '@/components/Contact'
 export default function Home() {
   return (
     <main id="content" className="flex flex-col items-center scroll-smooth">
-      <section className="w-full bg-[#F9F9F9] px-4 pt-[3rem] md:pt-[7.5rem] ">
+      <section className="w-full bg-[#F9F9F9] px-4 pt-12 md:pt-[7.5rem] ">
         <Hero />
         <Skills />
       </section>
