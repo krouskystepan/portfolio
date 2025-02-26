@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  @apply font-outfit text-white bg-black;
+}
+
+body [data-pattern='stripes'] {
+  --rgb: 255 255 255;
+  --opacity: 0.1;
+  --size: 6px 6px;
+  background-image: linear-gradient(
+    -45deg,
+    rgb(var(--rgb) / var(--opacity)) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgb(var(--rgb) / var(--opacity)) 50%,
+    rgb(var(--rgb) / var(--opacity)) 75%,
+    transparent 75%,
+    transparent 100%
+  );
+  background-size: var(--size);
+}
+
+body [data-pattern='honeycomb'] {
+  --color1: #000000;
+  --color2: #181818;
+  --rgba-color: rgba(255, 255, 255, 0);
+
+  background: radial-gradient(
+        circle farthest-side at 0% 50%,
+        var(--color1) 23.5%,
+        var(--rgba-color) 0
+      )
+      21px 30px,
+    radial-gradient(
+        circle farthest-side at 0% 50%,
+        var(--color2) 24%,
+        var(--rgba-color) 0
+      )
+      19px 30px,
+    linear-gradient(
+        var(--color1) 14%,
+        var(--rgba-color) 0,
+        var(--rgba-color) 85%,
+        var(--color1) 0
+      )
+      0 0,
+    linear-gradient(
+        150deg,
+        var(--color1) 24%,
+        var(--color2) 0,
+        var(--color2) 26%,
+        var(--rgba-color) 0,
+        var(--rgba-color) 74%,
+        var(--color2) 0,
+        var(--color2) 76%,
+        var(--color1) 0
+      )
+      0 0,
+    linear-gradient(
+        30deg,
+        var(--color1) 24%,
+        var(--color2) 0,
+        var(--color2) 26%,
+        var(--rgba-color) 0,
+        var(--rgba-color) 74%,
+        var(--color2) 0,
+        var(--color2) 76%,
+        var(--color1) 0
+      )
+      0 0,
+    linear-gradient(
+        90deg,
+        var(--color2) 2%,
+        var(--color1) 0,
+        var(--color1) 98%,
+        var(--color2) 0
+      )
+      0 0 var(--color1);
+
+  background-size: 40px 60px; /* Size of the honeycomb cells */
+}
+
+.bg-radial {
+  background: radial-gradient(circle at top, #4169e1, transparent 60%);
+}
