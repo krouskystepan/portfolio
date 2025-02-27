@@ -9,8 +9,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: 'var(--background)',
-        foreground: 'var(--foreground)',
+        custom_blue: 'var(--custom_blue)',
+        custom_pink: 'var(--custom_pink)',
       },
       fontFamily: {
         outfit: 'var(--font-outfit)',

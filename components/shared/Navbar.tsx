@@ -10,18 +10,18 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div className="w-full flex items-center justify-center gap-4 fixed left-0 top-0 z-50 px-4 pointer-events-none">
+    <div className="pointer-events-none fixed left-0 top-0 z-50 flex w-full items-center justify-center gap-4 px-4">
       <DottedLine position="outside" />
 
-      <nav className="w-full max-w-5xl 2xl:max-w-7xl h-20 flex items-center justify-between gap-2 sm:gap-4">
+      <nav className="flex h-20 w-full max-w-5xl items-center justify-between gap-2 sm:gap-4 2xl:max-w-7xl">
         <div
-          className="pointer-events-auto hover:bg-white/5 border border-white/25 border-dashed rounded-xl backdrop-blur-lg shrink-0 overflow-hidden"
+          className="pointer-events-auto shrink-0 overflow-hidden rounded-xl border border-dashed border-white/25 backdrop-blur-lg hover:bg-white/5"
           style={{ '--opacity': '0.04' } as React.CSSProperties}
           data-pattern="stripes"
         >
           <Link
             href="/"
-            className="h-12 flex items-center gap-4 px-4 text-white text-xl"
+            className="flex h-12 items-center gap-4 px-4 text-xl text-white"
           >
             <Image src="/svgs/logo.svg" alt="Logo" width={24} height={24} />
             <span className="tracking-wide">
@@ -32,10 +32,10 @@ const Navbar = () => {
 
         <DottedLine position="inside" />
 
-        <div className="h-12 flex shrink-0 items-center gap-4 relative pointer-events-auto">
+        <div className="pointer-events-auto relative flex h-12 shrink-0 items-center gap-4">
           {/* Desktop navigation */}
           <div
-            className="h-full hidden md:flex items-center px-4 border border-white/25 border-dashed rounded-xl backdrop-blur-md text-lg font-medium"
+            className="hidden h-full items-center rounded-xl border border-dashed border-white/25 px-4 text-lg font-medium backdrop-blur-md md:flex"
             style={{ '--opacity': '0.04' } as React.CSSProperties}
             data-pattern="stripes"
           >
@@ -43,7 +43,7 @@ const Navbar = () => {
               <Link
                 key={link.href}
                 href={link.href}
-                className="h-fit text-neutral-300 hover:text-white hover:underline hover:underline-offset-2 tracking-wide transition-colors duration-200 rounded-xl flex justify-center items-center mx-4"
+                className="mx-4 flex h-fit items-center justify-center rounded-xl tracking-wide text-neutral-300 transition-colors duration-200 hover:text-white hover:underline hover:underline-offset-2"
               >
                 {link.label}
               </Link>
@@ -52,15 +52,15 @@ const Navbar = () => {
 
           {/* Mobile menu button */}
           <div
-            className="h-12 md:hidden flex items-center gap-4 border border-white/25 border-dashed rounded-xl backdrop-blur-md"
+            className="flex h-12 items-center gap-4 rounded-xl border border-dashed border-white/25 backdrop-blur-md md:hidden"
             data-pattern="stripes"
             style={{ '--opacity': '0.04' } as React.CSSProperties}
           >
-            <div className="h-full flex grow">
+            <div className="flex h-full grow">
               <button
                 type="button"
                 aria-label="Menu"
-                className="min-w-20 flex grow items-center justify-center gap-3 px-4 hover:bg-white/5 rounded-xl cursor-pointer text-white"
+                className="flex min-w-20 grow cursor-pointer items-center justify-center gap-3 rounded-xl px-4 text-white hover:bg-white/5"
                 onClick={() => setIsOpen((prev) => !prev)}
               >
                 {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -68,15 +68,15 @@ const Navbar = () => {
             </div>
           </div>
           <div
-            className={`w-[calc(100vw-2rem)] min-[400px]:w-52 md:hidden flex flex-col gap-2 absolute -bottom-4 translate-y-full p-4 bg-gradient-to-br from-white/30 to-white/5 backdrop-blur-md outline outline-neutral-600 shadow-lg rounded-xl transition-all duration-700 ${
-              isOpen ? 'right-0' : '-right-[300%]'
+            className={`absolute right-0 top-16 flex w-[calc(100vw-2rem)] flex-col gap-2 rounded-xl bg-gradient-to-br from-white/30 to-white/5 p-4 shadow-lg outline outline-neutral-600/20 backdrop-blur-md transition-all duration-700 min-[400px]:w-52 md:hidden ${
+              isOpen ? 'translate-x-0' : 'translate-x-[110%]'
             }`}
           >
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-lg text-white hover:underline hover:underline-offset-2 tracking-wide rounded-xl flex justify-center items-center"
+                className="flex items-center justify-center rounded-xl text-lg tracking-wide text-white hover:underline hover:underline-offset-2"
               >
                 {link.label}
               </Link>
@@ -95,8 +95,8 @@ export default Navbar
 const DottedLine = ({ position }: { position: 'outside' | 'inside' }) => {
   return (
     <hr
-      className={`h-[1px] hidden border-t border-white/25 border-dashed ${
-        position === 'outside' ? '2xl:flex grow' : 'md:flex w-full '
+      className={`hidden h-px border-t border-dashed border-white/25 ${
+        position === 'outside' ? 'grow 2xl:flex' : 'w-full md:flex '
       }`}
     />
   )

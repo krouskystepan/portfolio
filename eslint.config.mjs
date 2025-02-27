@@ -1,4 +1,4 @@
-import { dirname } from 'path'
+import { dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
 import { FlatCompat } from '@eslint/eslintrc'
 
@@ -6,16 +6,22 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 const compat = new FlatCompat({
-  baseDirectory: __dirname,
+  baseDirectory: resolve(__dirname),
 })
 
-const eslintConfig = [
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
-  {
-    rules: {
-      'react/no-unescaped-entities': 'off',
-    },
+const baseConfig = compat.extends(
+  'next/core-web-vitals',
+  'next/typescript',
+  'plugin:tailwindcss/recommended'
+)
+
+const customRules = {
+  rules: {
+    'react/no-unescaped-entities': 'off',
+    'no-console': 'warn',
   },
-]
+}
+
+const eslintConfig = [...baseConfig, customRules]
 
 export default eslintConfig

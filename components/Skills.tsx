@@ -3,7 +3,7 @@
 import { SKILLS } from '@/constants'
 import { motion } from 'framer-motion'
 
-export const Skills = () => {
+const Skills = () => {
   return (
     <div className="flex w-full overflow-hidden">
       <motion.div
@@ -20,7 +20,7 @@ export const Skills = () => {
         {[...SKILLS, ...SKILLS].map((skill, index) => (
           <div
             key={index}
-            className="px-4 py-2 text-lg text-white rounded-lg shadow-md size-fit  whitespace-nowrap border border-white/25 border-dashed bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-sm"
+            className="size-fit whitespace-nowrap rounded-lg border border-dashed border-white/25 bg-gradient-to-br from-white/15     to-white/5 px-4 py-2 text-base text-white shadow-md backdrop-blur-sm sm:text-lg"
           >
             {skill}
           </div>
@@ -29,3 +29,5 @@ export const Skills = () => {
     </div>
   )
 }
+
+export default Skills

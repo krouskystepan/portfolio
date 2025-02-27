@@ -1,13 +1,15 @@
 const AboutMe = () => {
   return (
-    <div className="mx-auto w-full max-w-4xl flex flex-col relative">
-      <div className="w-full flex flex-col items-center relative z-10 ">
-        <div className="w-full h-px bg-gradient-to-r from-neutral-900/0 via-[#4169E1] to-neutral-900/0" />
-        <div className="bg-radial w-full h-72 absolute opacity-25" />
+    <div className="relative mx-auto flex w-full max-w-4xl flex-col">
+      <div className="relative z-10 flex w-full flex-col items-center ">
+        <div className="h-px w-full bg-gradient-to-r from-neutral-900/0 via-custom_blue to-neutral-900/0" />
+        <div className="bg-radial absolute h-72 w-full opacity-25" />
       </div>
-      <div className="flex flex-col items-center gap-4 relative py-12 z-10">
-        <h3 className="text-white text-6xl text-center font-bold">About Me</h3>
-        <p className="text-neutral-300 text-lg text-center">
+      <div className="relative z-10 flex flex-col items-center gap-4 py-12">
+        <h3 className="text-center text-4xl font-bold text-white sm:text-6xl md:text-5xl">
+          About Me
+        </h3>
+        <p className="text-center text-lg text-neutral-300 sm:text-xl">
           My name is <span className="font-semibold">Štěpán Krouský</span>, I'm
           a <span className="font-semibold">FullStack Developer</span> based in
           the Czech Republic. I focus on creating a{' '}
@@ -35,6 +37,3 @@ const AboutMe = () => {
 }
 
 export default AboutMe
-
-//F83A89 pink
-//4169E1 blue
