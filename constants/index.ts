@@ -6,7 +6,7 @@ export const NAV_LINKS = [
     label: 'Home',
   },
   {
-    href: '#about',
+    href: '/#about',
     label: 'About',
   },
   {
@@ -14,7 +14,7 @@ export const NAV_LINKS = [
     label: 'Projects',
   },
   {
-    href: '#contact',
+    href: '/#contact',
     label: 'Contact',
   },
 ] as const
@@ -64,7 +64,7 @@ export const PROJECTS: TProject[] = [
       url: 'https://wassa.eu',
     },
     tags: ['Next.js', 'Tailwind', 'Shadcn'],
-    isDemo: false,
+    availability: 'live',
   },
   {
     name: 'MonkeyCovers',
@@ -76,7 +76,19 @@ export const PROJECTS: TProject[] = [
       url: 'https://github.com/krouskystepan/monkeycovers',
     },
     tags: ['Next.js', 'Postgres', 'Tailwind', 'Kinde'],
-    isDemo: true,
+    availability: 'demo',
+  },
+  {
+    name: 'Discord Gambling Bot',
+    description:
+      'This Discord bot lets users gamble with virtual currency, featuring games like slots, dice, and coin-flip. It includes a registration system for account management and admin commands for overseeing transactions and balances.',
+    image: '/images/projects/discord-gambling-bot.png',
+    link: {
+      type: 'github',
+      url: 'https://github.com/krouskystepan/dc_gambling_bot',
+    },
+    tags: ['TypeScript', 'Discord.js', 'MongoDB'],
+    availability: 'other',
   },
   {
     name: 'SK Clothing Shop',
@@ -88,6 +100,6 @@ export const PROJECTS: TProject[] = [
       url: 'https://github.com/krouskystepan/sk_clothing-shop',
     },
     tags: ['Next.js', 'Shadcn', 'Tailwind', 'Stripe'],
-    isDemo: true,
+    availability: 'demo',
   },
 ] as const

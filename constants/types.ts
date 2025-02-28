@@ -7,5 +7,5 @@ export type TProject = {
     url: string
   }
   tags: string[]
-  isDemo: boolean
+  availability: 'live' | 'demo' | 'other'
 }

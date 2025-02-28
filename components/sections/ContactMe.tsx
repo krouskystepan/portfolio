@@ -14,7 +14,7 @@ const ContactMe = () => {
           Feel free to reach out via email or connect with me on social media.
         </p>
         <div
-          className="min-[440px]:px-14 mx-auto rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-8 sm:px-20 md:px-32 md:py-12 lg:px-40 lg:py-14"
+          className="mx-auto rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-8 min-[440px]:px-14 sm:px-20 md:px-32 md:py-12 lg:px-40 lg:py-14"
           style={{ '--opacity': '0.03' } as React.CSSProperties}
           data-pattern="stripes"
         >
