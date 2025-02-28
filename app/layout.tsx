@@ -11,7 +11,7 @@ const RootLayout = ({
   children: React.ReactNode
 }>) => {
   return (
-    <html lang="en" className={outfit.variable}>
+    <html lang="en" className={`scroll-smooth ${outfit.variable}`}>
       <body className="flex min-h-dvh flex-col bg-black antialiased">
         <Navbar />
         <main className="flex w-full flex-1 flex-col pt-20">{children}</main>

@@ -1,14 +1,17 @@
 const AboutMe = () => {
   return (
-    <div className="relative mx-auto flex w-full max-w-4xl flex-col">
+    <div
+      id="about"
+      className="relative mx-auto flex w-full max-w-4xl scroll-m-20 flex-col"
+    >
       <div className="relative z-10 flex w-full flex-col items-center ">
         <div className="h-px w-full bg-gradient-to-r from-neutral-900/0 via-custom_blue to-neutral-900/0" />
         <div className="bg-radial absolute h-72 w-full opacity-25" />
       </div>
       <div className="relative z-10 flex flex-col items-center gap-4 py-12">
-        <h3 className="text-center text-4xl font-bold text-white sm:text-6xl md:text-5xl">
+        <h2 className="text-center text-4xl font-bold text-white md:text-5xl">
           About Me
-        </h3>
+        </h2>
         <p className="text-center text-lg text-neutral-300 sm:text-xl">
           My name is <span className="font-semibold">Štěpán Krouský</span>, I'm
           a <span className="font-semibold">FullStack Developer</span> based in

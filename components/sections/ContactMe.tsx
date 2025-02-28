@@ -4,15 +4,13 @@ import Image from 'next/image'
 
 const ContactMe = () => {
   return (
-    <section className="bg-black py-16 text-white">
+    <section id="contact" className="scroll-m-6 py-16 text-white">
       <div className="mx-auto flex flex-col gap-4 px-6 text-center">
         <div className="mx-auto w-fit px-12">
-          <h2 className="text-4xl font-bold sm:text-6xl md:text-5xl">
-            Get in Touch
-          </h2>
+          <h2 className="text-4xl font-bold md:text-5xl">Get in Touch</h2>
           <div className="mx-[-30%] mt-1 h-0.5 w-[160%] rounded-xl bg-gradient-to-r from-transparent via-custom_blue to-transparent md:h-1" />
         </div>
-        <p className="text-center text-base font-medium text-neutral-300 sm:text-xl">
+        <p className="mx-auto max-w-xs text-center text-base font-medium text-neutral-300 sm:max-w-sm sm:text-xl md:max-w-2xl">
           Feel free to reach out via email or connect with me on social media.
         </p>
         <div

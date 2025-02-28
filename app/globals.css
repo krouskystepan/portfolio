@@ -96,3 +96,7 @@ body [data-pattern='honeycomb'] {
     transparent 60%
   );
 }
+
+.text-gradient {
+  @apply bg-gradient-to-br from-custom_pink from-10% to-custom_blue to-90% bg-clip-text text-transparent;
+}

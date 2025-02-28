@@ -24,9 +24,7 @@ const Projects = () => {
             data-pattern="honeycomb"
           />
 
-          <h2 className="z-20 text-4xl font-bold sm:text-6xl md:text-5xl">
-            Projects
-          </h2>
+          <h2 className="z-20 text-4xl font-bold md:text-5xl">Projects</h2>
           <p className="z-20 flex flex-col text-center text-base  font-medium text-neutral-300 sm:text-xl">
             <span>Here are some of the projects I've worked on.</span>
             <span>

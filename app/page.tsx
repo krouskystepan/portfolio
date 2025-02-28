@@ -8,13 +8,10 @@ const Home = () => {
   return (
     <section className="flex w-full flex-col px-4">
       <BackgroundGradient />
-      {/* Done */}
       <Hero />
       <AboutMe />
       <Projects />
-      {/* TBD */}
       <ContactMe />
-      {/* <div className="h-96 bg-black" /> */}
     </section>
   )
 }
