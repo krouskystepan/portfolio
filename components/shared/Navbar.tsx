@@ -23,7 +23,13 @@ const Navbar = () => {
             href="/"
             className="flex h-12 items-center gap-4 px-4 text-xl text-white"
           >
-            <Image src="/svgs/logo.svg" alt="Logo" width={24} height={24} />
+            <Image
+              src="/svgs/logo.svg"
+              alt="Logo"
+              width={24}
+              height={24}
+              priority
+            />
             <span className="tracking-wide">
               <span className="font-extrabold">Krouský</span>Štěpán
             </span>

@@ -4,7 +4,10 @@ import Image from 'next/image'
 
 const ContactMe = () => {
   return (
-    <section id="contact" className="scroll-m-6 py-16 text-white">
+    <section
+      id="contact"
+      className="scroll-m-6 py-12 text-white md:py-16 lg:py-24 xl:py-28"
+    >
       <div className="mx-auto flex flex-col gap-4 px-6 text-center">
         <div className="mx-auto w-fit px-12">
           <h2 className="text-4xl font-bold md:text-5xl">Get in Touch</h2>

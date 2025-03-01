@@ -2,7 +2,7 @@ const AboutMe = () => {
   return (
     <div
       id="about"
-      className="relative mx-auto flex w-full max-w-4xl scroll-m-20 flex-col"
+      className="relative mx-auto flex w-full max-w-4xl scroll-m-20 flex-col py-12 md:py-16 lg:py-24 xl:py-28"
     >
       <div className="relative z-10 flex w-full flex-col items-center ">
         <div className="h-px w-full bg-gradient-to-r from-neutral-900/0 via-custom_blue to-neutral-900/0" />

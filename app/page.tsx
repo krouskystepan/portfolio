@@ -2,7 +2,7 @@ import Hero from '@/components/sections/Hero'
 import AboutMe from '@/components/sections/AboutMe'
 import Projects from '@/components/sections/Projects'
 import ContactMe from '@/components/sections/ContactMe'
-import BackgroundGradient from '@/components/BackgroundGradient'
+import { BackgroundGradient } from '@/components/Backgrounds'
 
 const Home = () => {
   return (

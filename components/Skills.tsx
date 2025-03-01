@@ -8,8 +8,8 @@ const Skills = () => {
     <div className="flex w-full overflow-hidden">
       <motion.div
         className="flex gap-4 will-change-transform"
-        initial={{ x: '-50%' }}
-        animate={{ x: '0%' }}
+        style={{ transform: 'translateX(-50%)' }}
+        animate={{ transform: 'translateX(0%)' }}
         transition={{
           repeat: Infinity,
           repeatType: 'loop',

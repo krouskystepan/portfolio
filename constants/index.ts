@@ -1,5 +1,7 @@
 import { TProject } from './types'
 
+export const BASE_URL = 'https://krouskystepan.com'
+
 export const NAV_LINKS = [
   {
     href: '/',

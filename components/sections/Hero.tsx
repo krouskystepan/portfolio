@@ -3,7 +3,7 @@ import Skills from '../Skills'
 
 const Hero = () => {
   return (
-    <div className="z-10 my-12 md:my-24">
+    <div className="z-10 py-12 md:py-16 lg:py-24 xl:py-28">
       <div className="mx-auto grid h-fit max-w-5xl justify-center gap-4 md:grid-cols-3 md:gap-12">
         <div className="order-2 flex h-full flex-col justify-evenly gap-4 md:order-1 md:col-span-2 md:gap-0 lg:justify-between">
           <h1 className="text-center text-4xl font-extrabold text-neutral-100 sm:text-6xl md:text-left md:text-5xl md:leading-none min-[870px]:text-7xl">
@@ -25,6 +25,7 @@ const Hero = () => {
             src="/images/profile.webp"
             width={270}
             height={270}
+            quality={80}
             alt="Profile picture"
           />
         </div>

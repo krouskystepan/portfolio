@@ -1,20 +1,29 @@
+import { BackgroundFade } from '@/components/Backgrounds'
 import { PROJECTS } from '@/constants'
 import { TProject } from '@/constants/types'
+import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 
+export const metadata: Metadata = {
+  title: 'Projects',
+}
+
 const Projects = () => {
   return (
-    <div className="mx-auto px-6 py-16">
-      <h2 className="mb-8 text-center text-4xl font-bold md:text-5xl">
-        My Projects
-      </h2>
-      <div className="grid grid-cols-1 gap-10">
-        {PROJECTS.map((project, index) => (
-          <Project key={index} project={project} />
-        ))}
+    <section className="flex w-full flex-col px-4 py-16">
+      <BackgroundFade className="bg-gradient-to-b from-neutral-900/60 to-transparent" />
+      <div className="z-10">
+        <h2 className="mb-8 text-center text-4xl font-bold md:text-5xl">
+          My Projects
+        </h2>
+        <div className="grid grid-cols-1 gap-10">
+          {PROJECTS.map((project, index) => (
+            <Project key={index} project={project} />
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   )
 }
 

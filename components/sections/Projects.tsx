@@ -1,13 +1,12 @@
 import Link from 'next/link'
-import React from 'react'
 
 const Projects = () => {
   return (
-    <div className="mx-auto w-full px-2 py-12 lg:py-6">
+    <div className="mx-auto w-full px-2 py-8 md:py-12 lg:py-16 xl:py-20">
       {/* Top Side Lines */}
       <div className="hidden w-full justify-center lg:flex">
         <div className="relative flex h-24 w-full max-w-xl justify-center bg-gradient-to-t from-neutral-600 to-transparent lg:max-w-3xl 2xl:h-36 2xl:max-w-5xl">
-          <div className="absolute top-0 h-full w-[calc(100%-2px)] bg-black/90" />
+          <div className="absolute top-0 h-full w-[calc(100%-2px)] bg-neutral-950" />
         </div>
       </div>
 
@@ -21,7 +20,7 @@ const Projects = () => {
         <div className="relative flex w-full max-w-xl flex-col items-center gap-4 overflow-hidden border-neutral-600 px-8 py-20 text-white lg:max-w-3xl lg:border-x lg:py-24 2xl:max-w-5xl 2xl:py-32">
           <div
             className="absolute inset-0 hidden lg:block"
-            data-pattern="honeycomb"
+            data-pattern="dots"
           />
 
           <h2 className="z-20 text-4xl font-bold md:text-5xl">Projects</h2>
@@ -52,7 +51,7 @@ const Projects = () => {
       {/* Bottom Side Lines */}
       <div className="hidden w-full justify-center lg:flex">
         <div className="relative flex h-24 w-full max-w-xl justify-center bg-gradient-to-b from-neutral-600 to-transparent lg:max-w-3xl 2xl:h-36 2xl:max-w-5xl">
-          <div className="absolute top-0 h-full w-[calc(100%-2px)] bg-black" />
+          <div className="absolute top-0 h-full w-[calc(100%-2px)] bg-neutral-950" />
         </div>
       </div>
     </div>
