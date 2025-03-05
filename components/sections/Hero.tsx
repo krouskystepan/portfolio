@@ -43,8 +43,8 @@ const SkillsField = ({ className }: { className: string }) => {
     <div
       className={`relative h-fit w-full overflow-hidden border border-x-white border-y-transparent py-1 ${className}`}
     >
-      <div className="absolute right-0 z-20 h-full w-8 bg-gradient-to-l from-white/20 to-transparent" />
-      <div className="absolute left-0 z-20 h-full w-8 bg-gradient-to-r from-white/20 to-transparent" />
+      <div className="absolute right-0 top-0 z-20 h-full w-8 bg-gradient-to-l from-white/20 to-transparent" />
+      <div className="absolute left-0 top-0 z-20 h-full w-8 bg-gradient-to-r from-white/20 to-transparent" />
       <Skills />
     </div>
   )
