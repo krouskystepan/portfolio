@@ -5,7 +5,11 @@ import { NextResponse } from 'next/server'
 let workspaceStatus: WorkspaceStatus
 
 export async function GET() {
-  if (!workspaceStatus) {
+  const currentTime = new Date()
+  const lastUpdateTime = new Date(workspaceStatus?.lastUpdate)
+  const timeDifference = currentTime.getTime() - lastUpdateTime.getTime()
+
+  if (timeDifference > 300000 || !workspaceStatus) {
     return NextResponse.json({ workSpace: null }, { status: 200 })
   }
 

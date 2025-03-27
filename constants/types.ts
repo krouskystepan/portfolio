@@ -14,5 +14,6 @@ export type WorkspaceStatus = {
   project_name: string
   startup_time: string
   active_file: string
+  lastUpdate: string
   uptime?: string
 }
