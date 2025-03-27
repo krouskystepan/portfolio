@@ -18,7 +18,6 @@ const baseConfig = compat.extends(
 const customRules = {
   rules: {
     'react/no-unescaped-entities': 'off',
-    'no-console': 'warn',
   },
 }
 

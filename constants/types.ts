@@ -9,3 +9,10 @@ export type TProject = {
   tags: string[]
   availability: 'live' | 'demo' | 'other'
 }
+
+export type WorkspaceStatus = {
+  project_name: string
+  startup_time: string
+  active_file: string
+  uptime?: string
+}

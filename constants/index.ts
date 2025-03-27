@@ -1,6 +1,7 @@
 import { TProject } from './types'
 
-export const BASE_URL = 'https://krouskystepan.com'
+export const BASE_URL = 'http://localhost:3000'
+// export const BASE_URL = 'https://krouskystepan.com'
 
 export const NAV_LINKS = [
   {
@@ -105,3 +106,9 @@ export const PROJECTS: TProject[] = [
     availability: 'demo',
   },
 ] as const
+
+/*
+Achievements
+1. Hover over hand in hero section
+2. Hover over GitHub icon to move the tail
+*/
