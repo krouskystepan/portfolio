@@ -1,19 +1,21 @@
-import axios from 'axios'
-
 export async function verifyGithubToken(token: string) {
   try {
-    return await axios
-      .get('https://api.github.com/user', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .catch(() => false)
+    const response = await fetch('https://api.github.com/user', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    if (!response.ok) {
+      return false
+    }
+
+    return await response.json()
   } catch (error) {
     console.error('Error verifying token:', error)
+    return false
   }
 }
-
 export const calculateUptime = (startTime: string): number => {
   const startupTime = new Date(startTime)
   const currentTime = new Date()
