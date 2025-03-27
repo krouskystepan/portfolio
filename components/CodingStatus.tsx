@@ -1,56 +1,44 @@
-'use client'
-
 import { BASE_URL } from '@/constants'
 import { WorkspaceStatus } from '@/constants/types'
 import { calculateUptime } from '@/utils/utils'
-import React, { useEffect, useState } from 'react'
 
-const CodingStatus = () => {
-  const [data, setData] = useState<WorkspaceStatus | null>(null)
-  const [uptime, setUptime] = useState<number>(0)
+const fetchStatus = async (): Promise<WorkspaceStatus | null> => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/vscodeStatus`, {
+      cache: 'no-store',
+    })
 
-  const fetchStatus = async () => {
-    try {
-      const response = await fetch(`${BASE_URL}/api/vscodeStatus`)
-
-      if (response.status === 202) {
-        const responseData = await response.json()
-        const fetchedData: WorkspaceStatus = responseData.workSpace
-        setData(fetchedData)
-        setUptime(calculateUptime(fetchedData.startup_time))
-      }
-    } catch (error) {
-      console.error('Error fetching workspace status:', error)
+    if (response.status === 202) {
+      const responseData = await response.json()
+      return responseData.workSpace
     }
+  } catch (error) {
+    console.error('Error fetching workspace status:', error)
   }
 
-  useEffect(() => {
-    fetchStatus()
+  return null
+}
 
-    const interval = setInterval(() => {
-      setUptime((prevUptime) => prevUptime + 1)
-    }, 1000)
+const formatUptime = (seconds: number): string => {
+  const days = Math.floor(seconds / (3600 * 24))
+  const hours = Math.floor((seconds % (3600 * 24)) / 3600)
+  const minutes = Math.floor((seconds % 3600) / 60)
+  const secs = seconds % 60
 
-    return () => clearInterval(interval)
-  }, [])
+  const timeParts: string[] = []
+  if (days > 0) timeParts.push(`${days} ${days === 1 ? 'day' : 'days'}`)
+  if (hours > 0) timeParts.push(`${hours} ${hours === 1 ? 'hour' : 'hours'}`)
+  if (minutes > 0)
+    timeParts.push(`${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`)
+  if (secs > 0 || timeParts.length === 0)
+    timeParts.push(`${secs} ${secs === 1 ? 'second' : 'seconds'}`)
 
-  const formatUptime = (seconds: number): string => {
-    const days = Math.floor(seconds / (3600 * 24))
-    const hours = Math.floor((seconds % (3600 * 24)) / 3600)
-    const minutes = Math.floor((seconds % 3600) / 60)
-    const secs = seconds % 60
+  return timeParts.join(', ')
+}
 
-    const timeParts: string[] = []
-
-    if (days > 0) timeParts.push(`${days} ${days === 1 ? 'day' : 'days'}`)
-    if (hours > 0) timeParts.push(`${hours} ${hours === 1 ? 'hour' : 'hours'}`)
-    if (minutes > 0)
-      timeParts.push(`${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`)
-    if (secs > 0 || timeParts.length === 0)
-      timeParts.push(`${secs} ${secs === 1 ? 'second' : 'seconds'}`)
-
-    return timeParts.join(', ')
-  }
+const CodingStatus = async () => {
+  const data = await fetchStatus()
+  const uptime = data ? calculateUptime(data.startup_time) : 0
 
   return (
     <div className="z-10 pt-4 sm:pt-8 md:pt-12">
@@ -63,7 +51,7 @@ const CodingStatus = () => {
           <>
             <span className="sm:w-1/3 sm:truncate">
               <strong>Project Name:</strong> <br />
-              {data?.project_name}
+              {data.project_name}
             </span>
             <span className="sm:w-1/3 sm:truncate">
               <strong>Uptime:</strong> <br />
@@ -71,7 +59,7 @@ const CodingStatus = () => {
             </span>
             <span className="sm:w-1/3 sm:truncate">
               <strong>Active File:</strong> <br />
-              {data?.active_file}
+              {data.active_file}
             </span>
           </>
         ) : (
