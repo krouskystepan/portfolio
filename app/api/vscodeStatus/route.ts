@@ -9,7 +9,7 @@ export async function GET() {
   const lastUpdateTime = new Date(workspaceStatus?.lastUpdate)
   const timeDifference = currentTime.getTime() - lastUpdateTime.getTime()
 
-  if (timeDifference > 300000 || !workspaceStatus) {
+  if (timeDifference > 60_000 || !workspaceStatus) {
     return NextResponse.json({ workSpace: null }, { status: 200 })
   }
 
