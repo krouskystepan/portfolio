@@ -1,46 +1,56 @@
 'use client'
 
+import { useState, useEffect, useRef } from 'react'
+import { doc, onSnapshot } from 'firebase/firestore'
 import { WorkspaceStatus } from '@/constants/types'
-import { useState, useEffect } from 'react'
-
-const formatUptime = (seconds: number): string => {
-  const days = Math.floor(seconds / (3600 * 24))
-  const hours = Math.floor((seconds % (3600 * 24)) / 3600)
-  const minutes = Math.floor((seconds % 3600) / 60)
-  const secs = seconds % 60
-
-  const timeParts: string[] = []
-  if (days > 0) timeParts.push(`${days} ${days === 1 ? 'day' : 'days'}`)
-  if (hours > 0) timeParts.push(`${hours} ${hours === 1 ? 'hour' : 'hours'}`)
-  if (minutes > 0)
-    timeParts.push(`${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`)
-  if (secs > 0 || timeParts.length === 0)
-    timeParts.push(`${secs} ${secs === 1 ? 'second' : 'seconds'}`)
-
-  return timeParts.join(', ')
-}
+import { db } from '@/utils/firebase'
+import { formatUptime } from '@/utils/utils'
 
 const CodingStatusClient = ({
-  data,
-  initialUptime,
+  initialData,
 }: {
-  data: WorkspaceStatus | null
-  initialUptime: number
+  initialData: WorkspaceStatus | null
 }) => {
-  const [uptime, setUptime] = useState(initialUptime)
+  const [data, setData] = useState<WorkspaceStatus | null>(initialData)
+  const uptimeRef = useRef(initialData?.uptime || 0)
+  const uptimeElementRef = useRef<HTMLSpanElement | null>(null)
 
   useEffect(() => {
+    const codingSessionRef = doc(db, 'codingSession', 'currentSession')
+
+    const unsubscribe = onSnapshot(codingSessionRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const newData = docSnap.data()?.status as WorkspaceStatus
+        setData(newData)
+      } else {
+        setData(null)
+      }
+    })
+
+    return () => unsubscribe()
+  }, [])
+
+  useEffect(() => {
+    if (!data) return
+
     const interval = setInterval(() => {
-      setUptime((prev) => prev + 1)
+      uptimeRef.current += 1
+      if (uptimeElementRef.current) {
+        uptimeElementRef.current.textContent = formatUptime(uptimeRef.current)
+      }
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [data])
 
   return (
     <div className="z-10 pt-4 sm:pt-8 md:pt-12">
       <div
-        className={`mx-auto flex shrink-0 flex-col items-center justify-around gap-3 overflow-hidden rounded-xl border border-dashed p-4 text-center text-neutral-300 backdrop-blur-lg sm:flex-row sm:gap-8 ${data ? 'w-72 border-emerald-400 sm:w-3/5 xl:w-2/5' : 'w-fit border-white/25'}`}
+        className={`mx-auto flex shrink-0 flex-col items-center justify-around gap-3 overflow-hidden rounded-xl border border-dashed p-4 text-center text-neutral-300 backdrop-blur-lg sm:flex-row sm:gap-8 ${
+          data
+            ? 'w-72 border-emerald-400 sm:w-3/5 xl:w-2/5'
+            : 'w-fit border-white/25'
+        }`}
         style={{ '--opacity': '0.04' } as React.CSSProperties}
         data-pattern="stripes"
       >
@@ -52,7 +62,9 @@ const CodingStatusClient = ({
             </span>
             <span className="sm:w-1/3 sm:truncate">
               <strong>Uptime:</strong> <br />
-              {formatUptime(uptime)}
+              <span ref={uptimeElementRef}>
+                {formatUptime(uptimeRef.current)}
+              </span>
             </span>
             <span className="sm:w-1/3 sm:truncate">
               <strong>Active File:</strong> <br />

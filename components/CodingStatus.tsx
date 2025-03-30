@@ -1,6 +1,5 @@
 import { BASE_URL } from '@/constants'
 import { WorkspaceStatus } from '@/constants/types'
-import { calculateUptime } from '@/utils/utils'
 import CodingStatusClient from './CodingStatusClient'
 
 const fetchStatus = async (): Promise<WorkspaceStatus | null> => {
@@ -22,9 +21,8 @@ const fetchStatus = async (): Promise<WorkspaceStatus | null> => {
 
 const CodingStatus = async () => {
   const data = await fetchStatus()
-  const initialUptime = data ? calculateUptime(data.startup_time) : 0
 
-  return <CodingStatusClient data={data} initialUptime={initialUptime} />
+  return <CodingStatusClient initialData={data} />
 }
 
 export default CodingStatus

@@ -1,24 +1,23 @@
 import { WorkspaceStatus } from '@/constants/types'
+import { db } from '@/utils/firebase'
 import { verifyGithubToken } from '@/utils/utils'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { NextResponse } from 'next/server'
 
-let workspaceStatus: WorkspaceStatus
-
 export async function GET() {
+  const codingSessionRef = doc(db, 'codingSession', 'currentSession')
+  const codingSessionSnap = await getDoc(codingSessionRef)
+  const workSpace: WorkspaceStatus = codingSessionSnap.data()?.status
+
   const currentTime = new Date()
-  const lastUpdateTime = new Date(workspaceStatus?.lastUpdate)
+  const lastUpdateTime = new Date(workSpace?.lastUpdate)
   const timeDifference = currentTime.getTime() - lastUpdateTime.getTime()
 
-  if (timeDifference > 60_000 || !workspaceStatus) {
+  if (timeDifference > 60_000 || !workSpace) {
     return NextResponse.json({ workSpace: null }, { status: 200 })
   }
 
-  return NextResponse.json(
-    {
-      workSpace: workspaceStatus,
-    },
-    { status: 202 }
-  )
+  return NextResponse.json({ workSpace }, { status: 202 })
 }
 
 export async function POST(req: Request) {
@@ -37,12 +36,12 @@ export async function POST(req: Request) {
 
   const body = await req.json()
 
-  workspaceStatus = body.status
+  const codingSessionRef = doc(db, 'codingSession', 'currentSession')
+  await setDoc(codingSessionRef, body)
 
   return NextResponse.json(
     {
       message: 'Workspace status fetched successfully.',
-      data: workspaceStatus,
     },
     { status: 200 }
   )

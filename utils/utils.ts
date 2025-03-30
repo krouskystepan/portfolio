@@ -16,12 +16,20 @@ export async function verifyGithubToken(token: string) {
     return false
   }
 }
-export const calculateUptime = (startTime: string): number => {
-  const startupTime = new Date(startTime)
-  const currentTime = new Date()
-  const uptimeInMs = currentTime.getTime() - startupTime.getTime()
 
-  const seconds = Math.floor(uptimeInMs / 1000)
+export const formatUptime = (seconds: number): string => {
+  const days = Math.floor(seconds / (3600 * 24))
+  const hours = Math.floor((seconds % (3600 * 24)) / 3600)
+  const minutes = Math.floor((seconds % 3600) / 60)
+  const secs = seconds % 60
 
-  return seconds
+  const timeParts: string[] = []
+  if (days > 0) timeParts.push(`${days} ${days === 1 ? 'day' : 'days'}`)
+  if (hours > 0) timeParts.push(`${hours} ${hours === 1 ? 'hour' : 'hours'}`)
+  if (minutes > 0)
+    timeParts.push(`${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`)
+  if (secs > 0 || timeParts.length === 0)
+    timeParts.push(`${secs} ${secs === 1 ? 'second' : 'seconds'}`)
+
+  return timeParts.join(', ')
 }
