@@ -12,7 +12,9 @@ const CodingStatusClient = ({
   initialData: WorkspaceStatus | null
 }) => {
   const [data, setData] = useState<WorkspaceStatus | null>(initialData)
-  const uptimeRef = useRef(calculateUptime(data?.startup_time || '0'))
+  const uptimeRef = useRef(
+    calculateUptime(data?.startup_time || new Date().toISOString())
+  )
   const uptimeElementRef = useRef<HTMLSpanElement | null>(null)
 
   useEffect(() => {

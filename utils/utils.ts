@@ -17,7 +17,7 @@ export async function verifyGithubToken(token: string) {
   }
 }
 
-export const calculateUptime = (startDate: string | number | Date): number => {
+export const calculateUptime = (startDate: string): number => {
   const start = new Date(startDate)
   const now = new Date()
 
