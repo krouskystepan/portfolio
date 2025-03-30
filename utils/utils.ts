@@ -17,6 +17,17 @@ export async function verifyGithubToken(token: string) {
   }
 }
 
+export const calculateUptime = (startDate: string | number | Date): number => {
+  const start = new Date(startDate)
+  const now = new Date()
+
+  if (isNaN(start.getTime())) {
+    throw new Error(`Invalid date format: ${startDate}`)
+  }
+
+  return Math.floor((now.getTime() - start.getTime()) / 1000)
+}
+
 export const formatUptime = (seconds: number): string => {
   const days = Math.floor(seconds / (3600 * 24))
   const hours = Math.floor((seconds % (3600 * 24)) / 3600)

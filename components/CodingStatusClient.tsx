@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { WorkspaceStatus } from '@/constants/types'
 import { db } from '@/utils/firebase'
-import { formatUptime } from '@/utils/utils'
+import { calculateUptime, formatUptime } from '@/utils/utils'
 
 const CodingStatusClient = ({
   initialData,
@@ -12,7 +12,7 @@ const CodingStatusClient = ({
   initialData: WorkspaceStatus | null
 }) => {
   const [data, setData] = useState<WorkspaceStatus | null>(initialData)
-  const uptimeRef = useRef(initialData?.uptime || 0)
+  const uptimeRef = useRef(calculateUptime(data?.startup_time || '0'))
   const uptimeElementRef = useRef<HTMLSpanElement | null>(null)
 
   useEffect(() => {
@@ -30,7 +30,6 @@ const CodingStatusClient = ({
       } else {
         setData(newData)
       }
-      console.log('New data:', newData)
     })
 
     return () => unsubscribe()
@@ -39,12 +38,25 @@ const CodingStatusClient = ({
   useEffect(() => {
     if (!data) return
 
-    const interval = setInterval(() => {
+    const lastUpdateTime = new Date(data.lastUpdate)
+
+    const updateUptime = () => {
+      const currentTime = new Date()
+      const timeDifference = currentTime.getTime() - lastUpdateTime.getTime()
+
+      if (timeDifference > 60_000) {
+        setData(null)
+        return
+      }
+
       uptimeRef.current += 1
       if (uptimeElementRef.current) {
         uptimeElementRef.current.textContent = formatUptime(uptimeRef.current)
       }
-    }, 1000)
+    }
+
+    updateUptime()
+    const interval = setInterval(updateUptime, 1000)
 
     return () => clearInterval(interval)
   }, [data])

@@ -12,7 +12,8 @@ export type TProject = {
 
 export type WorkspaceStatus = {
   project_name: string
-  uptime: number
+  startup_time: string
   active_file: string
   lastUpdate: string
+  uptime?: number
 }
