@@ -1,7 +1,7 @@
 import { TProject } from './types'
 
-export const BASE_URL = 'http://localhost:3000'
-// export const BASE_URL = 'https://krouskystepan.com'
+// export const BASE_URL = 'http://localhost:3000'
+export const BASE_URL = 'https://krouskystepan.com'
 
 export const NAV_LINKS = [
   {

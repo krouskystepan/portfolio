@@ -19,12 +19,18 @@ const CodingStatusClient = ({
     const codingSessionRef = doc(db, 'codingSession', 'currentSession')
 
     const unsubscribe = onSnapshot(codingSessionRef, (docSnap) => {
-      if (docSnap.exists()) {
-        const newData = docSnap.data()?.status as WorkspaceStatus
-        setData(newData)
-      } else {
+      const newData = docSnap.data()?.status as WorkspaceStatus
+
+      const currentTime = new Date()
+      const lastUpdateTime = new Date(newData?.lastUpdate)
+      const timeDifference = currentTime.getTime() - lastUpdateTime.getTime()
+
+      if (timeDifference > 60_000 || !newData) {
         setData(null)
+      } else {
+        setData(newData)
       }
+      console.log('New data:', newData)
     })
 
     return () => unsubscribe()
