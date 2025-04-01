@@ -4,10 +4,29 @@ import { NAV_LINKS } from '@/constants'
 import { Menu, X } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useAchievementContext } from '@/context/AchievementContext'
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
+
+  const { isInitialized, isAchievementUnlocked, unlockAchievement } =
+    useAchievementContext()
+
+  useEffect(() => {
+    if (!isInitialized) return
+
+    if (!isAchievementUnlocked('first-visit')) {
+      unlockAchievement('first-visit', 200)
+    }
+
+    if (!isAchievementUnlocked('night-owl')) {
+      const currentHour = new Date().getHours()
+      if (currentHour >= 0 && currentHour < 6) {
+        unlockAchievement('night-owl', 300)
+      }
+    }
+  }, [isInitialized, isAchievementUnlocked, unlockAchievement])
 
   return (
     <div className="pointer-events-none fixed left-0 top-0 z-50 flex w-full items-center justify-center gap-4 px-4">
@@ -66,7 +85,7 @@ const Navbar = () => {
               <button
                 type="button"
                 aria-label="Menu"
-                className="flex min-w-20 grow cursor-pointer items-center justify-center gap-3 rounded-xl px-4 text-white hover:bg-white/5"
+                className="flex min-w-fit grow cursor-pointer items-center justify-center gap-3 rounded-xl px-4 text-white hover:bg-white/5 min-[420px]:min-w-20"
                 onClick={() => setIsOpen((prev) => !prev)}
               >
                 {isOpen ? <X size={24} /> : <Menu size={24} />}

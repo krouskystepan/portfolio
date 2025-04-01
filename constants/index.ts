@@ -43,16 +43,19 @@ export const SOCIALS = [
     iconPath: '/svgs/github.svg',
     source: 'https://github.com/krouskystepan',
     label: 'GitHub Link',
+    achievementId: 'pet-cat',
   },
   {
     iconPath: '/svgs/mail.svg',
     source: 'mailto:stepan.krousky@seznam.cz',
     label: 'Mail',
+    achievementId: '',
   },
   {
     iconPath: '/svgs/linkedin.svg',
     source: 'https://www.linkedin.com/in/krouskystepan/',
     label: 'Linkedin Link',
+    achievementId: '',
   },
 ] as const
 
@@ -107,8 +110,49 @@ export const PROJECTS: TProject[] = [
   },
 ] as const
 
-/*
-Achievements
-1. Hover over hand in hero section
-2. Hover over GitHub icon to move the tail
-*/
+export const allAchievements = [
+  // homepage
+  {
+    id: 'first-visit',
+    title: 'Who Are You?',
+    description: 'You visited my portfolio for the first time!',
+  },
+  {
+    id: 'caught-coding',
+    title: 'Caught Me Live!',
+    description: 'You caught me coding live!',
+  },
+  {
+    id: 'say-hey',
+    title: 'Said Hey!',
+    description: 'You greeted me with a "Hey!".',
+  },
+  // homepage in time
+  {
+    id: 'night-owl',
+    title: 'Night Owl',
+    description: 'You visited my portfolio between 12 AM and 5 AM.',
+  },
+  // achievement
+  {
+    id: 'hidden-path',
+    title: 'Off the Beaten Path',
+    description: 'You found a secret spot in my portfolio.',
+  },
+  {
+    id: 'pet-cat',
+    title: 'Cat Cuddler',
+    description: 'You petted the cat. A true animal lover!',
+  },
+  {
+    id: 'pick-nose',
+    title: 'The Forbidden Touch',
+    description: 'You dared to poke my nose. A bold move, indeed!',
+  },
+  // not found
+  {
+    id: '404-hunter',
+    title: 'Lost and Found',
+    description: 'You visited a non-existent page. Oops!',
+  },
+] as const

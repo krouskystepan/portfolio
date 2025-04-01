@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import HeroImage from '../HeroImage'
 import Skills from '../Skills'
 import WaveEmoji from '../WaveEmoji'
 
@@ -20,16 +20,8 @@ const Hero = () => {
           <SkillsField className="hidden lg:block" />
         </div>
 
-        <div className="relative order-1 mx-auto aspect-square size-72 overflow-hidden rounded-xl border border-white/80 transition-colors duration-200 hover:bg-white/90 md:order-2 md:size-full md:rounded-lg">
-          <Image
-            priority
-            className="size-full"
-            src="/images/profile.webp"
-            width={270}
-            height={270}
-            quality={80}
-            alt="Profile picture"
-          />
+        <div className="relative order-1 mx-auto aspect-square size-72 overflow-hidden md:order-2 md:size-full">
+          <HeroImage />
         </div>
       </div>
       <SkillsField className="mt-4 block lg:hidden" />

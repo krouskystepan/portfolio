@@ -1,3 +1,5 @@
+import { allAchievements } from '.'
+
 export type TProject = {
   name: string
   description: string
@@ -16,4 +18,21 @@ export type WorkspaceStatus = {
   active_file: string
   lastUpdate: string
   uptime?: number
+}
+
+export type AchievementID = (typeof allAchievements)[number]['id']
+
+export type Achievement = {
+  id: AchievementID
+  title: string
+  description: string
+}
+
+export type AchievementContextType = {
+  unlockAchievement: (id: AchievementID, delay?: number) => void
+  isAchievementUnlocked: (id: AchievementID) => boolean
+  getAchievementById: (id: AchievementID) => Achievement | undefined
+  getUnlockedAchievementsAsPercent: () => number
+  resetAllAchievements: () => void
+  isInitialized: boolean
 }

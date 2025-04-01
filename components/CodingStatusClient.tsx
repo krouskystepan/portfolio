@@ -5,6 +5,7 @@ import { doc, onSnapshot } from 'firebase/firestore'
 import { WorkspaceStatus } from '@/constants/types'
 import { db } from '@/utils/firebase'
 import { calculateUptime, formatUptime } from '@/utils/utils'
+import { useAchievementContext } from '@/context/AchievementContext'
 
 const CodingStatusClient = ({
   initialData,
@@ -16,6 +17,9 @@ const CodingStatusClient = ({
     calculateUptime(data?.startup_time || new Date().toISOString())
   )
   const uptimeElementRef = useRef<HTMLSpanElement | null>(null)
+
+  const { isAchievementUnlocked, unlockAchievement, getAchievementById } =
+    useAchievementContext()
 
   useEffect(() => {
     const codingSessionRef = doc(db, 'codingSession', 'currentSession')
@@ -31,14 +35,18 @@ const CodingStatusClient = ({
         setData(null)
       } else {
         setData(newData)
+
+        if (!isAchievementUnlocked('caught-coding')) {
+          unlockAchievement('caught-coding', 1000)
+        }
       }
     })
 
     return () => unsubscribe()
-  }, [])
+  }, [getAchievementById, isAchievementUnlocked, unlockAchievement])
 
   useEffect(() => {
-    if (!data) return
+    if (!data || typeof window === 'undefined') return
 
     const lastUpdateTime = new Date(data.lastUpdate)
 
@@ -68,7 +76,7 @@ const CodingStatusClient = ({
       <div
         className={`mx-auto flex shrink-0 flex-col items-center justify-around gap-3 overflow-hidden rounded-xl border border-dashed p-4 text-center text-neutral-300 backdrop-blur-lg sm:flex-row sm:gap-8 ${
           data
-            ? 'w-72 border-emerald-400 sm:w-3/5 xl:w-2/5'
+            ? 'max-w-72 border-emerald-400 sm:w-3/5 sm:max-w-full xl:w-2/5'
             : 'w-fit border-white/25'
         }`}
         style={{ '--opacity': '0.04' } as React.CSSProperties}

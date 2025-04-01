@@ -1,6 +1,7 @@
 import { SOCIALS } from '@/constants'
 import Link from 'next/link'
 import Image from 'next/image'
+import GitHubIcon from '../GitHubIcon'
 
 const ContactMe = () => {
   return (
@@ -26,7 +27,7 @@ const ContactMe = () => {
           </p>
           <a
             href="mailto:your.email@example.com"
-            className="text-lg text-custom_blue underline-offset-2 hover:underline sm:text-2xl"
+            className="break-all text-lg text-custom_blue underline-offset-2 hover:underline sm:text-2xl"
           >
             {
               SOCIALS.filter(
@@ -46,13 +47,23 @@ const ContactMe = () => {
                   'rounded-3xl border border-neutral-700 bg-neutral-800 p-3 shadow-md transition hover:bg-neutral-700/80 hover:shadow-lg sm:p-4'
                 }
               >
-                <Image
-                  src={social.iconPath}
-                  alt={social.label}
-                  width={28}
-                  height={28}
-                  className="size-5 sm:size-7"
-                />
+                {social?.achievementId === 'pet-cat' ? (
+                  <GitHubIcon
+                    id={social.achievementId}
+                    path={social.iconPath}
+                    alt={social.label}
+                    size={28}
+                    className="size-5 sm:size-7"
+                  />
+                ) : (
+                  <Image
+                    src={social.iconPath}
+                    alt={social.label}
+                    width={28}
+                    height={28}
+                    className="size-5 sm:size-7"
+                  />
+                )}
               </Link>
             ))}
           </div>

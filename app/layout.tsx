@@ -4,6 +4,8 @@ import { Outfit } from 'next/font/google'
 import './globals.css'
 import { BASE_URL } from '@/constants'
 import { Metadata } from 'next'
+import { AchievementProvider } from '@/context/AchievementContext'
+import { Toaster } from 'sonner'
 
 const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' })
 
@@ -38,9 +40,12 @@ const RootLayout = ({
   return (
     <html lang="en" className={`scroll-smooth ${outfit.variable}`}>
       <body className="flex min-h-dvh flex-col bg-neutral-950 antialiased">
-        <Navbar />
-        <main className="flex w-full flex-1 flex-col pt-20">{children}</main>
-        <Footer />
+        <AchievementProvider>
+          <Navbar />
+          <main className="flex w-full flex-1 flex-col pt-20">{children}</main>
+          <Footer />
+          <Toaster theme="dark" richColors />
+        </AchievementProvider>
       </body>
     </html>
   )
