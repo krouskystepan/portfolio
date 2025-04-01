@@ -3,6 +3,7 @@
 import { BackgroundFade } from '@/components/Backgrounds'
 import { allAchievements } from '@/constants'
 import { useAchievementContext } from '@/context/AchievementContext'
+
 import { useEffect } from 'react'
 
 const Achievements = () => {
