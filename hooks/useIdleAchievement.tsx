@@ -2,37 +2,50 @@ import { useAchievementContext } from '@/context/AchievementContext'
 import { useEffect, useRef } from 'react'
 
 export const useIdleAchievement = () => {
-  const idleTimer = useRef<NodeJS.Timeout | null>(null)
+  const firstIdleTimer = useRef<NodeJS.Timeout | null>(null)
+  const secondIdleTimer = useRef<NodeJS.Timeout | null>(null)
   const { isInitialized, unlockAchievement } = useAchievementContext()
 
   useEffect(() => {
     if (!isInitialized) return
 
-    const resetTimer = () => {
-      if (idleTimer.current) clearTimeout(idleTimer.current)
-      idleTimer.current = setTimeout(() => {
+    const resetFirstIdleTimer = () => {
+      if (firstIdleTimer.current) clearTimeout(firstIdleTimer.current)
+      firstIdleTimer.current = setTimeout(() => {
         unlockAchievement('patience-is-key')
       }, 30000)
     }
 
+    const resetSecondIdleTimer = () => {
+      if (secondIdleTimer.current) clearTimeout(secondIdleTimer.current)
+      secondIdleTimer.current = setTimeout(() => {
+        unlockAchievement('patience-is-key-ii')
+      }, 300_000)
+    }
+
     const handleUserActivity = () => {
       if (document.hidden) return
-      resetTimer()
+      resetFirstIdleTimer()
+      resetSecondIdleTimer()
     }
 
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        if (idleTimer.current) clearTimeout(idleTimer.current)
+        if (firstIdleTimer.current) clearTimeout(firstIdleTimer.current)
+        if (secondIdleTimer.current) clearTimeout(secondIdleTimer.current)
       } else {
-        resetTimer()
+        resetFirstIdleTimer()
+        resetSecondIdleTimer()
       }
     }
 
     const handleBeforeUnload = () => {
-      if (idleTimer.current) clearTimeout(idleTimer.current)
+      if (firstIdleTimer.current) clearTimeout(firstIdleTimer.current)
+      if (secondIdleTimer.current) clearTimeout(secondIdleTimer.current)
     }
 
-    resetTimer()
+    resetFirstIdleTimer()
+    resetSecondIdleTimer()
 
     window.addEventListener('mousemove', handleUserActivity)
     window.addEventListener('keydown', handleUserActivity)
@@ -42,7 +55,8 @@ export const useIdleAchievement = () => {
     window.addEventListener('beforeunload', handleBeforeUnload)
 
     return () => {
-      if (idleTimer.current) clearTimeout(idleTimer.current)
+      if (firstIdleTimer.current) clearTimeout(firstIdleTimer.current)
+      if (secondIdleTimer.current) clearTimeout(secondIdleTimer.current)
       window.removeEventListener('mousemove', handleUserActivity)
       window.removeEventListener('keydown', handleUserActivity)
       window.removeEventListener('click', handleUserActivity)

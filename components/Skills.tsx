@@ -8,7 +8,7 @@ const Skills = () => {
   const { unlockAchievement } = useAchievementContext()
 
   const handleMouseEnter = () => {
-    unlockAchievement('mui-click')
+    unlockAchievement('mui-skill')
   }
 
   return (

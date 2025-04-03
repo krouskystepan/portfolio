@@ -8,6 +8,7 @@ import { useState } from 'react'
 import useFirstVisitAchievement from '@/hooks/useFirstViewAchievement'
 import useNightOwlAchievement from '@/hooks/useNightOwlAchievement'
 import useIdleAchievement from '@/hooks/useIdleAchievement'
+import useClipboardAchievement from '@/hooks/useClipboardAchievement'
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -15,6 +16,7 @@ const Navbar = () => {
   useFirstVisitAchievement(200)
   useNightOwlAchievement(350)
   useIdleAchievement()
+  useClipboardAchievement()
 
   return (
     <div className="pointer-events-none fixed left-0 top-0 z-50 flex w-full items-center justify-center gap-4 px-4">

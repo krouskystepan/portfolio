@@ -136,9 +136,9 @@ export const allAchievements = [
     description: 'You found a secret spot in my portfolio.',
   },
   {
-    id: 'mui-click',
-    title: 'What is MUI?',
-    description: 'You clicked on the MUI skill!',
+    id: 'mui-skill',
+    title: 'Where is MUI?',
+    description: 'You found the MUI skill!',
   },
   {
     id: 'pet-cat',
@@ -151,9 +151,19 @@ export const allAchievements = [
     description: 'You dared to poke my nose. A bold move, indeed!',
   },
   {
+    id: 'clipboard-master',
+    title: 'Copycat',
+    description: 'You copied some text from my portfolio.',
+  },
+  {
     id: 'patience-is-key',
     title: 'Patience is Key',
-    description: 'You waited for 30 seconds without any interaction.',
+    description: 'You waited for 30sec without any interaction.',
+  },
+  {
+    id: 'patience-is-key-ii',
+    title: 'Patience is Key II',
+    description: 'You waited for 5min without any interaction.',
   },
   {
     id: '404-hunter',
