@@ -18,10 +18,8 @@ const Achievements = () => {
   useEffect(() => {
     if (!isInitialized) return
 
-    if (!isAchievementUnlocked('hidden-path')) {
-      unlockAchievement('hidden-path', 500)
-    }
-  }, [isInitialized, isAchievementUnlocked, unlockAchievement])
+    unlockAchievement('hidden-path', 500)
+  }, [isInitialized, unlockAchievement])
 
   const progress = getUnlockedAchievementsAsPercent()
 
@@ -76,7 +74,7 @@ const Achievements = () => {
             </li>
           ))}
         </ul>
-        {getUnlockedAchievementsAsPercent() === 100 ? (
+        {getUnlockedAchievementsAsPercent() >= 100 ? (
           <div className="flex items-center justify-center">
             <button
               onClick={resetAllAchievements}

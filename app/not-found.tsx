@@ -1,20 +1,10 @@
 'use client'
 
-import { useAchievementContext } from '@/context/AchievementContext'
+import useNotFoundAchievement from '@/hooks/useNotFoundAchievement'
 import Link from 'next/link'
-import { useEffect } from 'react'
 
 const NotFoundPage = () => {
-  const { isInitialized, isAchievementUnlocked, unlockAchievement } =
-    useAchievementContext()
-
-  useEffect(() => {
-    if (!isInitialized) return
-
-    if (!isAchievementUnlocked('404-hunter')) {
-      unlockAchievement('404-hunter', 500)
-    }
-  }, [isInitialized, isAchievementUnlocked, unlockAchievement])
+  useNotFoundAchievement(500)
 
   return (
     <div className="z-10 flex grow items-center justify-center px-4 text-gray-800">

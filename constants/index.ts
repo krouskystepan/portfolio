@@ -111,7 +111,6 @@ export const PROJECTS: TProject[] = [
 ] as const
 
 export const allAchievements = [
-  // homepage
   {
     id: 'first-visit',
     title: 'Who Are You?',
@@ -127,17 +126,20 @@ export const allAchievements = [
     title: 'Said Hey!',
     description: 'You greeted me with a "Hey!".',
   },
-  // homepage in time
   {
     id: 'night-owl',
     title: 'Night Owl',
-    description: 'You visited my portfolio between 12 AM and 5 AM.',
+    description: 'You visited my portfolio between 12AM - 5AM.',
   },
-  // achievement
   {
     id: 'hidden-path',
     title: 'Off the Beaten Path',
     description: 'You found a secret spot in my portfolio.',
+  },
+  {
+    id: 'mui-click',
+    title: 'What is MUI',
+    description: 'You clicked on the MUI skill!',
   },
   {
     id: 'pet-cat',
@@ -149,7 +151,11 @@ export const allAchievements = [
     title: 'The Forbidden Touch',
     description: 'You dared to poke my nose. A bold move, indeed!',
   },
-  // not found
+  {
+    id: 'patience-is-key',
+    title: 'Patience is Key',
+    description: 'You waited for 30 seconds without any interaction.',
+  },
   {
     id: '404-hunter',
     title: 'Lost and Found',

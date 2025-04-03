@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { useRef } from 'react'
 
 const HeroImage = () => {
-  const { isAchievementUnlocked, unlockAchievement } = useAchievementContext()
+  const { unlockAchievement } = useAchievementContext()
   const imageRef = useRef<HTMLDivElement>(null)
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -20,13 +20,7 @@ const HeroImage = () => {
     const noseYStart = 126
     const noseYEnd = 152
 
-    if (
-      x >= noseXStart &&
-      x <= noseXEnd &&
-      y >= noseYStart &&
-      y <= noseYEnd &&
-      !isAchievementUnlocked('pick-nose')
-    ) {
+    if (x >= noseXStart && x <= noseXEnd && y >= noseYStart && y <= noseYEnd) {
       unlockAchievement('pick-nose')
     }
   }

@@ -18,8 +18,7 @@ const CodingStatusClient = ({
   )
   const uptimeElementRef = useRef<HTMLSpanElement | null>(null)
 
-  const { isAchievementUnlocked, unlockAchievement, getAchievementById } =
-    useAchievementContext()
+  const { unlockAchievement, getAchievementById } = useAchievementContext()
 
   useEffect(() => {
     const codingSessionRef = doc(db, 'codingSession', 'currentSession')
@@ -36,14 +35,12 @@ const CodingStatusClient = ({
       } else {
         setData(newData)
 
-        if (!isAchievementUnlocked('caught-coding')) {
-          unlockAchievement('caught-coding', 1000)
-        }
+        unlockAchievement('caught-coding', 1000)
       }
     })
 
     return () => unsubscribe()
-  }, [getAchievementById, isAchievementUnlocked, unlockAchievement])
+  }, [getAchievementById, unlockAchievement])
 
   useEffect(() => {
     if (!data || typeof window === 'undefined') return

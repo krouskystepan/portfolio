@@ -17,7 +17,7 @@ const GitHubIcon = ({
   size: number
   className?: string
 }) => {
-  const { isAchievementUnlocked, unlockAchievement } = useAchievementContext()
+  const { unlockAchievement } = useAchievementContext()
 
   const controls = useAnimation()
 
@@ -27,9 +27,7 @@ const GitHubIcon = ({
       transition: { duration: 0.4, ease: 'easeInOut' },
     })
 
-    if (!isAchievementUnlocked(id)) {
-      unlockAchievement(id)
-    }
+    unlockAchievement(id)
   }
 
   return (

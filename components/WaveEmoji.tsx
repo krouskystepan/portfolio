@@ -4,12 +4,10 @@ import { useAchievementContext } from '@/context/AchievementContext'
 import { motion } from 'framer-motion'
 
 const WaveEmoji = () => {
-  const { isAchievementUnlocked, unlockAchievement } = useAchievementContext()
+  const { unlockAchievement } = useAchievementContext()
 
   const handleMouseEnter = () => {
-    if (!isAchievementUnlocked('say-hey')) {
-      unlockAchievement('say-hey')
-    }
+    unlockAchievement('say-hey')
   }
 
   return (

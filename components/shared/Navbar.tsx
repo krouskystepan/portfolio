@@ -4,29 +4,17 @@ import { NAV_LINKS } from '@/constants'
 import { Menu, X } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
-import { useAchievementContext } from '@/context/AchievementContext'
+import { useState } from 'react'
+import useFirstVisitAchievement from '@/hooks/useFirstViewAchievement'
+import useNightOwlAchievement from '@/hooks/useNightOwlAchievement'
+import useIdleAchievement from '@/hooks/useIdleAchievement'
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
 
-  const { isInitialized, isAchievementUnlocked, unlockAchievement } =
-    useAchievementContext()
-
-  useEffect(() => {
-    if (!isInitialized) return
-
-    if (!isAchievementUnlocked('first-visit')) {
-      unlockAchievement('first-visit', 200)
-    }
-
-    if (!isAchievementUnlocked('night-owl')) {
-      const currentHour = new Date().getHours()
-      if (currentHour >= 0 && currentHour < 6) {
-        unlockAchievement('night-owl', 300)
-      }
-    }
-  }, [isInitialized, isAchievementUnlocked, unlockAchievement])
+  useFirstVisitAchievement(200)
+  useNightOwlAchievement(350)
+  useIdleAchievement()
 
   return (
     <div className="pointer-events-none fixed left-0 top-0 z-50 flex w-full items-center justify-center gap-4 px-4">
