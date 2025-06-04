@@ -60,6 +60,7 @@ export const SOCIALS = [
 
 export const PROJECTS: TProject[] = [
   {
+    id: 'wassa',
     name: 'Wassa',
     description:
       'Wassa specializes in packaging development, offering custom paperboard solutions and logistics across the Czech Republic, Germany, Poland, and the EU. This project showcases their services.',
@@ -72,6 +73,7 @@ export const PROJECTS: TProject[] = [
     availability: 'live',
   },
   {
+    id: 'monkeycovers',
     name: 'MonkeyCovers',
     description:
       'MonkeyCovers is a cutting-edge platform designed for creating and purchasing custom phone cases. Built with the latest technology, it offers a seamless and stylish shopping experience.',
@@ -84,6 +86,7 @@ export const PROJECTS: TProject[] = [
     availability: 'demo',
   },
   {
+    id: 'discord-gambling-bot',
     name: 'Discord Gambling Bot',
     description:
       'This Discord bot lets users gamble with virtual currency, featuring games like slots, dice, and coin-flip. It includes a registration system for account management and admin commands for overseeing transactions and balances.',
@@ -96,6 +99,7 @@ export const PROJECTS: TProject[] = [
     availability: 'other',
   },
   {
+    id: 'sk-clothing-shop',
     name: 'SK Clothing Shop',
     description:
       'This is a simple project created without the need for a database. It serves as a basic example of building an e-commerce website without relying on backend.',
@@ -164,6 +168,11 @@ export const allAchievements = [
     id: 'patience-is-key-ii',
     title: 'Patience is Key II',
     description: 'You waited for 5min without any interaction.',
+  },
+  {
+    id: 'gambling',
+    title: 'Gambling Enthusiast',
+    description: 'You hovered over Gambling Bot. Feeling lucky?',
   },
   {
     id: '404-hunter',

@@ -1,6 +1,7 @@
 import { allAchievements } from '.'
 
 export type TProject = {
+  id: string
   name: string
   description: string
   image: string

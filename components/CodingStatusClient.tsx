@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { WorkspaceStatus } from '@/constants/types'
 import { db } from '@/utils/firebase'
@@ -13,10 +13,31 @@ const CodingStatusClient = ({
   initialData: WorkspaceStatus | null
 }) => {
   const [data, setData] = useState<WorkspaceStatus | null>(initialData)
-  const uptimeRef = useRef(
-    calculateUptime(data?.startup_time || new Date().toISOString())
-  )
-  const uptimeElementRef = useRef<HTMLSpanElement | null>(null)
+  const [uptime, setUptime] = useState(0)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!data || typeof window === 'undefined') return
+
+    const startup = new Date(data.startup_time)
+    const updateUptime = () => {
+      const currentTime = new Date()
+      const difference = Math.floor(
+        (currentTime.getTime() - startup.getTime()) / 1000
+      )
+
+      setUptime(difference)
+    }
+
+    updateUptime()
+    const interval = setInterval(updateUptime, 1000)
+
+    return () => clearInterval(interval)
+  }, [data])
 
   const { unlockAchievement, getAchievementById } = useAchievementContext()
 
@@ -30,11 +51,10 @@ const CodingStatusClient = ({
       const lastUpdateTime = new Date(newData?.lastUpdate)
       const timeDifference = currentTime.getTime() - lastUpdateTime.getTime()
 
-      if (timeDifference > 60_000 || !newData) {
+      if (timeDifference > 65_000 || !newData) {
         setData(null)
       } else {
         setData(newData)
-
         unlockAchievement('caught-coding', 1000)
       }
     })
@@ -51,18 +71,15 @@ const CodingStatusClient = ({
       const currentTime = new Date()
       const timeDifference = currentTime.getTime() - lastUpdateTime.getTime()
 
-      if (timeDifference > 60_000) {
+      if (timeDifference > 65_000) {
         setData(null)
         return
       }
 
-      uptimeRef.current += 1
-      if (uptimeElementRef.current) {
-        uptimeElementRef.current.textContent = formatUptime(uptimeRef.current)
-      }
+      setUptime((prev) => prev + 1)
     }
 
-    updateUptime()
+    setUptime(calculateUptime(data.startup_time))
     const interval = setInterval(updateUptime, 1000)
 
     return () => clearInterval(interval)
@@ -87,9 +104,7 @@ const CodingStatusClient = ({
             </span>
             <span className="sm:w-1/3 sm:truncate">
               <strong>Uptime:</strong> <br />
-              <span ref={uptimeElementRef}>
-                {formatUptime(uptimeRef.current)}
-              </span>
+              {mounted ? formatUptime(uptime) : '0'}
             </span>
             <span className="sm:w-1/3 sm:truncate">
               <strong>Active File:</strong> <br />
