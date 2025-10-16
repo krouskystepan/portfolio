@@ -66,7 +66,7 @@ const Digit = ({ value, label }: { value: string; label: string }) => (
   </div>
 )
 
-export function Smiles() {
+const Smiles = () => {
   const smiles = [0, 1] // three instances
   const delayStep = 2.5 // seconds between starts
 
