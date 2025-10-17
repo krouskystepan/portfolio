@@ -137,6 +137,11 @@ const Countdown = ({
           <Digit value={pad2(seconds)} label="seconds" />
         </div>
       )}
+
+      <div className="mt-3 text-xs text-neutral-400">
+        Server (UTC) time:&nbsp;
+        <span className="text-white">{new Date(now).toUTCString()}</span>
+      </div>
     </div>
   )
 }
