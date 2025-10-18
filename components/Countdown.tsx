@@ -9,7 +9,7 @@ type CountdownTarget = Date | string | number
 interface CountdownProps {
   target?: CountdownTarget
   title?: string
-  serverNow: number
+  serverTime: number
   onComplete?: () => void
 }
 
@@ -87,10 +87,10 @@ const Countdown = ({
   target,
   title,
   onComplete,
-  serverNow,
+  serverTime,
 }: CountdownProps) => {
   const targetDate = useMemo(() => toDate(target), [target])
-  const [now, setNow] = useState<number>(serverNow)
+  const [now, setNow] = useState<number>(serverTime)
 
   // Increment time locally from the fixed server baseline
   useEffect(() => {
