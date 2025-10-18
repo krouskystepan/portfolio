@@ -38,7 +38,12 @@ function pad2(n: number): string {
 }
 
 const Digit = ({ value, label }: { value: string; label: string }) => (
-  <div className="flex flex-col items-center">
+  <motion.div
+    initial={{ y: -20, opacity: 0 }}
+    animate={{ y: 0, opacity: 1 }}
+    transition={{ duration: 0.3 }}
+    className="flex flex-col items-center"
+  >
     <div className="relative aspect-[5/3] w-24 overflow-hidden rounded-xl border border-neutral-600">
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.span
@@ -54,7 +59,7 @@ const Digit = ({ value, label }: { value: string; label: string }) => (
       </AnimatePresence>
     </div>
     <div className="mt-2 text-xs uppercase text-gray-400">{label}</div>
-  </div>
+  </motion.div>
 )
 
 const Smiles = () => {
@@ -122,26 +127,28 @@ const Countdown = ({
       {isOver ? (
         <Smiles />
       ) : (
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
-          <AnimatePresence mode="popLayout">
-            {days > 0 && (
-              <Digit
-                key={`d-${days}`}
-                value={String(days)}
-                label={days === 1 ? 'day' : 'days'}
-              />
-            )}
-          </AnimatePresence>
-          <Digit value={pad2(hours)} label="hours" />
-          <Digit value={pad2(minutes)} label="minutes" />
-          <Digit value={pad2(seconds)} label="seconds" />
-        </div>
+        <>
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
+            {[
+              { value: pad2(days), label: days === 1 ? 'day' : 'days' },
+              { value: pad2(hours), label: 'hours' },
+              { value: pad2(minutes), label: 'minutes' },
+              { value: pad2(seconds), label: 'seconds' },
+            ].map((item, index) => (
+              <Digit key={index} value={item.value} label={item.label} />
+            ))}
+          </div>
+          <motion.div
+            initial={{ y: 5, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.35, delay: 0.2 }}
+            className="mt-3 text-xs text-neutral-400"
+          >
+            Server (UTC) time:&nbsp;
+            <span className="text-white">{new Date(now).toUTCString()}</span>
+          </motion.div>
+        </>
       )}
-
-      <div className="mt-3 text-xs text-neutral-400">
-        Server (UTC) time:&nbsp;
-        <span className="text-white">{new Date(now).toUTCString()}</span>
-      </div>
     </div>
   )
 }
