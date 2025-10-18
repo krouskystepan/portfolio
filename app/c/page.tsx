@@ -1,3 +1,5 @@
+process.env.TZ = 'UTC'
+
 import { getUtcTime } from '@/actions/getTime'
 import Countdown from '@/components/Countdown'
 
@@ -5,6 +7,8 @@ export const dynamic = 'force-dynamic'
 
 const CountdownPage = async () => {
   const serverNow = await getUtcTime()
+  console.log('Server UTC time (ms):', serverNow)
+
   const targetDate = new Date('2025-10-31T22:00:00Z')
 
   return (
