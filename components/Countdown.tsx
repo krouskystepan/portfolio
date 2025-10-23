@@ -96,42 +96,30 @@ const Countdown = ({
 }: CountdownProps) => {
   const targetDate = useMemo(() => toDate(target), [target])
 
-  // 1) Fix the relationship between client clock and server clock once.
-  //    If the client is wrong by +3 min and the server is your truth,
-  //    this offset corrects the client to match the server.
   const [offset, setOffset] = useState<number>(() => serverNow - Date.now())
-
-  // 2) Render "now" from the live client clock + that fixed offset.
-  //    This avoids drift even if setInterval ticks late or the tab sleeps.
   const [now, setNow] = useState<number>(Date.now() + offset)
 
   useEffect(() => {
-    const id = setInterval(() => {
-      // Recompute from the real-time client clock each tick
-      setNow(Date.now() + offset)
-    }, 1000)
-    return () => clearInterval(id)
-  }, [offset])
+    const updateNow = () => setNow(Date.now() + offset)
 
-  useEffect(() => {
-    const syncOffset = () => {
-      // Recalculate offset if local clock likely changed
-      const newOffset = serverNow - Date.now()
-      setOffset(newOffset)
+    const tick = setInterval(updateNow, 1000)
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        const newOffset = serverNow - Date.now()
+        setOffset(newOffset)
+
+        setNow(Date.now() + newOffset)
+      }
     }
 
-    const visibilityHandler = () => {
-      if (document.visibilityState === 'visible') syncOffset()
-    }
-
-    document.addEventListener('visibilitychange', visibilityHandler)
-    const id = setInterval(syncOffset, 60_000) // re-sync every 1 min
+    document.addEventListener('visibilitychange', handleVisibility)
 
     return () => {
-      document.removeEventListener('visibilitychange', visibilityHandler)
-      clearInterval(id)
+      clearInterval(tick)
+      document.removeEventListener('visibilitychange', handleVisibility)
     }
-  }, [serverNow])
+  }, [offset, serverNow])
 
   const msRemaining = Math.max(0, targetDate.getTime() - now)
   const { days, hours, minutes, seconds } = getTimeParts(msRemaining)
