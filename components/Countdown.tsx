@@ -95,13 +95,31 @@ const Countdown = ({
   serverNow,
 }: CountdownProps) => {
   const targetDate = useMemo(() => toDate(target), [target])
-  const [now, setNow] = useState<number>(serverNow)
 
-  // Increment time locally from the fixed server baseline
+  const [offset, setOffset] = useState<number>(() => serverNow - Date.now())
+  const [now, setNow] = useState<number>(Date.now() + offset)
+
   useEffect(() => {
-    const id = setInterval(() => setNow((n) => n + 1000), 1000)
-    return () => clearInterval(id)
-  }, [])
+    const updateNow = () => setNow(Date.now() + offset)
+
+    const tick = setInterval(updateNow, 1000)
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        const newOffset = serverNow - Date.now()
+        setOffset(newOffset)
+
+        setNow(Date.now() + newOffset)
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibility)
+
+    return () => {
+      clearInterval(tick)
+      document.removeEventListener('visibilitychange', handleVisibility)
+    }
+  }, [offset, serverNow])
 
   const msRemaining = Math.max(0, targetDate.getTime() - now)
   const { days, hours, minutes, seconds } = getTimeParts(msRemaining)
