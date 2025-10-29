@@ -10,7 +10,7 @@ export const metadata = {
 const tools = [
   {
     name: 'Text Compare / Diff Tool',
-    path: '',
+    path: 'text-diff',
     description:
       'Compare two blocks of text and see the differences highlighted.',
   },
@@ -68,19 +68,16 @@ const tools = [
 
 export default function ToolsPage() {
   return (
-    <section className="flex w-full max-w-6xl mx-auto flex-col px-4 py-12">
-      <BackgroundFade className="bg-gradient-to-b from-neutral-900/60 to-transparent" />
-      <div className="z-10">
-        <h2 className="mb-8 text-center text-4xl font-bold lg:text-5xl">
-          Utility Tools
-        </h2>
-      </div>
+    <div>
+      <h2 className="mb-8 text-center text-4xl font-bold lg:text-5xl">
+        Utility Tools
+      </h2>
 
-      <div className="z-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {tools.map((tool, index) => (
           <Link
             key={index}
-            href={tool.path}
+            href={`/t/${tool.path}`}
             className={`group relative block overflow-hidden rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm ${tool.path !== '' ? 'transition-all duration-200 hover:border-custom_blue' : 'cursor-default'}`}
           >
             <div className="flex flex-col justify-between gap-3 h-full">
@@ -109,6 +106,6 @@ export default function ToolsPage() {
           </Link>
         ))}
       </div>
-    </section>
+    </div>
   )
 }
