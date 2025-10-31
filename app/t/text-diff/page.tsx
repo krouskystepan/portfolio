@@ -15,9 +15,9 @@ export default function TextDiffPage() {
         Text Compare / Diff Tool
       </h2>
 
-      <div className="z-10 grid grid-cols-1 gap-6 mb-8">
-        <div className="rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 backdrop-blur-sm p-5 flex flex-col">
-          <h2 className="text-neutral-100 font-semibold mb-2 text-lg">
+      <div className="z-10 mb-8 grid grid-cols-1 gap-6">
+        <div className="flex flex-col rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-5 backdrop-blur-sm">
+          <h2 className="mb-2 text-lg font-semibold text-neutral-100">
             Text A
           </h2>
           <textarea
@@ -25,12 +25,12 @@ export default function TextDiffPage() {
             onChange={(e) => setTextA(e.target.value)}
             placeholder="Enter first text..."
             spellCheck={false}
-            className="w-full h-64 resize-none rounded-lg bg-neutral-900/50 text-neutral-100 border border-white/10 p-3 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-custom_blue focus:border-transparent"
+            className="h-64 w-full resize-none rounded-lg border border-white/10 bg-neutral-900/50 p-3 font-mono text-sm text-neutral-100 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-custom_blue"
           />
         </div>
 
-        <div className="rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 backdrop-blur-sm p-5 flex flex-col">
-          <h2 className="text-neutral-100 font-semibold mb-2 text-lg">
+        <div className="flex flex-col rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-5 backdrop-blur-sm">
+          <h2 className="mb-2 text-lg font-semibold text-neutral-100">
             Text B
           </h2>
           <textarea
@@ -38,16 +38,16 @@ export default function TextDiffPage() {
             onChange={(e) => setTextB(e.target.value)}
             placeholder="Enter second text..."
             spellCheck={false}
-            className="w-full h-64 resize-none rounded-lg bg-neutral-900/50 text-neutral-100 border border-white/10 p-3 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-custom_blue focus:border-transparent"
+            className="h-64 w-full resize-none rounded-lg border border-white/10 bg-neutral-900/50 p-3 font-mono text-sm text-neutral-100 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-custom_blue"
           />
         </div>
       </div>
 
-      <div className="z-10 rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 backdrop-blur-sm p-6 text-neutral-100 overflow-auto">
-        <div className="flex justify-between sm:gap-4 flex-col sm:flex-row items-center">
-          <h2 className="text-lg font-semibold mb-4 text-white">Differences</h2>
+      <div className="z-10 overflow-auto rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 text-neutral-100 backdrop-blur-sm">
+        <div className="flex flex-col items-center justify-between sm:flex-row sm:gap-4">
+          <h2 className="mb-4 text-lg font-semibold text-white">Differences</h2>
           <div className="flex flex-col items-center sm:flex-row sm:gap-4">
-            <label className="flex items-center gap-2 text-sm text-neutral-300 mb-4">
+            <label className="mb-4 flex items-center gap-2 text-sm text-neutral-300">
               <input
                 type="checkbox"
                 checked={compareMethod === DiffMethod.WORDS}
@@ -63,7 +63,7 @@ export default function TextDiffPage() {
               Compare by words
             </label>
 
-            <label className="flex items-center gap-2 text-sm text-neutral-300 mb-4">
+            <label className="mb-4 flex items-center gap-2 text-sm text-neutral-300">
               <input
                 type="checkbox"
                 checked={splitView}
@@ -75,7 +75,7 @@ export default function TextDiffPage() {
           </div>
         </div>
 
-        <div className="font-mono text-sm w-full overflow-auto">
+        <div className="w-full overflow-auto font-mono text-sm">
           <ReactDiffViewer
             oldValue={textA}
             newValue={textB}
