@@ -84,16 +84,16 @@ export default function ToolsPage() {
                 </p>
               </div>
 
-              <div className="relative inline-flex items-center text-xs font-medium text-custom_blue sm:text-sm">
+              <div className="relative text-xs font-medium sm:text-sm">
                 {tool.path === '' ? (
-                  <span>Coming Soon</span>
+                  <span className="text-custom_pink">Coming Soon</span>
                 ) : (
-                  <>
+                  <span className="inline-flex items-center text-custom_blue">
                     <span className="relative after:absolute after:-bottom-px after:left-0 after:h-px after:w-0 after:bg-current after:transition-all after:duration-300 group-hover:after:w-full">
                       Open
                     </span>
                     <ArrowRight className="ml-1 size-4 transition-transform delay-[50ms] duration-300 group-hover:translate-x-1" />
-                  </>
+                  </span>
                 )}
               </div>
             </div>

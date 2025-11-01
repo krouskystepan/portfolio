@@ -1,5 +1,6 @@
 'use client'
 
+import TextAreaWithLineNumbers from '@/components/TextAreaWithLineNumbers'
 import { useState } from 'react'
 import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer'
 
@@ -20,12 +21,11 @@ export default function TextDiffPage() {
           <h2 className="mb-2 text-lg font-semibold text-neutral-100">
             Text A
           </h2>
-          <textarea
+
+          <TextAreaWithLineNumbers
             value={textA}
-            onChange={(e) => setTextA(e.target.value)}
+            setValue={setTextA}
             placeholder="Enter first text..."
-            spellCheck={false}
-            className="h-64 w-full resize-none rounded-lg border border-white/10 bg-neutral-900/50 p-3 font-mono text-sm text-neutral-100 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-custom_blue"
           />
         </div>
 
@@ -33,12 +33,11 @@ export default function TextDiffPage() {
           <h2 className="mb-2 text-lg font-semibold text-neutral-100">
             Text B
           </h2>
-          <textarea
+
+          <TextAreaWithLineNumbers
             value={textB}
-            onChange={(e) => setTextB(e.target.value)}
+            setValue={setTextB}
             placeholder="Enter second text..."
-            spellCheck={false}
-            className="h-64 w-full resize-none rounded-lg border border-white/10 bg-neutral-900/50 p-3 font-mono text-sm text-neutral-100 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-custom_blue"
           />
         </div>
       </div>

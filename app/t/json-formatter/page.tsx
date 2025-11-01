@@ -1,5 +1,6 @@
 'use client'
 
+import TextAreaWithLineNumbers from '@/components/TextAreaWithLineNumbers'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -99,8 +100,6 @@ export default function JsonFormatterPage() {
     setError(null)
   }
 
-  const lineCount = input.split('\n').length
-
   return (
     <div>
       <h2 className="mb-8 text-center text-4xl font-bold lg:text-5xl">
@@ -113,23 +112,11 @@ export default function JsonFormatterPage() {
             Input JSON
           </h2>
 
-          <div className="relative flex rounded-lg border border-white/10 bg-neutral-900/50 font-mono text-sm text-neutral-100 focus-within:ring-2 focus-within:ring-custom_blue">
-            <div
-              className="select-none border-r border-white/10 bg-neutral-950/40 p-3 text-right text-neutral-500"
-              style={{ minWidth: '2.5rem' }}
-            >
-              {Array.from({ length: lineCount }).map((_, i) => (
-                <div key={i}>{i + 1}</div>
-              ))}
-            </div>
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Paste your JSON here..."
-              spellCheck={false}
-              className="h-64 w-full resize-none bg-transparent p-3 outline-none"
-            />
-          </div>
+          <TextAreaWithLineNumbers
+            value={input}
+            setValue={setInput}
+            placeholder="Paste your JSON here..."
+          />
 
           <div className="mt-4 flex flex-wrap gap-3">
             <button
