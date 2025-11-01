@@ -150,6 +150,11 @@ export const allAchievements = [
     description: 'You petted the cat. A true animal lover!',
   },
   {
+    id: 'inspector-of-gadgets',
+    title: 'Inspector of Gadgets',
+    description: 'Visited the Tools page. Sleuth approved.',
+  },
+  {
     id: 'pick-nose',
     title: 'The Forbidden Touch',
     description: 'You dared to poke my nose. A bold move, indeed!',
