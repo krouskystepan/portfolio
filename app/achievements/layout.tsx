@@ -4,8 +4,8 @@ export const metadata: Metadata = {
   title: 'Achievements',
 }
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const AchievementsLayout = ({ children }: { children: React.ReactNode }) => {
   return children
 }
 
-export default Layout
+export default AchievementsLayout

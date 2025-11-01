@@ -1,11 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 
-export const metadata = {
-  title: 'Tools',
-  description: 'Simple everyday tools for text, data, and conversions.',
-}
-
 const tools = [
   {
     name: 'Text Compare / Diff Tool',

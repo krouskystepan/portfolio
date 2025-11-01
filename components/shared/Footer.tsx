@@ -10,10 +10,17 @@ const Footer = () => {
   const footerSocials = useMemo(
     () => [
       SOCIALS[0],
-      SOCIALS[1],
       {
         iconPath: '/svgs/question.svg',
         source: '/achievements',
+        label: 'Mystery Achievement',
+        achievementId: 'achievementLink',
+      },
+      SOCIALS[1],
+
+      {
+        iconPath: '/svgs/code.svg',
+        source: '/t',
         label: 'Mystery Achievement',
         achievementId: 'achievementLink',
       },
