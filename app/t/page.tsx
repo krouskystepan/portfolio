@@ -27,9 +27,9 @@ const tools = [
   },
   {
     name: 'Color Converter',
-    path: '',
+    path: 'color-converter',
     description:
-      'Convert colors between HEX, RGB, and HSL. Live color preview.',
+      'Convert colors between HEX, RGB, HSL and more. Live color preview.',
   },
   {
     name: 'Markdown Previewer',
