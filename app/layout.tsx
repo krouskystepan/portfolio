@@ -38,7 +38,11 @@ const RootLayout = ({
   children: React.ReactNode
 }>) => {
   return (
-    <html lang="en" className={`scroll-smooth ${outfit.variable}`}>
+    <html
+      lang="en"
+      className={`scroll-smooth ${outfit.variable}`}
+      data-scroll-behavior="smooth"
+    >
       <body className="flex min-h-dvh flex-col bg-neutral-950 antialiased">
         <AchievementProvider>
           <Navbar />

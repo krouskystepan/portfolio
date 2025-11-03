@@ -1,13 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { toast } from 'sonner'
 import { parseColor, ColorFormats } from '@/utils/colorUtils'
+import { useAchievementContext } from '@/context/AchievementContext'
 
 export default function ColorConverterPage() {
   const [input, setInput] = useState('')
   const [converted, setConverted] = useState<ColorFormats>({})
   const [error, setError] = useState<string | null>(null)
+
+  const { unlockAchievement } = useAchievementContext()
 
   const handleConvert = () => {
     if (!input.trim()) return
@@ -27,9 +29,11 @@ export default function ColorConverterPage() {
     setError(null)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text)
-    toast.success(`${label} copied to clipboard!`)
+    unlockAchievement('clipboard-master')
+    // toast.success(`${label} copied to clipboard!`)
   }
 
   return (

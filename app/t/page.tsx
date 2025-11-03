@@ -15,12 +15,6 @@ const tools = [
       'Format, validate, and inspect JSON instantly in your browser.',
   },
   {
-    name: 'Regex Tester',
-    path: '',
-    description:
-      'Test and debug regular expressions with instant match highlighting.',
-  },
-  {
     name: 'UUID Generator',
     path: '',
     description: 'Generate random UUIDs (v4) for identifiers or testing.',
@@ -41,11 +35,6 @@ const tools = [
     path: '',
     description:
       'Convert CSV data into formatted JSON objects and arrays instantly.',
-  },
-  {
-    name: 'URL Encoder / Decoder',
-    path: '',
-    description: 'Encode or decode URLs and query parameters with one click.',
   },
   {
     name: 'HTML / CSS / JS Minifier',

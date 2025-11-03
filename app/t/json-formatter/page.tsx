@@ -1,6 +1,7 @@
 'use client'
 
 import TextAreaWithLineNumbers from '@/components/TextAreaWithLineNumbers'
+import { useAchievementContext } from '@/context/AchievementContext'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -11,6 +12,8 @@ export default function JsonFormatterPage() {
   const [quoteError, setQuoteError] = useState(false)
   const [unquotedKeyError, setUnquotedKeyError] = useState(false)
   const [trailingCommaError, setTrailingCommaError] = useState(false)
+
+  const { unlockAchievement } = useAchievementContext()
 
   const resetErrors = () => {
     setQuoteError(false)
@@ -169,7 +172,8 @@ export default function JsonFormatterPage() {
             <button
               onClick={() => {
                 navigator.clipboard.writeText(formatted)
-                toast.success('Formatted JSON copied to clipboard!')
+                unlockAchievement('clipboard-master')
+                // toast.success('Formatted JSON copied to clipboard!')
               }}
               className="rounded-lg bg-neutral-800 px-3 py-1.5 text-xs font-medium text-neutral-100 transition hover:bg-neutral-700 active:scale-95"
             >
