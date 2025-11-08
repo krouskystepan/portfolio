@@ -16,7 +16,7 @@ const tools = [
   },
   {
     name: 'UUID Generator',
-    path: '',
+    path: 'uuid-generator',
     description: 'Generate random UUIDs (v4) for identifiers or testing.',
   },
   {
