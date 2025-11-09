@@ -11,8 +11,8 @@ const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' })
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Stepan Krousky',
     default: 'Home | Stepan Krousky',
+    template: '%s | Stepan Krousky',
   },
   description:
     'The personal portfolio of Stepan Krousky, showcasing projects, skills, and experience in full-stack development.',

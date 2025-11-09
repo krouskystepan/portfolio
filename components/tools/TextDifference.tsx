@@ -1,10 +1,11 @@
 'use client'
 
-import TextAreaWithLineNumbers from '@/components/TextAreaWithLineNumbers'
 import { useState } from 'react'
-import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer'
+import { DiffMethod } from 'react-diff-viewer'
+import TextAreaWithLineNumbers from '../TextAreaWithLineNumbers'
+import ReactDiffViewer from 'react-diff-viewer'
 
-export default function TextDiffPage() {
+const TextDifference = () => {
   const [textA, setTextA] = useState('')
   const [textB, setTextB] = useState('')
   const [compareMethod, setCompareMethod] = useState(DiffMethod.WORDS)
@@ -117,3 +118,5 @@ export default function TextDiffPage() {
     </div>
   )
 }
+
+export default TextDifference

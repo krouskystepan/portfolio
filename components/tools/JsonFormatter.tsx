@@ -1,11 +1,11 @@
 'use client'
 
-import TextAreaWithLineNumbers from '@/components/TextAreaWithLineNumbers'
 import { useAchievementContext } from '@/context/AchievementContext'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import TextAreaWithLineNumbers from '../TextAreaWithLineNumbers'
 
-export default function JsonFormatterPage() {
+const JsonFormatter = () => {
   const [input, setInput] = useState('')
   const [formatted, setFormatted] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -224,3 +224,5 @@ export default function JsonFormatterPage() {
     </div>
   )
 }
+
+export default JsonFormatter

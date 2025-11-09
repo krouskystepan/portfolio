@@ -1,14 +1,14 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
 import { useAchievementContext } from '@/context/AchievementContext'
+import { useState, useMemo, useEffect } from 'react'
 
 type UUIDOptions = {
   uppercase: boolean
   noHyphens: boolean
 }
 
-export default function UuidGeneratorPage() {
+const UuidGenerator = () => {
   const [count, setCount] = useState<number>(10)
   const [uuids, setUuids] = useState<string[]>([])
   const [options, setOptions] = useState<UUIDOptions>({
@@ -226,3 +226,5 @@ function formatUuid(uuid: string, options: UUIDOptions): string {
 
   return formatted
 }
+
+export default UuidGenerator

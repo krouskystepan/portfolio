@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
-import { parseColor, ColorFormats } from '@/utils/colorUtils'
 import { useAchievementContext } from '@/context/AchievementContext'
+import { ColorFormats, parseColor } from '@/utils/colorUtils'
+import { useState } from 'react'
 
-export default function ColorConverterPage() {
+const ColorConverter = () => {
   const [input, setInput] = useState('')
   const [converted, setConverted] = useState<ColorFormats>({})
   const [error, setError] = useState<string | null>(null)
@@ -41,7 +41,6 @@ export default function ColorConverterPage() {
       <h2 className="mb-8 text-center text-4xl font-bold lg:text-5xl">
         Color Converter
       </h2>
-
       <div className="mb-8 flex flex-col rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-5 backdrop-blur-sm">
         <h2 className="mb-2 text-lg font-semibold text-neutral-100">
           Enter any color (HEX, RGB, RGBA, HSL, HSLA, HWB, LAB, LCH, or name)
@@ -126,3 +125,5 @@ export default function ColorConverterPage() {
     </div>
   )
 }
+
+export default ColorConverter
