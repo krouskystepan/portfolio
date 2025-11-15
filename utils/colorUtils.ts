@@ -1,5 +1,3 @@
-// utils/colorUtils.ts
-
 export type ColorFormats = Record<string, string>
 type RGB = { r: number; g: number; b: number }
 

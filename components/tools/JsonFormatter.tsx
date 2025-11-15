@@ -4,6 +4,7 @@ import { useAchievementContext } from '@/context/AchievementContext'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import TextAreaWithLineNumbers from '../TextAreaWithLineNumbers'
+import ToolLayout from './ToolLayout'
 
 const JsonFormatter = () => {
   const [input, setInput] = useState('')
@@ -12,6 +13,7 @@ const JsonFormatter = () => {
   const [quoteError, setQuoteError] = useState(false)
   const [unquotedKeyError, setUnquotedKeyError] = useState(false)
   const [trailingCommaError, setTrailingCommaError] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   const { unlockAchievement } = useAchievementContext()
 
@@ -103,25 +105,66 @@ const JsonFormatter = () => {
     setError(null)
   }
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(formatted)
+    unlockAchievement('clipboard-master')
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }
+
+  const highlightJson = (json: string): string => {
+    if (!json) return ''
+
+    // escape HTML first
+    const escaped = json
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+
+    return escaped.replace(
+      /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^"\\])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d+)?(?:[eE][+\-]?\d+)?)/g,
+      (match) => {
+        // KEY (string ending with :)
+        if (/^".*":$/.test(match)) {
+          return `<span class="text-blue-400">${match}</span>`
+        }
+        // STRING value
+        if (/^"/.test(match)) {
+          return `<span class="text-green-400">${match}</span>`
+        }
+        // NUMBER
+        if (/^-?\d/.test(match)) {
+          return `<span class="text-purple-400">${match}</span>`
+        }
+        // BOOLEAN or null
+        if (/true|false|null/.test(match)) {
+          return `<span class="text-amber-400">${match}</span>`
+        }
+        return match
+      }
+    )
+  }
+
   return (
-    <div>
-      <h2 className="mb-8 text-center text-4xl font-bold lg:text-5xl">
-        JSON Formatter & Validator
-      </h2>
+    <ToolLayout title="JSON Formatter & Validator">
+      <div className="flex flex-col rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm">
+        <TextAreaWithLineNumbers
+          value={input}
+          setValue={setInput}
+          placeholder="Paste your JSON here..."
+        />
 
-      <div className="mb-8 grid grid-cols-1 gap-6">
-        <div className="flex flex-col rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-5 backdrop-blur-sm">
-          <h2 className="mb-2 text-lg font-semibold text-neutral-100">
-            Input JSON
-          </h2>
+        <div className="mt-4 flex flex-wrap justify-between gap-3">
+          {(quoteError || unquotedKeyError || trailingCommaError) && (
+            <button
+              onClick={handleFixIssues}
+              className="rounded-lg bg-amber-600/90 px-4 py-2 text-sm font-medium text-white transition hover:bg-amber-500"
+            >
+              Fix Common Issues
+            </button>
+          )}
 
-          <TextAreaWithLineNumbers
-            value={input}
-            setValue={setInput}
-            placeholder="Paste your JSON here..."
-          />
-
-          <div className="mt-4 flex flex-wrap gap-3">
+          <div className="flex flex-1 flex-wrap justify-end gap-3">
             <button
               onClick={handleFormat}
               disabled={!input.trim()}
@@ -148,36 +191,29 @@ const JsonFormatter = () => {
 
             <button
               onClick={handleClear}
-              className="rounded-lg bg-neutral-800 px-4 py-2 text-sm font-medium text-neutral-100 transition hover:bg-neutral-700"
+              className="rounded-lg bg-red-800 px-4 py-2 text-sm font-medium text-neutral-100 transition hover:bg-red-700"
             >
               Clear
             </button>
-
-            {(quoteError || unquotedKeyError || trailingCommaError) && (
-              <button
-                onClick={handleFixIssues}
-                className="rounded-lg bg-amber-600/90 px-4 py-2 text-sm font-medium text-white transition hover:bg-amber-500"
-              >
-                Fix Common Issues
-              </button>
-            )}
           </div>
         </div>
       </div>
 
-      <div className="overflow-auto rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 text-neutral-100 backdrop-blur-sm">
-        <div className="mb-4 flex items-center justify-between">
+      <div className="overflow-auto rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm">
+        <div className="mb-2 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-white">Result</h2>
+
           {formatted && (
             <button
-              onClick={() => {
-                navigator.clipboard.writeText(formatted)
-                unlockAchievement('clipboard-master')
-                // toast.success('Formatted JSON copied to clipboard!')
-              }}
-              className="rounded-lg bg-neutral-800 px-3 py-1.5 text-xs font-medium text-neutral-100 transition hover:bg-neutral-700 active:scale-95"
+              onClick={handleCopy}
+              disabled={copied}
+              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+                copied
+                  ? 'cursor-default bg-neutral-900 text-custom_blue'
+                  : 'bg-neutral-800 text-neutral-100 hover:bg-neutral-700 active:scale-95'
+              }`}
             >
-              Copy
+              {copied ? 'Copied!' : 'Copy'}
             </button>
           )}
         </div>
@@ -212,16 +248,17 @@ const JsonFormatter = () => {
             </div>
           </div>
         ) : formatted ? (
-          <pre className="relative w-full overflow-auto overflow-x-hidden text-wrap rounded-lg border border-white/10 bg-neutral-900/50 p-3 font-mono text-sm text-neutral-100">
-            {formatted}
-          </pre>
+          <pre
+            className="relative w-full overflow-auto overflow-x-hidden text-wrap rounded-lg border border-white/10 bg-neutral-900/50 p-3 font-mono text-sm text-neutral-100"
+            dangerouslySetInnerHTML={{ __html: highlightJson(formatted) }}
+          />
         ) : (
           <div className="text-sm text-neutral-400">
             Output will appear here after formatting.
           </div>
         )}
       </div>
-    </div>
+    </ToolLayout>
   )
 }
 

@@ -42,7 +42,7 @@ const Achievements = () => {
           <p className="mt-2 text-center text-sm md:text-base">{`${Math.floor(progress)}% unlocked`}</p>
         </div>
 
-        <ul className="mx-auto grid max-w-md select-none grid-cols-1 justify-center gap-4 min-[740px]:max-w-2xl min-[740px]:grid-cols-2 lg:max-w-3xl">
+        <ul className="mx-auto grid max-w-md select-none grid-cols-1 justify-center gap-4 min-[740px]:max-w-2xl min-[740px]:grid-cols-2 lg:max-w-3xl ">
           {[
             ...allAchievements.filter((ach) => isAchievementUnlocked(ach.id)),
             ...allAchievements.filter((ach) => !isAchievementUnlocked(ach.id)),

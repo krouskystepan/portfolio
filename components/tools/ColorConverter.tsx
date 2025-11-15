@@ -3,11 +3,13 @@
 import { useAchievementContext } from '@/context/AchievementContext'
 import { ColorFormats, parseColor } from '@/utils/colorUtils'
 import { useState } from 'react'
+import ToolLayout from './ToolLayout'
 
 const ColorConverter = () => {
   const [input, setInput] = useState('')
   const [converted, setConverted] = useState<ColorFormats>({})
   const [error, setError] = useState<string | null>(null)
+  const [copiedStates, setCopiedStates] = useState<Record<string, boolean>>({})
 
   const { unlockAchievement } = useAchievementContext()
 
@@ -29,19 +31,19 @@ const ColorConverter = () => {
     setError(null)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text)
     unlockAchievement('clipboard-master')
-    // toast.success(`${label} copied to clipboard!`)
+
+    setCopiedStates((prev) => ({ ...prev, [label]: true }))
+    setTimeout(() => {
+      setCopiedStates((prev) => ({ ...prev, [label]: false }))
+    }, 1500)
   }
 
   return (
-    <div>
-      <h2 className="mb-8 text-center text-4xl font-bold lg:text-5xl">
-        Color Converter
-      </h2>
-      <div className="mb-8 flex flex-col rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-5 backdrop-blur-sm">
+    <ToolLayout title="Color Converter">
+      <div className="mb-8 flex flex-col rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm">
         <h2 className="mb-2 text-lg font-semibold text-neutral-100">
           Enter any color (HEX, RGB, RGBA, HSL, HSLA, HWB, LAB, LCH, or name)
         </h2>
@@ -53,7 +55,7 @@ const ColorConverter = () => {
           className="rounded-lg bg-neutral-900 p-3 text-sm text-neutral-100 outline-none focus:ring-2 focus:ring-custom_blue"
         />
 
-        <div className="mt-4 flex flex-wrap gap-3">
+        <div className="mt-4 flex flex-wrap justify-end gap-3">
           <button
             onClick={handleConvert}
             disabled={!input.trim()}
@@ -68,15 +70,15 @@ const ColorConverter = () => {
 
           <button
             onClick={handleClear}
-            className="rounded-lg bg-neutral-800 px-4 py-2 text-sm font-medium text-neutral-100 transition hover:bg-neutral-700"
+            className="rounded-lg bg-red-800 px-4 py-2 text-sm font-medium text-neutral-100 transition hover:bg-red-700"
           >
             Clear
           </button>
         </div>
       </div>
 
-      <div className="overflow-auto rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 text-neutral-100 backdrop-blur-sm">
-        <h2 className="mb-4 text-lg font-semibold text-white">Result</h2>
+      <div className="overflow-auto rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm">
+        <h2 className="mb-2 text-lg font-semibold text-white">Result</h2>
 
         {error ? (
           <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-400">
@@ -85,7 +87,7 @@ const ColorConverter = () => {
         ) : Object.keys(converted).length > 0 ? (
           <div className="space-y-3 text-sm">
             <div
-              className="mt-6 h-20 w-full rounded-xl border border-white/20 shadow-inner"
+              className="h-20 w-full rounded-xl border border-white/20 shadow-inner"
               style={{
                 backgroundColor:
                   converted.RGBA ??
@@ -108,9 +110,14 @@ const ColorConverter = () => {
                   </div>
                   <button
                     onClick={() => handleCopy(val, label)}
-                    className="rounded-md bg-neutral-800 px-2 py-1 text-xs font-medium text-neutral-100 transition hover:bg-neutral-700 active:scale-95"
+                    disabled={copiedStates[label]}
+                    className={`rounded-md px-2 py-1 text-xs font-medium transition ${
+                      copiedStates[label]
+                        ? 'cursor-default bg-neutral-900 text-custom_blue'
+                        : 'bg-neutral-800 text-neutral-100 hover:bg-neutral-700 active:scale-95'
+                    }`}
                   >
-                    Copy
+                    {copiedStates[label] ? 'Copied!' : 'Copy'}
                   </button>
                 </div>
               ))}
@@ -122,7 +129,7 @@ const ColorConverter = () => {
           </div>
         )}
       </div>
-    </div>
+    </ToolLayout>
   )
 }
 

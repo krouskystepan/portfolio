@@ -34,6 +34,12 @@ export const tools: TTools[] = [
     description: 'Write and preview Markdown with instant rendering.',
   },
   {
+    name: 'Alphabet Sorter',
+    path: 'alphabet-sorter',
+    description:
+      'Sort text alphabetically, with an option to automatically group related items together.',
+  },
+  {
     name: 'CSV to JSON Converter',
     path: '',
     description:

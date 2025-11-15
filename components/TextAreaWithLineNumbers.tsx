@@ -24,7 +24,7 @@ const TextAreaWithLineNumbers = ({
       <div
         ref={lineNumberRef}
         className="select-none overflow-hidden border-r border-white/10 bg-neutral-950/40 p-3 text-right text-neutral-500"
-        style={{ minWidth: '2.5rem', paddingBottom: '0.75rem' }}
+        style={{ minWidth: '2.5rem' }}
       >
         {Array.from({ length: lineCount }).map((_, i) => (
           <div key={i}>{i + 1}</div>
@@ -37,7 +37,7 @@ const TextAreaWithLineNumbers = ({
         onScroll={handleScroll}
         placeholder={placeholder}
         spellCheck={false}
-        className="size-full resize-none overflow-y-scroll bg-transparent p-3 outline-none"
+        className="h-auto w-full resize-none overflow-y-auto bg-transparent p-3 outline-none"
       />
     </div>
   )

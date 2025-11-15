@@ -2,6 +2,7 @@
 
 import { useAchievementContext } from '@/context/AchievementContext'
 import { useState, useMemo, useEffect } from 'react'
+import ToolLayout from './ToolLayout'
 
 type UUIDOptions = {
   uppercase: boolean
@@ -86,14 +87,10 @@ const UuidGenerator = () => {
   }
 
   return (
-    <div>
-      <h2 className="mb-8 text-center text-4xl font-bold lg:text-5xl">
-        UUID Generator
-      </h2>
-
+    <ToolLayout title="UUID Generator">
       <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-5 backdrop-blur-sm">
         <div className="flex justify-between gap-4">
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-1">
             <label htmlFor="count" className="mb-1 text-sm text-neutral-300">
               Count (1–500)
             </label>
@@ -107,7 +104,7 @@ const UuidGenerator = () => {
             />
           </div>
 
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-2">
             <div className="flex items-center justify-center gap-2">
               <label className="flex items-center gap-2 text-sm text-neutral-300">
                 <input
@@ -133,7 +130,7 @@ const UuidGenerator = () => {
               <button
                 onClick={handleGenerate}
                 disabled={isGenerateDisabled}
-                className={`flex-1 rounded-lg px-4 text-sm font-medium transition duration-100 ${
+                className={`flex-1 rounded-lg px-4 text-sm font-medium transition ${
                   isGenerateDisabled
                     ? 'cursor-not-allowed bg-neutral-800 text-neutral-500 opacity-60'
                     : 'bg-custom_blue text-white hover:opacity-90'
@@ -144,7 +141,7 @@ const UuidGenerator = () => {
 
               <button
                 onClick={handleClear}
-                className="rounded-lg bg-neutral-800 px-4 text-sm font-medium text-neutral-100 transition hover:bg-neutral-700"
+                className="rounded-lg bg-red-800 px-4 text-sm font-medium text-neutral-100 transition hover:bg-red-700"
               >
                 Clear
               </button>
@@ -197,7 +194,7 @@ const UuidGenerator = () => {
           </p>
         )}
       </div>
-    </div>
+    </ToolLayout>
   )
 }
 
