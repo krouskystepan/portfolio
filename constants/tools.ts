@@ -4,6 +4,13 @@ type TTools = {
   description: string
 }
 
+// TODOs
+/*
+- Responsive uuid gen
+- Responsive color conv
+- Filter out invalid achievements via edited local storage
+*/
+
 export const tools: TTools[] = [
   {
     name: 'Text Compare / Diff Tool',
@@ -55,5 +62,25 @@ export const tools: TTools[] = [
     name: 'Timestamp Converter',
     path: '',
     description: 'Convert Unix timestamps to readable dates and vice versa.',
+  },
+  {
+    name: 'JSON to TS Type Generator',
+    path: '',
+    // path: 'json-to-ts',
+    description:
+      'Convert JSON objects into clean, typed TypeScript interfaces with one click.',
+  },
+  {
+    name: 'Text Case Converter',
+    path: '',
+    // path: 'case-converter',
+    description:
+      'Convert text into camelCase, PascalCase, snake_case, uppercase, and more.',
+  },
+  {
+    name: 'YAML to JSON Converter',
+    path: '',
+    // path: 'yaml-json',
+    description: 'Convert YAML data to JSON and JSON back to YAML instantly.',
   },
 ]
