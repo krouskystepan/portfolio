@@ -60,7 +60,7 @@ export const tools: TTools[] = [
   },
   {
     name: 'Timestamp Converter',
-    path: '',
+    path: 'timestamp-converter',
     description: 'Convert Unix timestamps to readable dates and vice versa.',
   },
   {

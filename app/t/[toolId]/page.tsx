@@ -45,6 +45,8 @@ const ToolsPage = async ({
     'uuid-generator': () => import('@/components/tools/UuidGenerator'),
     'color-converter': () => import('@/components/tools/ColorConverter'),
     'alphabet-sorter': () => import('@/components/tools/AlphabetSorter'),
+    'timestamp-converter': () =>
+      import('@/components/tools/TimestampConverter'),
   } as const
 
   const importer = toolMap[tool.path as keyof typeof toolMap]
