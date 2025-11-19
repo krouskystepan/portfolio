@@ -23,7 +23,20 @@ export const AchievementProvider = ({ children }: { children: ReactNode }) => {
     if (typeof window === 'undefined') return
 
     const storedUnlocked = localStorage.getItem('unlockedAchievements')
-    setUnlockedIds(storedUnlocked ? JSON.parse(storedUnlocked) : [])
+    const parsed: AchievementID[] = storedUnlocked
+      ? JSON.parse(storedUnlocked)
+      : []
+
+    const validIds = parsed.filter((id) =>
+      allAchievements.some((ach) => ach.id === id)
+    )
+
+    setUnlockedIds(validIds)
+
+    if (validIds.length !== parsed.length) {
+      localStorage.setItem('unlockedAchievements', JSON.stringify(validIds))
+    }
+
     setIsInitialized(true)
   }, [])
 
@@ -64,8 +77,13 @@ export const AchievementProvider = ({ children }: { children: ReactNode }) => {
         getAchievementById: (id) =>
           allAchievements.find((ach) => ach.id === id),
         resetAllAchievements,
-        getUnlockedAchievementsAsPercent: () =>
-          (unlockedIds.length / allAchievements.length) * 100,
+        getUnlockedAchievementsAsPercent: () => {
+          const validUnlockedCount = unlockedIds.filter((id) =>
+            allAchievements.some((ach) => ach.id === id)
+          ).length
+
+          return (validUnlockedCount / allAchievements.length) * 100
+        },
         isInitialized,
       }}
     >
