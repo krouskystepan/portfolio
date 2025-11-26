@@ -94,6 +94,26 @@ const TimestampConverter = () => {
     }, 1500)
   }
 
+  const handleAddTime = (time: number) => {
+    if (!input.trim()) return
+
+    const value = input.trim()
+    const isNumeric = /^\d+$/.test(value)
+
+    try {
+      if (isNumeric) {
+        const ts = parseInt(value, 10)
+        const date = new Date(ts * 1000)
+        date.setTime(date.getTime() + time * 1000)
+        setInput(String(Math.floor(date.getTime() / 1000)))
+      } else {
+        const date = new Date(value)
+        date.setTime(date.getTime() + time * 1000)
+        setInput(date.toISOString())
+      }
+    } catch {}
+  }
+
   return (
     <ToolLayout title="Timestamp Converter">
       <div className="mb-8 flex flex-col rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm">
@@ -108,35 +128,61 @@ const TimestampConverter = () => {
           className="rounded-lg bg-neutral-900 p-3 text-sm text-neutral-100 outline-none focus:ring-2 focus:ring-custom_blue"
         />
 
-        <div className="mt-4 flex flex-wrap justify-end gap-3">
-          <button
-            onClick={() => {
-              const now = Math.floor(Date.now() / 1000)
-              setInput(String(now))
-            }}
-            className="rounded-lg bg-neutral-800 px-4 py-2 text-sm font-medium text-neutral-100 transition hover:bg-neutral-700"
-          >
-            Now
-          </button>
+        <div className="mt-4 flex flex-wrap justify-between gap-3">
+          <div className="flex gap-3">
+            <button
+              onClick={() => {
+                const now = Math.floor(Date.now() / 1000)
+                setInput(String(now))
+              }}
+              className="rounded-lg bg-neutral-800 px-4 py-2 text-sm font-medium text-neutral-100 transition hover:bg-neutral-700"
+            >
+              Now
+            </button>
+            <button
+              onClick={() => handleAddTime(60 * 60)} // +1 hour
+              disabled={!input.trim()}
+              className={`rounded-lg bg-amber-600/90 px-4 py-2 text-sm font-medium text-white transition ${
+                !input.trim()
+                  ? 'cursor-not-allowed opacity-60'
+                  : 'hover:bg-amber-500'
+              }`}
+            >
+              +1 hour
+            </button>
+            <button
+              onClick={() => handleAddTime(60 * 60 * 24)} // +1 day
+              disabled={!input.trim()}
+              className={`rounded-lg bg-amber-600/90 px-4 py-2 text-sm font-medium text-white transition ${
+                !input.trim()
+                  ? 'cursor-not-allowed opacity-60'
+                  : 'hover:bg-amber-500'
+              }`}
+            >
+              +1 day
+            </button>
+          </div>
 
-          <button
-            onClick={handleConvert}
-            disabled={!input.trim()}
-            className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-              !input.trim()
-                ? 'cursor-not-allowed bg-neutral-800 text-neutral-500 opacity-60'
-                : 'bg-custom_blue text-white hover:opacity-90'
-            }`}
-          >
-            Convert
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={handleConvert}
+              disabled={!input.trim()}
+              className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
+                !input.trim()
+                  ? 'cursor-not-allowed bg-neutral-800 text-neutral-500 opacity-60'
+                  : 'bg-custom_blue text-white hover:opacity-90'
+              }`}
+            >
+              Convert
+            </button>
 
-          <button
-            onClick={handleClear}
-            className="rounded-lg bg-red-800 px-4 py-2 text-sm font-medium text-neutral-100 transition hover:bg-red-700"
-          >
-            Clear
-          </button>
+            <button
+              onClick={handleClear}
+              className="rounded-lg bg-red-800 px-4 py-2 text-sm font-medium text-neutral-100 transition hover:bg-red-700"
+            >
+              Clear
+            </button>
+          </div>
         </div>
       </div>
 
