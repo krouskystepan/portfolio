@@ -10,7 +10,7 @@ export type TProject = {
     url: string
   }
   tags: string[]
-  availability: 'live' | 'demo' | 'other'
+  availability: 'live' | 'demo'
 }
 
 export type WorkspaceStatus = {
@@ -36,4 +36,10 @@ export type AchievementContextType = {
   getUnlockedAchievementsAsPercent: () => number
   resetAllAchievements: () => void
   isInitialized: boolean
+}
+
+export type TTools = {
+  name: string
+  path: string
+  description: string
 }

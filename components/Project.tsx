@@ -54,12 +54,6 @@ const Project = ({ project }: { project: TProject }) => {
         label: 'Live',
       }
       break
-    case 'other':
-      availabilityOption = {
-        className: 'bg-yellow-900',
-        label: 'Other',
-      }
-      break
     default:
       availabilityOption = {
         className: 'bg-gray-900',
