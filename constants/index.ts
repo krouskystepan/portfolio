@@ -58,18 +58,27 @@ export const SOCIALS = [
   },
 ] as const
 
+export const PROJECT_FILTERS = ['live', 'all', 'demo'] as const
+
 export const PROJECTS: TProject[] = [
   {
-    id: 'discord-gambling-bot',
-    name: 'Discord Gambling Bot',
+    id: 'discord-gambling-hub',
+    name: 'Discord Gambling Hub',
     description:
-      'This Discord bot lets users gamble with virtual currency, featuring games like slots, dice, and coin-flip. It includes a registration system for account management and admin commands for overseeing transactions and balances.',
+      'A modular Discord gambling and economy system featuring multiple casino-style games, a virtual currency backend, and an integrated Next.js admin dashboard for real-time player and game management.',
     image: '/images/projects/discord-gambling-bot.png',
     link: {
-      type: 'github',
-      url: 'https://github.com/krouskystepan/dc_gambling_bot',
+      type: 'internal',
+      url: '/projects/discord-gambling-hub',
     },
-    tags: ['TypeScript', 'Discord.js', 'MongoDB'],
+    tags: [
+      'Next.js',
+      'Node.js',
+      'Discord.js',
+      'TypeScript',
+      'Tailwind',
+      'MongoDB',
+    ],
     availability: 'live',
   },
   {
@@ -79,7 +88,7 @@ export const PROJECTS: TProject[] = [
       'Wassa specializes in packaging development, offering custom paperboard solutions and logistics across the Czech Republic, Germany, Poland, and the EU. This project showcases their services.',
     image: '/images/projects/wassa.png',
     link: {
-      type: 'website',
+      type: 'external',
       url: 'https://wassa.eu',
     },
     tags: ['Next.js', 'Tailwind', 'Shadcn'],
@@ -92,7 +101,7 @@ export const PROJECTS: TProject[] = [
       'MonkeyCovers is a cutting-edge platform designed for creating and purchasing custom phone cases. Built with the latest technology, it offers a seamless and stylish shopping experience.',
     image: '/images/projects/monkeycovers.png',
     link: {
-      type: 'github',
+      type: 'external',
       url: 'https://github.com/krouskystepan/monkeycovers',
     },
     tags: ['Next.js', 'Postgres', 'Tailwind', 'Kinde'],
@@ -105,7 +114,7 @@ export const PROJECTS: TProject[] = [
       'This is a simple project created without the need for a database. It serves as a basic example of building an e-commerce website without relying on backend.',
     image: '/images/projects/sk-clothing.png',
     link: {
-      type: 'github',
+      type: 'external',
       url: 'https://github.com/krouskystepan/sk_clothing-shop',
     },
     tags: ['Next.js', 'Shadcn', 'Tailwind', 'Stripe'],

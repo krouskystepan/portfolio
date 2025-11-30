@@ -1,4 +1,6 @@
-import { allAchievements } from '.'
+import { allAchievements, PROJECT_FILTERS } from '.'
+
+export type TProjectFilter = (typeof PROJECT_FILTERS)[number]
 
 export type TProject = {
   id: string
@@ -6,11 +8,11 @@ export type TProject = {
   description: string
   image: string
   link: {
-    type: 'github' | 'website'
+    type: 'internal' | 'external'
     url: string
   }
   tags: string[]
-  availability: 'live' | 'demo'
+  availability: Exclude<TProjectFilter, 'all'>
 }
 
 export type WorkspaceStatus = {

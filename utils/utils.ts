@@ -1,3 +1,5 @@
+import { TProjectFilter } from '@/constants/types'
+
 export async function verifyGithubToken(token: string) {
   try {
     const response = await fetch('https://api.github.com/user', {
@@ -43,4 +45,29 @@ export const formatUptime = (seconds: number): string => {
     timeParts.push(`${secs} ${secs === 1 ? 'sec' : 'secs'}`)
 
   return timeParts.join(', ')
+}
+
+export const getAvailabilityDetails = (availability: TProjectFilter) => {
+  switch (availability) {
+    case 'demo':
+      return {
+        className: 'bg-red-900',
+        label: 'Demo',
+      }
+    case 'live':
+      return {
+        className: 'bg-green-900',
+        label: 'Live',
+      }
+    case 'all':
+      return {
+        className: 'bg-blue-800',
+        label: 'All',
+      }
+    default:
+      return {
+        className: 'bg-gray-900',
+        label: 'Unknown',
+      }
+  }
 }
