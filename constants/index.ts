@@ -88,7 +88,7 @@ export const PROJECTS: TProject[] = [
       'Wassa specializes in packaging development, offering custom paperboard solutions and logistics across the Czech Republic, Germany, Poland, and the EU. This project showcases their services.',
     image: '/images/projects/wassa.png',
     link: {
-      type: 'external',
+      type: 'website',
       url: 'https://wassa.eu',
     },
     tags: ['Next.js', 'Tailwind', 'Shadcn'],

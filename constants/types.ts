@@ -8,7 +8,7 @@ export type TProject = {
   description: string
   image: string
   link: {
-    type: 'internal' | 'external'
+    type: 'internal' | 'external' | 'website'
     url: string
   }
   tags: string[]

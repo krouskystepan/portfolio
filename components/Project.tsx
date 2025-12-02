@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { CSSProperties, useRef, useState } from 'react'
 import { useAchievementContext } from '@/context/AchievementContext'
 import CustomConfetti from './CustomConfetti'
-import { ChevronRight, ExternalLink } from 'lucide-react'
+import { ChevronRight, ExternalLink, Globe } from 'lucide-react'
 import { getAvailabilityDetails } from '@/utils/utils'
 
 const Project = ({ project }: { project: TProject }) => {
@@ -38,8 +38,6 @@ const Project = ({ project }: { project: TProject }) => {
       activeRef.current = false
     }, 700)
   }
-
-  const isExternal = project.link.type === 'external'
 
   return (
     <div
@@ -84,21 +82,36 @@ const Project = ({ project }: { project: TProject }) => {
 
           <Link
             href={project.link.url}
-            target={isExternal ? '_blank' : undefined}
-            rel={isExternal ? 'noopener noreferrer' : undefined}
+            target={project.link.type === 'internal' ? undefined : '_blank'}
+            rel={
+              project.link.type === 'internal'
+                ? undefined
+                : 'noopener noreferrer'
+            }
             className="group mx-auto flex w-full max-w-lg items-center justify-center rounded-lg border border-neutral-800 bg-neutral-700 py-2 text-center transition-colors duration-200 hover:bg-neutral-700/80 md:max-w-full"
           >
-            {isExternal ? (
-              <>
-                <span className="mr-1">Visit Project</span>
-                <ExternalLink size={16} />
-              </>
-            ) : (
-              <>
-                <span className="mr-0.5">View Project</span>
-                <ChevronRight size={16} />
-              </>
-            )}
+            <>
+              {project.link.type === 'website' && (
+                <>
+                  <span className="mr-1">Go To Website</span>
+                  <Globe size={16} />
+                </>
+              )}
+
+              {project.link.type === 'external' && (
+                <>
+                  <span className="mr-1">Visit Project</span>
+                  <ExternalLink size={16} />
+                </>
+              )}
+
+              {project.link.type === 'internal' && (
+                <>
+                  <span className="mr-0.5">View Project</span>
+                  <ChevronRight size={16} />
+                </>
+              )}
+            </>
           </Link>
         </div>
       </div>
