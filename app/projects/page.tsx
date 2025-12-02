@@ -28,26 +28,27 @@ const Projects = () => {
         </h2>
 
         <div className="mb-6 flex justify-center sm:mb-10">
-          <div className="relative flex overflow-hidden rounded-xl border-2 border-neutral-800">
+          <div className="relative flex overflow-hidden rounded-xl border-2 border-neutral-800 p-1 backdrop-blur">
             <motion.div
-              layoutId="highlight"
-              className={`absolute inset-y-0 ${getAvailabilityDetails(filter).className}`}
+              layoutId="availability-highlight"
+              className={`absolute inset-y-1 rounded-lg ${getAvailabilityDetails(filter).className}`}
               style={{
-                width: `${100 / ORDER.length}%`,
-                left: `${ORDER.indexOf(filter) * (100 / ORDER.length)}%`,
+                width: `calc(${100 / ORDER.length}% - 0.5rem)`,
+                left: `calc(${ORDER.indexOf(filter) * (100 / ORDER.length)}% + 0.25rem)`,
               }}
               transition={{
+                backgroundColor: { delay: 0.08 },
                 type: 'spring',
                 stiffness: 300,
-                damping: 30,
+                damping: 25,
               }}
             />
 
-            {ORDER.map((item, index) => (
+            {ORDER.map((item) => (
               <button
                 key={item}
                 onClick={() => setFilter(item)}
-                className={`relative z-10 flex size-8 items-center justify-center bg-transparent p-8 text-base font-bold transition sm:size-20 sm:text-xl ${getAvailabilityDetails(item).label === 'Unknown' ? 'hover:bg-neutral-800/30' : ''} ${index !== ORDER.length - 1 ? 'border-r-2 border-neutral-800' : ''}`}
+                className="relative z-10 flex w-24 items-center justify-center rounded-lg px-5 py-2 text-sm font-semibold transition sm:px-8 sm:py-3 sm:text-lg"
               >
                 {item === 'all'
                   ? getAvailabilityDetails('all').label
