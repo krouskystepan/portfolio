@@ -3,9 +3,11 @@
 import { TProject } from '@/constants/types'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useRef, useState } from 'react'
+import { CSSProperties, useRef, useState } from 'react'
 import { useAchievementContext } from '@/context/AchievementContext'
 import CustomConfetti from './CustomConfetti'
+import { ChevronRight, ExternalLink, Globe } from 'lucide-react'
+import { getAvailabilityDetails } from '@/utils/utils'
 
 const Project = ({ project }: { project: TProject }) => {
   const { unlockAchievement } = useAchievementContext()
@@ -13,14 +15,14 @@ const Project = ({ project }: { project: TProject }) => {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const activeRef = useRef(false)
-  const [visibleConfetti, setVisibleConfetti] = useState(true)
+  const [visibleConfetti, setVisibleConfetti] = useState(false)
 
   const handleMouseEnter = () => {
-    if (project.id !== 'discord-gambling-bot') return
+    if (project.id !== 'discord-gambling-hub') return
     if (activeRef.current) return
 
     activeRef.current = true
-    setVisibleConfetti(false)
+    setVisibleConfetti(true)
 
     timeoutRef.current = setTimeout(() => {
       unlockAchievement('gambling')
@@ -30,42 +32,11 @@ const Project = ({ project }: { project: TProject }) => {
   const handleMouseLeave = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
 
-    setVisibleConfetti(true)
+    setVisibleConfetti(false)
 
     setTimeout(() => {
       activeRef.current = false
     }, 700)
-  }
-
-  let availabilityOption = {
-    className: '',
-    label: '',
-  }
-  switch (project.availability) {
-    case 'demo':
-      availabilityOption = {
-        className: 'bg-red-900',
-        label: 'Demo',
-      }
-      break
-    case 'live':
-      availabilityOption = {
-        className: 'bg-green-900',
-        label: 'Live',
-      }
-      break
-    case 'other':
-      availabilityOption = {
-        className: 'bg-yellow-900',
-        label: 'Other',
-      }
-      break
-    default:
-      availabilityOption = {
-        className: 'bg-gray-900',
-        label: 'Unknown',
-      }
-      break
   }
 
   return (
@@ -74,12 +45,12 @@ const Project = ({ project }: { project: TProject }) => {
       onMouseLeave={handleMouseLeave}
       className="group/container relative mx-auto flex h-[32rem] w-full flex-col gap-0 overflow-hidden rounded-lg border-2 border-neutral-800 bg-neutral-900 text-center sm:h-[28rem] md:h-96 md:max-w-3xl md:flex-row md:gap-10 md:text-start md:even:flex-row-reverse md:[&>*]:basis-1/2"
       data-pattern="stripes"
-      style={{ '--opacity': '0.03' } as React.CSSProperties}
+      style={{ '--opacity': '0.03' } as CSSProperties}
     >
-      {project.id === 'discord-gambling-bot' && (
+      {project.id === 'discord-gambling-hub' && (
         <div
           className={`pointer-events-none absolute inset-0 transition-opacity duration-700 ${
-            visibleConfetti ? 'opacity-0' : 'opacity-50'
+            visibleConfetti ? 'opacity-50' : 'opacity-0'
           }`}
         >
           <CustomConfetti />
@@ -87,9 +58,9 @@ const Project = ({ project }: { project: TProject }) => {
       )}
       {project.availability && (
         <span
-          className={`absolute left-1/2 top-0 -translate-x-1/2 rounded-b-lg border-x-2 border-b-2 border-neutral-800 px-2 py-1 text-xs font-semibold text-white md:group-odd/container:left-0 md:group-odd/container:translate-x-0 md:group-odd/container:rounded-bl-none md:group-odd/container:rounded-br-lg md:group-odd/container:border-l-0 md:group-odd/container:border-r-2 md:group-even/container:left-full md:group-even/container:-translate-x-full md:group-even/container:rounded-bl-lg md:group-even/container:rounded-br-none md:group-even/container:border-l-2 md:group-even/container:border-r-0 ${availabilityOption.className}`}
+          className={`absolute left-1/2 top-0 -translate-x-1/2 rounded-b-lg border-x-2 border-b-2 border-neutral-800 px-2 py-1 text-xs font-semibold text-white md:group-odd/container:left-0 md:group-odd/container:translate-x-0 md:group-odd/container:rounded-bl-none md:group-odd/container:rounded-br-lg md:group-odd/container:border-l-0 md:group-odd/container:border-r-2 md:group-even/container:left-full md:group-even/container:-translate-x-full md:group-even/container:rounded-bl-lg md:group-even/container:rounded-br-none md:group-even/container:border-l-2 md:group-even/container:border-r-0 ${getAvailabilityDetails(project.availability).className}`}
         >
-          {availabilityOption.label}
+          {getAvailabilityDetails(project.availability).label}
         </span>
       )}
       <div className="flex flex-col px-4 py-7 md:pb-7 md:pl-10 md:pt-10 md:group-even/container:pl-4 md:group-even/container:pr-10">
@@ -111,13 +82,36 @@ const Project = ({ project }: { project: TProject }) => {
 
           <Link
             href={project.link.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mx-auto w-full max-w-lg rounded-lg border border-neutral-800 bg-neutral-700 py-2 text-center transition-colors duration-200 hover:bg-neutral-700/80 md:max-w-full"
+            target={project.link.type === 'internal' ? undefined : '_blank'}
+            rel={
+              project.link.type === 'internal'
+                ? undefined
+                : 'noopener noreferrer'
+            }
+            className="group mx-auto flex w-full max-w-lg items-center justify-center rounded-lg border border-neutral-800 bg-neutral-700 py-2 text-center transition-colors duration-200 hover:bg-neutral-700/80 md:max-w-full"
           >
-            {project.link.type === 'github'
-              ? 'Visit GitHub Repository'
-              : 'Go to Website'}
+            <>
+              {project.link.type === 'website' && (
+                <>
+                  <span className="mr-1">Go To Website</span>
+                  <Globe size={16} />
+                </>
+              )}
+
+              {project.link.type === 'external' && (
+                <>
+                  <span className="mr-1">Visit Project</span>
+                  <ExternalLink size={16} />
+                </>
+              )}
+
+              {project.link.type === 'internal' && (
+                <>
+                  <span className="mr-0.5">View Project</span>
+                  <ChevronRight size={16} />
+                </>
+              )}
+            </>
           </Link>
         </div>
       </div>

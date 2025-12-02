@@ -1,4 +1,4 @@
-import { TProject } from './types'
+import { TProject, TTools } from './types'
 
 export const BASE_URL = 'https://krouskystepan.com'
 
@@ -58,7 +58,29 @@ export const SOCIALS = [
   },
 ] as const
 
+export const PROJECT_FILTERS = ['live', 'all', 'demo'] as const
+
 export const PROJECTS: TProject[] = [
+  {
+    id: 'discord-gambling-hub',
+    name: 'Discord Gambling Hub',
+    description:
+      'A modular Discord gambling and economy system featuring multiple casino-style games, a virtual currency backend, and an integrated Next.js admin dashboard for real-time player and game management.',
+    image: '/images/projects/discord-gambling-bot.png',
+    link: {
+      type: 'internal',
+      url: '/projects/discord-gambling-hub',
+    },
+    tags: [
+      'Next.js',
+      'Node.js',
+      'Discord.js',
+      'TypeScript',
+      'Tailwind',
+      'MongoDB',
+    ],
+    availability: 'live',
+  },
   {
     id: 'wassa',
     name: 'Wassa',
@@ -79,24 +101,11 @@ export const PROJECTS: TProject[] = [
       'MonkeyCovers is a cutting-edge platform designed for creating and purchasing custom phone cases. Built with the latest technology, it offers a seamless and stylish shopping experience.',
     image: '/images/projects/monkeycovers.png',
     link: {
-      type: 'github',
+      type: 'external',
       url: 'https://github.com/krouskystepan/monkeycovers',
     },
     tags: ['Next.js', 'Postgres', 'Tailwind', 'Kinde'],
     availability: 'demo',
-  },
-  {
-    id: 'discord-gambling-bot',
-    name: 'Discord Gambling Bot',
-    description:
-      'This Discord bot lets users gamble with virtual currency, featuring games like slots, dice, and coin-flip. It includes a registration system for account management and admin commands for overseeing transactions and balances.',
-    image: '/images/projects/discord-gambling-bot.png',
-    link: {
-      type: 'github',
-      url: 'https://github.com/krouskystepan/dc_gambling_bot',
-    },
-    tags: ['TypeScript', 'Discord.js', 'MongoDB'],
-    availability: 'other',
   },
   {
     id: 'sk-clothing-shop',
@@ -105,7 +114,7 @@ export const PROJECTS: TProject[] = [
       'This is a simple project created without the need for a database. It serves as a basic example of building an e-commerce website without relying on backend.',
     image: '/images/projects/sk-clothing.png',
     link: {
-      type: 'github',
+      type: 'external',
       url: 'https://github.com/krouskystepan/sk_clothing-shop',
     },
     tags: ['Next.js', 'Shadcn', 'Tailwind', 'Stripe'],
@@ -185,3 +194,84 @@ export const allAchievements = [
     description: 'You visited a non-existent page. Oops!',
   },
 ] as const
+
+// TODOs
+/*
+- Responsive uuid gen
+- Responsive color conv
+- Filter out invalid achievements via edited local storage
+*/
+
+export const tools: TTools[] = [
+  {
+    name: 'Text Compare / Diff Tool',
+    path: 'text-diff',
+    description:
+      'Compare two blocks of text and see the differences highlighted.',
+  },
+  {
+    name: 'JSON Formatter & Validator',
+    path: 'json-formatter',
+    description:
+      'Format, validate, and inspect JSON instantly in your browser.',
+  },
+  {
+    name: 'UUID Generator',
+    path: 'uuid-generator',
+    description: 'Generate random UUIDs (v4) for identifiers or testing.',
+  },
+  {
+    name: 'Color Converter',
+    path: 'color-converter',
+    description:
+      'Convert colors between HEX, RGB, HSL and more. Live color preview.',
+  },
+  {
+    name: 'Markdown Previewer',
+    path: '',
+    description: 'Write and preview Markdown with instant rendering.',
+  },
+  {
+    name: 'Alphabet Sorter',
+    path: 'alphabet-sorter',
+    description:
+      'Sort text alphabetically, with an option to automatically group related items together.',
+  },
+  {
+    name: 'CSV to JSON Converter',
+    path: '',
+    description:
+      'Convert CSV data into formatted JSON objects and arrays instantly.',
+  },
+  {
+    name: 'HTML / CSS / JS Minifier',
+    path: '',
+    description:
+      'Minify or beautify HTML, CSS, or JavaScript code to optimize performance.',
+  },
+  {
+    name: 'Timestamp Converter',
+    path: 'timestamp-converter',
+    description: 'Convert Unix timestamps to readable dates and vice versa.',
+  },
+  {
+    name: 'JSON to TS Type Generator',
+    path: '',
+    // path: 'json-to-ts',
+    description:
+      'Convert JSON objects into clean, typed TypeScript interfaces with one click.',
+  },
+  {
+    name: 'Text Case Converter',
+    path: '',
+    // path: 'case-converter',
+    description:
+      'Convert text into camelCase, PascalCase, snake_case, uppercase, and more.',
+  },
+  {
+    name: 'YAML to JSON Converter',
+    path: '',
+    // path: 'yaml-json',
+    description: 'Convert YAML data to JSON and JSON back to YAML instantly.',
+  },
+]

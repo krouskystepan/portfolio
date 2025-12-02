@@ -1,4 +1,6 @@
-import { allAchievements } from '.'
+import { allAchievements, PROJECT_FILTERS } from '.'
+
+export type TProjectFilter = (typeof PROJECT_FILTERS)[number]
 
 export type TProject = {
   id: string
@@ -6,11 +8,11 @@ export type TProject = {
   description: string
   image: string
   link: {
-    type: 'github' | 'website'
+    type: 'internal' | 'external' | 'website'
     url: string
   }
   tags: string[]
-  availability: 'live' | 'demo' | 'other'
+  availability: Exclude<TProjectFilter, 'all'>
 }
 
 export type WorkspaceStatus = {
@@ -36,4 +38,10 @@ export type AchievementContextType = {
   getUnlockedAchievementsAsPercent: () => number
   resetAllAchievements: () => void
   isInitialized: boolean
+}
+
+export type TTools = {
+  name: string
+  path: string
+  description: string
 }

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { tools } from '@/constants/tools'
+import { tools } from '@/constants'
 
 export default function ToolsPage() {
   return (

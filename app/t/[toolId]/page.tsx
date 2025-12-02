@@ -1,4 +1,4 @@
-import { tools } from '@/constants/tools'
+import { tools } from '@/constants'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
