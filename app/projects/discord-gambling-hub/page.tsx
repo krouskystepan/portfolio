@@ -18,6 +18,7 @@ import {
   Shapes,
   Ticket,
   HandCoins,
+  Layers,
 } from 'lucide-react'
 import Alert from '@/components/Alert'
 import {
@@ -36,26 +37,28 @@ import {
 const GamblingBotCaseStudyPage = () => {
   return (
     <div className="mx-auto max-w-4xl px-4 pt-12">
+      {/* HEADER */}
       <header className="mb-8">
         <ProjectSubPageTag text="Case Study" />
         <ProjectSubPageTitle title="Gambling BOT – Discord Casino & Admin Dashboard Ecosystem" />
         <ProjectSubPageDescription
-          description={`Gambling BOT is a full-stack gambling and virtual-economy system built for Discord communities.\nIt combines a feature-rich casino engine, persistent user balances, VIP rooms, predictions, daily bonuses, and a powerful admin dashboard.\nAll gameplay, configuration, logging, and economy interactions share a unified database, ensuring consistency across both the bot and the web interface.`}
+          description={`Gambling BOT is a full-stack gambling and virtual-economy system built for Discord communities.\nIt combines a feature-rich casino engine, persistent user balances, VIP rooms, predictions, daily bonuses, and a powerful admin dashboard.\nAll gameplay, configuration, logging, and economy interactions share a unified database and a shared NPM package, ensuring consistency across the entire ecosystem.`}
         />
       </header>
 
       <Alert
         type="info"
         title="Project Overview"
-        description="The system consists of two tightly coupled parts: a Discord bot that handles all gameplay and user interactions, and a secure web dashboard for server admins to configure rules, RTP values, VIP pricing, and to inspect logs."
+        description="The system now consists of three tightly connected parts: a Discord bot for gameplay, an admin dashboard for configuration and insights, and a shared NPM package that provides all shared models, types, and utilities."
       />
 
-      {/* #. TOC */}
+      {/* TOC */}
       <ProjectSubPageTableOfContents
         title="Contents"
         items={[
           { label: 'Motivation & Goals', href: '#motivation' },
           { label: 'System Architecture', href: '#architecture' },
+          { label: 'Shared Package Architecture', href: '#shared' },
           { label: 'Economy & Transaction Model', href: '#economy' },
           { label: 'Casino Game Engine', href: '#engine' },
           { label: 'RTP System & Fairness Logic', href: '#rtp' },
@@ -77,30 +80,23 @@ const GamblingBotCaseStudyPage = () => {
           Gambling BOT started as a way to introduce a structured, persistent
           casino experience into a Discord community—something deeper than
           simple “fun” commands. The goal was to design a unified system where
-          both the bot and the web dashboard interact with one shared economy,
-          one shared set of rules, and one source of truth.
+          all layers share the same logic, models, and economic rules.
         </ProjectSubPageParagraph>
 
         <ProjectSubPageParagraph>
-          Instead of isolated mini-games, the vision was to create a small yet
-          fully functional virtual ecosystem with:
+          Over time, the project matured into a scalable multi-application
+          ecosystem with:
         </ProjectSubPageParagraph>
 
         <ProjectSubPageBulletList
           items={[
             'A persistent virtual currency with complete transaction logging.',
-            'Casino-style games with fully configurable RTP per guild.',
-            'VIP rooms that feel personal, private and temporary, but remain fully automated.',
-            'Admin tools for adjusting settings without touching code.',
-            'A web dashboard that reads and writes the exact same database as the bot.',
+            'Casino-style games with fully configurable RTP and fairness controls.',
+            'VIP rooms that feel personal, private, automated, and temporary.',
+            'A modern admin dashboard for analytics, management, and server customization.',
+            'A shared NPM package providing schemas, validation, helpers, and strong typing across all apps.',
           ]}
         />
-
-        <ProjectSubPageParagraph>
-          Over time, the project evolved into a scalable architecture supporting
-          fairness, configuration, administration, and long-term player
-          engagement.
-        </ProjectSubPageParagraph>
       </ProjectSubPageSectionLayout>
 
       {/* 2. ARCHITECTURE */}
@@ -110,58 +106,94 @@ const GamblingBotCaseStudyPage = () => {
         id="architecture"
       >
         <ProjectSubPageParagraph>
-          The system is split into two main applications that communicate
-          implicitly through a shared MongoDB database. Both layers operate
-          independently, yet remain perfectly synchronized because they read and
-          write from the same collections.
+          The system is composed of three interconnected applications that share
+          the same data structures and logic through a dedicated NPM package.
+          Each runs independently but stays perfectly aligned thanks to shared
+          schemas, helpers, constants, and TypeScript types.
         </ProjectSubPageParagraph>
 
-        <div className="grid gap-5 sm:grid-cols-2">
-          {/* Discord Bot */}
+        <div className="grid gap-5 sm:grid-cols-3">
+          {/* DISCORD BOT */}
           <ProjectSubPageInfoCard
             title="Discord Bot"
             icon={Terminal}
             iconColor="text-blue-400"
             items={[
               'Built with discord.js and CommandKit.',
-              'Implements slash commands for ATM, games, VIP management, bonuses, and predictions.',
-              'Handles all gameplay logic, validation, and state transitions.',
-              'Creates all economic transactions (bets, wins, bonuses).',
-              'Writes user, transaction, game, VIP, and prediction data to MongoDB through Mongoose models.',
+              'Implements all casino games, VIP management, predictions, and ATM logic.',
+              'Handles gameplay, validation, messaging, cooldowns, and transactional state.',
+              'Reads all models and types directly from gambling-bot-shared.',
             ]}
           />
 
+          {/* SHARED PACKAGE */}
           <ProjectSubPageInfoCard
-            title="Web Dashboard"
+            title="Shared NPM Package"
+            icon={Layers}
+            iconColor="text-purple-400"
+            items={[
+              'Exports all TypeScript types, interfaces, enums, and constants.',
+              'Contains all Mongoose schemas and models.',
+              'Includes helper functions, validators, and probability utilities.',
+              'Ensures 100% consistency across the bot and dashboard.',
+            ]}
+          />
+
+          {/* DASHBOARD */}
+          <ProjectSubPageInfoCard
+            title="Admin Dashboard"
             icon={Globe}
             iconColor="text-emerald-400"
             items={[
-              'Built with Next.js, React, Radix UI, Tailwind, and Framer Motion.',
+              'Built using Next.js, React, Radix UI, Framer Motion, and Tailwind.',
               'Authentication via Discord OAuth with role-based access control.',
-              'Reads and updates the exact same MongoDB collections as the bot.',
-              'Provides transparency: real-time logs, transaction history, RTP controls, VIP management, and user insights.',
+              'Provides transparency: transaction history, RTP controls, VIP management.',
+              'Reads and updates the same MongoDB collections as the bot.',
+              'Uses shared models and utilities from gambling-bot-shared.',
             ]}
           />
         </div>
+      </ProjectSubPageSectionLayout>
+
+      {/* 3. SHARED PACKAGE MINI-SECTION */}
+      <ProjectSubPageSectionLayout
+        iconStyle={{ icon: Layers, color: 'text-purple-400' }}
+        title="3. Shared Package Architecture"
+        id="shared"
+      >
+        <ProjectSubPageParagraph>
+          To prevent desynchronization between the bot and the admin dashboard,
+          all logic that defines the casino ecosystem lives inside a dedicated
+          NPM package: <strong>gambling-bot-shared</strong>.
+        </ProjectSubPageParagraph>
+
+        <ProjectSubPageBulletList
+          items={[
+            'Mongoose schemas & models for User, Transaction, Games, Predictions, VIP Rooms, GuildConfiguration.',
+            'Strongly typed constants and enums used by both applications.',
+            'Shared helper functions including RTP calculations and probability utilities.',
+            'Reusable validation logic for commands, forms, and internal systems.',
+            'Utilities for formatting, randomization, state transitions, and gameplay rules.',
+          ]}
+        />
 
         <Alert
-          type="info"
-          title="Single Source of Truth"
-          description="Both the Discord bot and the web dashboard use the same Mongoose models and connect to the same MongoDB instance. There is no synchronization layer—the database itself acts as the communication channel and ensures consistent state across both applications."
+          type="note"
+          title="Benefits of a Shared Core"
+          description="By centralizing all shared logic, the ecosystem becomes easier to maintain, safer to extend, and impossible to desync. Both applications always run on the same logic by design."
         />
       </ProjectSubPageSectionLayout>
 
-      {/* 3. ECONOMY & TRANSACTIONS */}
+      {/* 4. ECONOMY */}
       <ProjectSubPageSectionLayout
-        iconStyle={{ icon: Database, color: 'text-purple-400' }}
-        title="3. Economy & Transaction Model"
+        iconStyle={{ icon: Database, color: 'text-amber-400' }}
+        title="4. Economy & Transaction Model"
         id="economy"
       >
         <ProjectSubPageParagraph>
-          At the core of the project is a simple but carefully indexed virtual
-          economy. Every action that modifies a user’s balance creates a new
-          transaction document — nothing is ever mutated without generating a
-          corresponding audit log entry.
+          All economy-related schemas now come from the shared NPM package,
+          guaranteeing identical behavior in both the Discord bot and the admin
+          dashboard.
         </ProjectSubPageParagraph>
 
         <ProjectSubPageBulletList
@@ -206,10 +238,10 @@ const GamblingBotCaseStudyPage = () => {
         />
       </ProjectSubPageSectionLayout>
 
-      {/* 4. GAME ENGINE DESIGN */}
+      {/* 5. GAME ENGINE DESIGN */}
       <ProjectSubPageSectionLayout
         iconStyle={{ icon: Gamepad2, color: 'text-sky-400' }}
-        title="4. Game Engine Design"
+        title="5. Game Engine Design"
         id="engine"
       >
         <ProjectSubPageParagraph>
@@ -347,10 +379,10 @@ const GamblingBotCaseStudyPage = () => {
         </div>
       </ProjectSubPageSectionLayout>
 
-      {/* 5. RTP */}
+      {/* 6. RTP */}
       <ProjectSubPageSectionLayout
         iconStyle={{ icon: LineChart, color: 'text-cyan-400' }}
-        title="5. RTP Calculation & Fairness Controls"
+        title="6. RTP Calculation & Fairness Controls"
         id="rtp"
       >
         <ProjectSubPageParagraph>
@@ -480,10 +512,10 @@ case 'slots': {
         />
       </ProjectSubPageSectionLayout>
 
-      {/* 6. DAILY BONUS */}
+      {/* 7. DAILY BONUS */}
       <ProjectSubPageSectionLayout
         iconStyle={{ icon: Clock, color: 'text-amber-400' }}
-        title="6. Daily Bonus & Streak System"
+        title="7. Daily Bonus & Streak System"
         id="daily-bonus"
       >
         <ProjectSubPageParagraph>
@@ -523,10 +555,10 @@ case 'slots': {
         />
       </ProjectSubPageSectionLayout>
 
-      {/* 7. VIP ROOMS */}
+      {/* 8. VIP ROOMS */}
       <ProjectSubPageSectionLayout
         iconStyle={{ icon: Lock, color: 'text-rose-400' }}
-        title="7. VIP Rooms"
+        title="8. VIP Rooms"
         id="vip"
       >
         <ProjectSubPageParagraph>
@@ -592,10 +624,10 @@ case 'slots': {
         />
       </ProjectSubPageSectionLayout>
 
-      {/* 8. PREDICTIONS */}
+      {/* 9. PREDICTIONS */}
       <ProjectSubPageSectionLayout
         iconStyle={{ icon: BarChart3, color: 'text-indigo-400' }}
-        title="8. Predictions"
+        title="9. Predictions"
         id="predictions"
       >
         <ProjectSubPageParagraph>
@@ -637,9 +669,10 @@ case 'slots': {
         />
       </ProjectSubPageSectionLayout>
 
+      {/* TBD */}
       <ProjectSubPageSectionLayout
         iconStyle={{ icon: ShieldCheck, color: 'text-emerald-400' }}
-        title="9. Admin Web Dashboard (TBD)"
+        title="10. Admin Web Dashboard (TBD)"
         id="dashboard"
       >
         <ProjectSubPageParagraph>
@@ -658,9 +691,10 @@ case 'slots': {
         />
       </ProjectSubPageSectionLayout>
 
+      {/* TBD */}
       <ProjectSubPageSectionLayout
         iconStyle={{ icon: Terminal, color: 'text-red-400' }}
-        title="10. Future Work & Technical Challenges (TBD)"
+        title="11. Future Work & Technical Challenges (TBD)"
         id="future"
       >
         <ProjectSubPageParagraph>
@@ -689,8 +723,8 @@ case 'slots': {
       <section className="mt-8 border-t border-neutral-800 pt-8">
         <p className="text-sm text-neutral-400">
           This page is a living case study of the Gambling BOT ecosystem. As the
-          dashboard expands and more advanced features are introduced, both the
-          system and this write-up will continue to evolve.
+          dashboard, Discord bot, and shared package evolve, this write-up will
+          be updated to reflect new architectural decisions and best practices.
         </p>
       </section>
     </div>
