@@ -363,7 +363,6 @@ const GamblingBotCaseStudyPage = () => {
         </ProjectSubPageParagraph>
 
         {/* Visual Layout Overview */}
-
         <div className="my-4 rounded-lg border border-neutral-800 bg-neutral-900/40 p-4">
           <h4 className="mb-3 text-sm font-semibold tracking-wide text-neutral-100">
             How RTP Is Computed
@@ -444,7 +443,7 @@ const GamblingBotCaseStudyPage = () => {
             Example: RTP Calculation Snippet
           </h4>
 
-          <pre className="overflow-x-auto rounded-md bg-neutral-950 p-3 text-xs text-neutral-200">
+          <pre className="max-w-full overflow-x-auto whitespace-pre-wrap break-words rounded-md bg-neutral-950 p-1 text-[10px] text-neutral-200 sm:p-3 sm:text-xs">
             {`case 'coinflip': {
   const { winMultiplier } = settings;
   return 0.5 * Number(winMultiplier) * 100;
