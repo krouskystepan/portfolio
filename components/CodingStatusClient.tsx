@@ -1,14 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { doc, onSnapshot } from 'firebase/firestore'
 import { WorkspaceStatus } from '@/constants/types'
-import { db } from '@/utils/firebase'
 import { calculateUptime, formatUptime } from '@/utils/utils'
-import { useAchievementContext } from '@/context/AchievementContext'
+// import { useAchievementContext } from '@/context/AchievementContext'
 
+// TODO: Do this in WebSocket
 const CodingStatusClient = ({
-  initialData,
+  initialData
 }: {
   initialData: WorkspaceStatus | null
 }) => {
@@ -39,28 +38,28 @@ const CodingStatusClient = ({
     return () => clearInterval(interval)
   }, [data])
 
-  const { unlockAchievement, getAchievementById } = useAchievementContext()
+  // const { unlockAchievement, getAchievementById } = useAchievementContext()
 
-  useEffect(() => {
-    const codingSessionRef = doc(db, 'codingSession', 'currentSession')
+  // useEffect(() => {
+  //   const codingSessionRef = doc(db, 'codingSession', 'currentSession')
 
-    const unsubscribe = onSnapshot(codingSessionRef, (docSnap) => {
-      const newData = docSnap.data()?.status as WorkspaceStatus
+  //   const unsubscribe = onSnapshot(codingSessionRef, (docSnap) => {
+  //     const newData = docSnap.data()?.status as WorkspaceStatus
 
-      const currentTime = new Date()
-      const lastUpdateTime = new Date(newData?.lastUpdate)
-      const timeDifference = currentTime.getTime() - lastUpdateTime.getTime()
+  //     const currentTime = new Date()
+  //     const lastUpdateTime = new Date(newData?.lastUpdate)
+  //     const timeDifference = currentTime.getTime() - lastUpdateTime.getTime()
 
-      if (timeDifference > 65_000 || !newData) {
-        setData(null)
-      } else {
-        setData(newData)
-        unlockAchievement('caught-coding', 1000)
-      }
-    })
+  //     if (timeDifference > 65_000 || !newData) {
+  //       setData(null)
+  //     } else {
+  //       setData(newData)
+  //       unlockAchievement('caught-coding', 1000)
+  //     }
+  //   })
 
-    return () => unsubscribe()
-  }, [getAchievementById, unlockAchievement])
+  //   return () => unsubscribe()
+  // }, [getAchievementById, unlockAchievement])
 
   useEffect(() => {
     if (!data || typeof window === 'undefined') return
