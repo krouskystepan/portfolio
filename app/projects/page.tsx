@@ -34,13 +34,13 @@ const Projects = () => {
               className={`absolute inset-y-1 rounded-lg ${getAvailabilityDetails(filter).className}`}
               style={{
                 width: `calc(${100 / ORDER.length}% - 0.5rem)`,
-                left: `calc(${ORDER.indexOf(filter) * (100 / ORDER.length)}% + 0.25rem)`,
+                left: `calc(${ORDER.indexOf(filter) * (100 / ORDER.length)}% + 0.25rem)`
               }}
               transition={{
                 backgroundColor: { delay: 0.08 },
                 type: 'spring',
                 stiffness: 300,
-                damping: 25,
+                damping: 25
               }}
             />
 
@@ -69,20 +69,20 @@ const Projects = () => {
               variants={{
                 hidden: {},
                 show: {
-                  transition: { staggerChildren: 0.1 },
-                },
+                  transition: { staggerChildren: 0.1 }
+                }
               }}
             >
-              {filteredProjects.map((project) => (
+              {filteredProjects.map((project, index) => (
                 <motion.div
                   key={project.id}
                   variants={{
                     hidden: { opacity: 0, y: 20 },
-                    show: { opacity: 1, y: 0 },
+                    show: { opacity: 1, y: 0 }
                   }}
                   transition={{ duration: 0.2, ease: 'linear' }}
                 >
-                  <Project project={project} />
+                  <Project project={project} index={index} />
                 </motion.div>
               ))}
             </motion.div>

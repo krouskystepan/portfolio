@@ -9,7 +9,7 @@ import CustomConfetti from './CustomConfetti'
 import { ChevronRight, ExternalLink, Globe } from 'lucide-react'
 import { getAvailabilityDetails } from '@/utils/utils'
 
-const Project = ({ project }: { project: TProject }) => {
+const Project = ({ project, index }: { project: TProject; index: number }) => {
   const { unlockAchievement } = useAchievementContext()
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -39,11 +39,13 @@ const Project = ({ project }: { project: TProject }) => {
     }, 700)
   }
 
+  const isReversed = index % 2 === 1
+
   return (
     <div
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="group/container relative mx-auto flex h-[32rem] w-full flex-col gap-0 overflow-hidden rounded-lg border-2 border-neutral-800 bg-neutral-900 text-center sm:h-[28rem] md:h-96 md:max-w-3xl md:flex-row md:gap-10 md:text-start md:even:flex-row-reverse md:[&>*]:basis-1/2"
+      className={`group/container relative mx-auto flex h-[32rem] w-full flex-col gap-0 overflow-hidden rounded-lg border-2 border-neutral-800 bg-neutral-900 text-center sm:h-[28rem] md:h-96 md:max-w-3xl md:flex-row md:gap-10 md:text-start md:[&>*]:basis-1/2 ${isReversed ? 'md:flex-row-reverse' : ''}`}
       data-pattern="stripes"
       style={{ '--opacity': '0.03' } as CSSProperties}
     >
@@ -58,12 +60,14 @@ const Project = ({ project }: { project: TProject }) => {
       )}
       {project.availability && (
         <span
-          className={`absolute left-1/2 top-0 -translate-x-1/2 rounded-b-lg border-x-2 border-b-2 border-neutral-800 px-2 py-1 text-xs font-semibold text-white md:group-odd/container:left-0 md:group-odd/container:translate-x-0 md:group-odd/container:rounded-bl-none md:group-odd/container:rounded-br-lg md:group-odd/container:border-l-0 md:group-odd/container:border-r-2 md:group-even/container:left-full md:group-even/container:-translate-x-full md:group-even/container:rounded-bl-lg md:group-even/container:rounded-br-none md:group-even/container:border-l-2 md:group-even/container:border-r-0 ${getAvailabilityDetails(project.availability).className}`}
+          className={`absolute left-1/2 top-0 -translate-x-1/2 rounded-b-lg border-x-2 border-b-2 border-neutral-800 px-2 py-1 text-xs font-semibold text-white ${isReversed ? 'md:left-full md:-translate-x-full md:rounded-bl-lg md:rounded-br-none md:border-l-2 md:border-r-0' : 'md:left-0 md:translate-x-0 md:rounded-bl-none md:rounded-br-lg md:border-l-0 md:border-r-2'} ${getAvailabilityDetails(project.availability).className}`}
         >
           {getAvailabilityDetails(project.availability).label}
         </span>
       )}
-      <div className="flex flex-col px-4 py-7 md:pb-7 md:pl-10 md:pt-10 md:group-even/container:pl-4 md:group-even/container:pr-10">
+      <div
+        className={`flex flex-col px-4 py-7 md:pb-7 md:pl-10 md:pt-10 ${isReversed ? 'md:pl-4 md:pr-10' : 'md:pl-10'}`}
+      >
         <h3 className="mt-2 text-3xl font-semibold md:mt-0">{project.name}</h3>
         <p className="mt-3 line-clamp-5 text-base md:line-clamp-6">
           {project.description}
@@ -123,7 +127,7 @@ const Project = ({ project }: { project: TProject }) => {
         width={500}
         height={900}
         priority
-        className="mx-auto max-w-56 rounded-t-lg border border-neutral-700 min-[380px]:max-w-80 min-[480px]:max-w-[26rem] sm:max-w-lg md:absolute md:-right-32 md:top-8 md:mx-0 md:w-[28.25rem] md:shadow-2xl md:transition-all md:duration-200 md:group-even/container:-left-32 md:group-hover/container:-rotate-3 md:group-hover/container:scale-[102%] md:group-hover/container:group-even/container:rotate-3"
+        className={`mx-auto max-w-56 rounded-t-lg border border-neutral-700 min-[380px]:max-w-80 min-[480px]:max-w-[26rem] sm:max-w-lg md:absolute md:top-8 md:w-[28.25rem] md:shadow-2xl md:transition-all md:duration-200 ${isReversed ? 'md:-left-32 md:group-hover/container:rotate-3' : 'md:-right-32 md:group-hover/container:-rotate-3'} md:group-hover/container:scale-[102%]`}
       />
     </div>
   )
