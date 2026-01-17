@@ -15,7 +15,6 @@ const CodingStatusClient = ({
   const [data, setData] = useState<WorkspaceStatus | null>(initialData)
   const [now, setNow] = useState<number | null>(null)
 
-  // 🟢 polling – aktualizuje DATA
   useEffect(() => {
     let firstRun = true
 
@@ -30,8 +29,7 @@ const CodingStatusClient = ({
           return
         }
 
-        const json = await res.json()
-        const next: WorkspaceStatus = json.status
+        const next: WorkspaceStatus = await res.json()
 
         const age = Date.now() - new Date(next.lastUpdate).getTime()
 
@@ -51,7 +49,6 @@ const CodingStatusClient = ({
     return () => clearInterval(interval)
   }, [])
 
-  // ⏱️ CLIENT-ONLY clock (PO mountu)
   useEffect(() => {
     setNow(Date.now())
 
@@ -69,7 +66,7 @@ const CodingStatusClient = ({
 
   const uptime =
     data && now !== null && !isStale
-      ? Math.floor((now - new Date(data.startup_time).getTime()) / 1000)
+      ? Math.floor((now - new Date(data.startupTime).getTime()) / 1000)
       : null
 
   return (
@@ -88,7 +85,7 @@ const CodingStatusClient = ({
             <span className="sm:w-1/3 sm:truncate">
               <strong>Project Name:</strong>
               <br />
-              {data.project_name}
+              {data.projectName}
             </span>
 
             <span className="sm:w-1/3 sm:truncate">
@@ -100,7 +97,7 @@ const CodingStatusClient = ({
             <span className="sm:w-1/3 sm:truncate">
               <strong>Active File:</strong>
               <br />
-              {data.active_file ?? '—'}
+              {data.activeFile ?? '—'}
             </span>
           </>
         ) : (
