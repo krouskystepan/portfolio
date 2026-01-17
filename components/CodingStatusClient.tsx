@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { WorkspaceStatus } from '@/constants/types'
 import { formatUptime } from '@/utils/utils'
+import { useAchievementContext } from '@/context/AchievementContext'
 
 const POLL_INTERVAL = 2000
 const STALE_AFTER = 65_000
@@ -14,6 +15,9 @@ const CodingStatusClient = ({
 }) => {
   const [data, setData] = useState<WorkspaceStatus | null>(initialData)
   const [now, setNow] = useState<number | null>(null)
+
+  const unlockedRef = useRef(false)
+  const { unlockAchievement } = useAchievementContext()
 
   useEffect(() => {
     let firstRun = true
@@ -68,6 +72,15 @@ const CodingStatusClient = ({
     data && now !== null && !isStale
       ? Math.floor((now - new Date(data.startupTime).getTime()) / 1000)
       : null
+
+  useEffect(() => {
+    if (!data || isStale) return
+    if (unlockedRef.current) return
+
+    unlockAchievement('caught-coding', 500)
+
+    unlockedRef.current = true
+  }, [data, isStale, unlockAchievement])
 
   return (
     <div className="z-10 pt-4 sm:pt-8 md:pt-12">
