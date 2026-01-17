@@ -5,20 +5,20 @@ export const BASE_URL = 'https://krouskystepan.com'
 export const NAV_LINKS = [
   {
     href: '/',
-    label: 'Home',
+    label: 'Home'
   },
   {
     href: '/#about',
-    label: 'About',
+    label: 'About'
   },
   {
     href: '/projects',
-    label: 'Projects',
+    label: 'Projects'
   },
   {
     href: '/#contact',
-    label: 'Contact',
-  },
+    label: 'Contact'
+  }
 ] as const
 
 export const SKILLS = [
@@ -34,7 +34,7 @@ export const SKILLS = [
   'Firebase',
   'Prisma',
   'MUI',
-  'Figma',
+  'Figma'
 ] as const
 
 export const SOCIALS = [
@@ -42,20 +42,20 @@ export const SOCIALS = [
     iconPath: '/svgs/github.svg',
     source: 'https://github.com/krouskystepan',
     label: 'GitHub Link',
-    achievementId: 'pet-cat',
+    achievementId: 'pet-cat'
   },
   {
     iconPath: '/svgs/mail.svg',
     source: 'mailto:stepan.krousky@seznam.cz',
     label: 'Mail',
-    achievementId: '',
+    achievementId: ''
   },
   {
     iconPath: '/svgs/linkedin.svg',
     source: 'https://www.linkedin.com/in/krouskystepan/',
     label: 'Linkedin Link',
-    achievementId: '',
-  },
+    achievementId: ''
+  }
 ] as const
 
 export const PROJECT_FILTERS = ['live', 'all', 'demo'] as const
@@ -69,7 +69,7 @@ export const PROJECTS: TProject[] = [
     image: '/images/projects/discord-gambling-bot.png',
     link: {
       type: 'internal',
-      url: '/projects/discord-gambling-hub',
+      url: '/projects/discord-gambling-hub'
     },
     tags: [
       'Next.js',
@@ -77,9 +77,9 @@ export const PROJECTS: TProject[] = [
       'Discord.js',
       'TypeScript',
       'Tailwind',
-      'MongoDB',
+      'MongoDB'
     ],
-    availability: 'live',
+    availability: 'live'
   },
   {
     id: 'wassa',
@@ -89,10 +89,10 @@ export const PROJECTS: TProject[] = [
     image: '/images/projects/wassa.png',
     link: {
       type: 'website',
-      url: 'https://wassa.eu',
+      url: 'https://wassa.eu'
     },
     tags: ['Next.js', 'Tailwind', 'Shadcn'],
-    availability: 'live',
+    availability: 'live'
   },
   {
     id: 'monkeycovers',
@@ -102,10 +102,10 @@ export const PROJECTS: TProject[] = [
     image: '/images/projects/monkeycovers.png',
     link: {
       type: 'external',
-      url: 'https://github.com/krouskystepan/monkeycovers',
+      url: 'https://github.com/krouskystepan/monkeycovers'
     },
     tags: ['Next.js', 'Postgres', 'Tailwind', 'Kinde'],
-    availability: 'demo',
+    availability: 'demo'
   },
   {
     id: 'sk-clothing-shop',
@@ -115,84 +115,79 @@ export const PROJECTS: TProject[] = [
     image: '/images/projects/sk-clothing.png',
     link: {
       type: 'external',
-      url: 'https://github.com/krouskystepan/sk_clothing-shop',
+      url: 'https://github.com/krouskystepan/sk_clothing-shop'
     },
     tags: ['Next.js', 'Shadcn', 'Tailwind', 'Stripe'],
-    availability: 'demo',
-  },
+    availability: 'demo'
+  }
 ] as const
 
 export const allAchievements = [
   {
     id: 'first-visit',
     title: 'Who Are You?',
-    description: 'You visited my portfolio for the first time!',
-  },
-  {
-    id: 'caught-coding',
-    title: 'Caught Me Live!',
-    description: 'You caught me coding live!',
+    description: 'You visited my portfolio for the first time!'
   },
   {
     id: 'say-hey',
     title: 'Said Hey!',
-    description: 'You greeted me with a "Hey!".',
+    description: 'You greeted me with a "Hey!".'
   },
   {
     id: 'night-owl',
     title: 'Night Owl',
-    description: 'You visited my portfolio between 12AM - 5AM.',
+    description: 'You visited my portfolio between 12AM - 5AM.'
   },
   {
     id: 'hidden-path',
     title: 'Off the Beaten Path',
-    description: 'You found a secret spot in my portfolio.',
+    description: 'You found a secret spot in my portfolio.'
   },
   {
     id: 'mui-skill',
     title: 'Where is MUI?',
-    description: 'You found the MUI skill!',
+    description: 'You found the MUI skill!'
   },
   {
     id: 'pet-cat',
     title: 'Cat Cuddler',
-    description: 'You petted the cat. A true animal lover!',
+    description: 'You petted the cat. A true animal lover!'
   },
   {
     id: 'inspector-of-gadgets',
     title: 'Inspector of Gadgets',
-    description: 'Visited the Tools page. Sleuth approved.',
+    description: 'Visited the Tools page. Sleuth approved.'
   },
   {
     id: 'pick-nose',
     title: 'The Forbidden Touch',
-    description: 'You dared to poke my nose. A bold move, indeed!',
+    description: 'You dared to poke my nose. A bold move, indeed!'
   },
   {
     id: 'clipboard-master',
     title: 'Copycat',
-    description: 'You copied some text from my portfolio.',
+    description: 'You copied some text from my portfolio.'
   },
   {
     id: 'patience-is-key',
     title: 'Patience is Key',
-    description: 'You waited for 30sec without any interaction.',
+    description: 'You waited for 30sec without any interaction.'
   },
   {
     id: 'patience-is-key-ii',
     title: 'Patience is Key II',
-    description: 'You waited for 5min without any interaction.',
+    description: 'You waited for 5min without any interaction.'
   },
   {
     id: 'gambling',
     title: 'Gambling Enthusiast',
-    description: 'You hovered over Gambling Bot. Feeling lucky?',
+    description: 'You hovered over Gambling Bot. Feeling lucky?'
   },
   {
     id: '404-hunter',
     title: 'Lost and Found',
-    description: 'You visited a non-existent page. Oops!',
-  },
+    description: 'You visited a non-existent page. Oops!'
+  }
 ] as const
 
 // TODOs
@@ -207,71 +202,70 @@ export const tools: TTools[] = [
     name: 'Text Compare / Diff Tool',
     path: 'text-diff',
     description:
-      'Compare two blocks of text and see the differences highlighted.',
+      'Compare two blocks of text and see the differences highlighted.'
   },
   {
     name: 'JSON Formatter & Validator',
     path: 'json-formatter',
-    description:
-      'Format, validate, and inspect JSON instantly in your browser.',
+    description: 'Format, validate, and inspect JSON instantly in your browser.'
   },
   {
     name: 'UUID Generator',
     path: 'uuid-generator',
-    description: 'Generate random UUIDs (v4) for identifiers or testing.',
+    description: 'Generate random UUIDs (v4) for identifiers or testing.'
   },
   {
     name: 'Color Converter',
     path: 'color-converter',
     description:
-      'Convert colors between HEX, RGB, HSL and more. Live color preview.',
+      'Convert colors between HEX, RGB, HSL and more. Live color preview.'
   },
   {
     name: 'Markdown Previewer',
     path: '',
-    description: 'Write and preview Markdown with instant rendering.',
+    description: 'Write and preview Markdown with instant rendering.'
   },
   {
     name: 'Alphabet Sorter',
     path: 'alphabet-sorter',
     description:
-      'Sort text alphabetically, with an option to automatically group related items together.',
+      'Sort text alphabetically, with an option to automatically group related items together.'
   },
   {
     name: 'CSV to JSON Converter',
     path: '',
     description:
-      'Convert CSV data into formatted JSON objects and arrays instantly.',
+      'Convert CSV data into formatted JSON objects and arrays instantly.'
   },
   {
     name: 'HTML / CSS / JS Minifier',
     path: '',
     description:
-      'Minify or beautify HTML, CSS, or JavaScript code to optimize performance.',
+      'Minify or beautify HTML, CSS, or JavaScript code to optimize performance.'
   },
   {
     name: 'Timestamp Converter',
     path: 'timestamp-converter',
-    description: 'Convert Unix timestamps to readable dates and vice versa.',
+    description: 'Convert Unix timestamps to readable dates and vice versa.'
   },
   {
     name: 'JSON to TS Type Generator',
     path: '',
     // path: 'json-to-ts',
     description:
-      'Convert JSON objects into clean, typed TypeScript interfaces with one click.',
+      'Convert JSON objects into clean, typed TypeScript interfaces with one click.'
   },
   {
     name: 'Text Case Converter',
     path: '',
     // path: 'case-converter',
     description:
-      'Convert text into camelCase, PascalCase, snake_case, uppercase, and more.',
+      'Convert text into camelCase, PascalCase, snake_case, uppercase, and more.'
   },
   {
     name: 'YAML to JSON Converter',
     path: '',
     // path: 'yaml-json',
-    description: 'Convert YAML data to JSON and JSON back to YAML instantly.',
-  },
+    description: 'Convert YAML data to JSON and JSON back to YAML instantly.'
+  }
 ]
