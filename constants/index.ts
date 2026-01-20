@@ -82,6 +82,27 @@ export const PROJECTS: TProject[] = [
     availability: 'live'
   },
   {
+    id: 'portfolio-platform',
+    name: 'Portfolio Platform',
+    description:
+      'A self-hosted Next.js portfolio platform running on a custom VPS with subdomain-based services, GitHub Actions deployment, and lightweight interactive features such as achievements and internal tools.',
+    image: '/images/projects/portfolio.png',
+    link: {
+      type: 'internal',
+      url: '/projects/portfolio-platform'
+    },
+    tags: [
+      'Next.js',
+      'TypeScript',
+      'Node.js',
+      'PM2',
+      'Nginx',
+      'VPS',
+      'GitHub Actions'
+    ],
+    availability: 'live'
+  },
+  {
     id: 'wassa',
     name: 'Wassa',
     description:

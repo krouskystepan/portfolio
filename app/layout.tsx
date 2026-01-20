@@ -12,7 +12,7 @@ const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' })
 export const metadata: Metadata = {
   title: {
     default: 'Home | Stepan Krousky',
-    template: '%s | Stepan Krousky',
+    template: '%s | Stepan Krousky'
   },
   description:
     'The personal portfolio of Stepan Krousky, showcasing projects, skills, and experience in full-stack development.',
@@ -27,13 +27,13 @@ export const metadata: Metadata = {
     'Web Development',
     'JavaScript',
     'TypeScript',
-    'Next.js',
+    'Next.js'
   ],
-  robots: 'index, follow',
+  robots: 'index, follow'
 }
 
 const RootLayout = ({
-  children,
+  children
 }: Readonly<{
   children: React.ReactNode
 }>) => {
