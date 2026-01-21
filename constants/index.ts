@@ -116,6 +116,26 @@ export const PROJECTS: TProject[] = [
     availability: 'live'
   },
   {
+    id: 'custom-overlays',
+    name: 'Streaming Overlays',
+    description:
+      'A real-time overlay platform built around a custom Node.js WebSocket server that aggregates events from Kick and StreamElements and delivers normalized live data to browser-based OBS overlays.',
+    image: '/images/projects/custom-overlays.png',
+    link: {
+      type: 'internal',
+      url: '/projects/custom-overlays'
+    },
+    tags: [
+      'Node.js',
+      'TypeScript',
+      'WebSockets',
+      'Express',
+      'Vite',
+      'Monorepo'
+    ],
+    availability: 'live'
+  },
+  {
     id: 'monkeycovers',
     name: 'MonkeyCovers',
     description:
