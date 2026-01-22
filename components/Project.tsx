@@ -120,18 +120,9 @@ const Project = ({ project, index }: { project: TProject; index: number }) => {
         </div>
       </div>
 
-      <Image
-        src={project.image}
-        alt={`Project ${project.name} image`}
-        quality={90}
-        width={500}
-        height={900}
-        priority
-        className={`mx-auto max-w-56 rounded-t-lg border border-neutral-700 min-[380px]:max-w-80 min-[480px]:max-w-[26rem] sm:max-w-lg md:absolute md:top-8 md:w-[28.25rem] md:shadow-2xl md:transition-all md:duration-200 ${isReversed ? 'md:-left-32 md:group-hover/container:rotate-3' : 'md:-right-32 md:group-hover/container:-rotate-3'} md:group-hover/container:scale-[102%]`}
-      />
-        <div
-          className={`relative mx-auto w-full max-w-56 min-[380px]:max-w-80 min-[480px]:max-w-[26rem] sm:max-w-lg md:absolute md:top-8 md:w-[28.25rem] ${isReversed ? 'md:-left-32' : 'md:-right-32'} md:shadow-2xl md:transition-all md:duration-200 md:group-hover/container:scale-[102%] ${isReversed ? 'md:group-hover/container:rotate-3' : 'md:group-hover/container:-rotate-3'}`}
-        >
+      <div
+        className={`relative mx-auto w-full max-w-56 min-[380px]:max-w-80 min-[480px]:max-w-[26rem] sm:max-w-lg md:absolute md:top-8 md:w-[28.25rem] ${isReversed ? 'md:-left-32' : 'md:-right-32'} md:shadow-2xl md:transition-all md:duration-200 md:group-hover/container:scale-[102%] ${isReversed ? 'md:group-hover/container:rotate-3' : 'md:group-hover/container:-rotate-3'}`}
+      >
         <div className="relative aspect-[4/5] overflow-hidden rounded-t-lg border border-neutral-700">
           <Image
             src={project.image}
