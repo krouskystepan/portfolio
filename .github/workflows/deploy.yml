@@ -16,5 +16,4 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            /usr/local/bin/deploy_portfolio.sh
+          script: sudo -u deploy /usr/local/bin/deploy/portfolio.sh
