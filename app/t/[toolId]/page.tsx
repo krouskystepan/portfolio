@@ -7,7 +7,7 @@ const getToolById = (toolId: string) => {
 }
 
 export async function generateMetadata({
-  params,
+  params
 }: {
   params: Promise<{ toolId: string }>
 }): Promise<Metadata> {
@@ -18,18 +18,18 @@ export async function generateMetadata({
 
   return {
     title: `${tool.name} | Stepan Krousky`,
-    description: tool?.description,
+    description: tool?.description
   }
 }
 
 export async function generateStaticParams() {
   return tools.map((tool) => ({
-    toolId: tool.path,
+    toolId: tool.path
   }))
 }
 
 const ToolsPage = async ({
-  params,
+  params
 }: {
   params: Promise<{ toolId: string }>
 }) => {
@@ -45,8 +45,7 @@ const ToolsPage = async ({
     'uuid-generator': () => import('@/components/tools/UuidGenerator'),
     'color-converter': () => import('@/components/tools/ColorConverter'),
     'alphabet-sorter': () => import('@/components/tools/AlphabetSorter'),
-    'timestamp-converter': () =>
-      import('@/components/tools/TimestampConverter'),
+    'timestamp-converter': () => import('@/components/tools/TimestampConverter')
   } as const
 
   const importer = toolMap[tool.path as keyof typeof toolMap]
