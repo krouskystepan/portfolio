@@ -129,6 +129,7 @@ const Project = ({ project, index }: { project: TProject; index: number }) => {
             alt={`Project ${project.name} image`}
             fill
             priority
+            unoptimized
             sizes="(min-width: 768px) 28.25rem, 100vw"
             className="object-cover"
           />
