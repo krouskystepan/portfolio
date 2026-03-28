@@ -280,7 +280,7 @@ export const tools: TTools[] = [
   },
   {
     name: 'HTML / CSS / JS Minifier',
-    path: '',
+    path: 'html-css-js-minifier',
     description:
       'Minify or beautify HTML, CSS, or JavaScript code to optimize performance.'
   },
