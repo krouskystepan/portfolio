@@ -274,7 +274,7 @@ export const tools: TTools[] = [
   },
   {
     name: 'CSV to JSON Converter',
-    path: '',
+    path: 'csv-to-json',
     description:
       'Convert CSV data into formatted JSON objects and arrays instantly.'
   },

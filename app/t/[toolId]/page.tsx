@@ -46,6 +46,7 @@ const ToolsPage = async ({
     'color-converter': () => import('@/components/tools/ColorConverter'),
     'alphabet-sorter': () => import('@/components/tools/AlphabetSorter'),
     'html-css-js-minifier': () => import('@/components/tools/CodeMinifier'),
+    'csv-to-json': () => import('@/components/tools/CsvToJson'),
     'timestamp-converter': () => import('@/components/tools/TimestampConverter')
   } as const
 
