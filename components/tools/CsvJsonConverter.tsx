@@ -176,7 +176,7 @@ const CsvJsonConverter = () => {
   }
 
   return (
-    <ToolLayout title="CSV to JSON Converter">
+    <ToolLayout title="CSV & JSON Converter">
       <div className="flex flex-col rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm">
         <TextAreaWithLineNumbers
           value={input}
