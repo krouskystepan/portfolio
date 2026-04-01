@@ -6,7 +6,7 @@ import TextAreaWithLineNumbers from '../TextAreaWithLineNumbers'
 import ToolLayout from './ToolLayout'
 import { ClearButton, PrimaryButton, SecondaryButton } from './ToolButtons'
 
-const CsvToJson = () => {
+const CsvJsonConverter = () => {
   const [input, setInput] = useState('')
   const [output, setOutput] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -52,7 +52,7 @@ const CsvToJson = () => {
     return rows
   }
 
-  const convertToJSON = () => {
+  const convertCSVToJSON = () => {
     if (!input.trim()) return
 
     try {
@@ -81,6 +81,57 @@ const CsvToJson = () => {
       })
 
       setOutput(JSON.stringify(json, null, 2))
+      setError(null)
+    } catch (err) {
+      setError((err as Error).message)
+      setOutput('')
+    }
+  }
+
+  const convertJsonToCSV = () => {
+    if (!input.trim()) return
+
+    try {
+      const parsed = JSON.parse(input)
+
+      if (!Array.isArray(parsed)) {
+        throw new Error('JSON must be an array of objects')
+      }
+
+      if (parsed.length === 0) {
+        throw new Error('JSON array is empty')
+      }
+
+      // collect ALL unique keys (important)
+      const headers = Array.from(
+        new Set(parsed.flatMap((obj) => Object.keys(obj)))
+      )
+
+      const escapeValue = (value: unknown): string => {
+        if (value === null || value === undefined) return ''
+
+        let str = String(value)
+
+        // escape quotes
+        str = str.replace(/"/g, '""')
+
+        // wrap if needed
+        if (/[",\n]/.test(str)) {
+          str = `"${str}"`
+        }
+
+        return str
+      }
+
+      const rows = parsed.map((obj) =>
+        headers.map((header) => escapeValue(obj[header]))
+      )
+
+      const csv = [headers.join(','), ...rows.map((row) => row.join(','))].join(
+        '\n'
+      )
+
+      setOutput(csv)
       setError(null)
     } catch (err) {
       setError((err as Error).message)
@@ -134,20 +185,12 @@ const CsvToJson = () => {
         />
 
         <div className="mt-4 flex flex-wrap justify-end gap-3">
-          <button
-            onClick={convertToJSON}
-            disabled={!input.trim()}
-            className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-              !input.trim()
-                ? 'cursor-not-allowed bg-neutral-800 text-neutral-500 opacity-60'
-                : 'bg-custom_blue text-white hover:opacity-90'
-            }`}
-          >
-            Convert
-          </button>
+          <PrimaryButton onClick={convertCSVToJSON} disabled={!input.trim()}>
+            CSV to JSON
+          </PrimaryButton>
 
-          <PrimaryButton onClick={convertToJSON} disabled={!input.trim()}>
-            Convert
+          <PrimaryButton onClick={convertJsonToCSV} disabled={!input.trim()}>
+            JSON to CSV
           </PrimaryButton>
 
           <SecondaryButton onClick={handleMinify} disabled={!input.trim()}>
@@ -191,4 +234,4 @@ const CsvToJson = () => {
   )
 }
 
-export default CsvToJson
+export default CsvJsonConverter
