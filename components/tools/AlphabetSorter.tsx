@@ -4,6 +4,7 @@ import { useAchievementContext } from '@/context/AchievementContext'
 import { useState, useMemo } from 'react'
 import TextAreaWithLineNumbers from '@/components/TextAreaWithLineNumbers'
 import ToolLayout from './ToolLayout'
+import { ClearButton, PrimaryButton } from './ToolButtons'
 
 type SortOptions = { addSpacing: boolean }
 
@@ -94,24 +95,11 @@ const AlphabetSorter = () => {
           </label>
 
           <div className="flex gap-2">
-            <button
-              onClick={sortLines}
-              disabled={isDisabled}
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-                isDisabled
-                  ? 'cursor-not-allowed bg-neutral-800 text-neutral-500 opacity-60'
-                  : 'bg-custom_blue text-white hover:opacity-90'
-              }`}
-            >
+            <PrimaryButton onClick={sortLines} disabled={isDisabled}>
               Sort
-            </button>
+            </PrimaryButton>
 
-            <button
-              onClick={clearAll}
-              className="rounded-lg bg-red-800 px-4 py-2 text-sm font-medium text-neutral-100 transition hover:bg-red-700"
-            >
-              Clear
-            </button>
+            <ClearButton onClick={clearAll}>Clear</ClearButton>
           </div>
         </div>
       </div>

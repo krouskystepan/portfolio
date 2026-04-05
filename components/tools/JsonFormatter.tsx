@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import TextAreaWithLineNumbers from '../TextAreaWithLineNumbers'
 import ToolLayout from './ToolLayout'
+import { ClearButton, PrimaryButton, SecondaryButton } from './ToolButtons'
 
 const JsonFormatter = () => {
   const [input, setInput] = useState('')
@@ -165,36 +166,15 @@ const JsonFormatter = () => {
           )}
 
           <div className="flex flex-1 flex-wrap justify-end gap-3">
-            <button
-              onClick={handleFormat}
-              disabled={!input.trim()}
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-                !input.trim()
-                  ? 'cursor-not-allowed bg-neutral-800 text-neutral-500 opacity-60'
-                  : 'bg-custom_blue text-white hover:opacity-90'
-              }`}
-            >
+            <PrimaryButton onClick={handleFormat} disabled={!input.trim()}>
               Format
-            </button>
+            </PrimaryButton>
 
-            <button
-              onClick={handleMinify}
-              disabled={!input.trim()}
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-                !input.trim()
-                  ? 'cursor-not-allowed bg-neutral-800 text-neutral-500 opacity-60'
-                  : 'bg-neutral-800 text-neutral-100 hover:bg-neutral-700'
-              }`}
-            >
+            <SecondaryButton onClick={handleMinify} disabled={!input.trim()}>
               Minify
-            </button>
+            </SecondaryButton>
 
-            <button
-              onClick={handleClear}
-              className="rounded-lg bg-red-800 px-4 py-2 text-sm font-medium text-neutral-100 transition hover:bg-red-700"
-            >
-              Clear
-            </button>
+            <ClearButton onClick={handleClear}>Clear</ClearButton>
           </div>
         </div>
       </div>

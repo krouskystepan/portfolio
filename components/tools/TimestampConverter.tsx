@@ -3,6 +3,7 @@
 import { useAchievementContext } from '@/context/AchievementContext'
 import { useState } from 'react'
 import ToolLayout from './ToolLayout'
+import { ClearButton, PrimaryButton } from './ToolButtons'
 
 type TimestampResult = {
   readable?: string
@@ -43,7 +44,7 @@ const TimestampConverter = () => {
 
         setResult({
           readable: date.toISOString(),
-          timestamp: ts,
+          timestamp: ts
         })
       } else {
         const date = new Date(value)
@@ -57,7 +58,7 @@ const TimestampConverter = () => {
 
         setResult({
           readable: date.toISOString(),
-          timestamp: ts,
+          timestamp: ts
         })
       }
 
@@ -164,24 +165,11 @@ const TimestampConverter = () => {
           </div>
 
           <div className="flex gap-3">
-            <button
-              onClick={handleConvert}
-              disabled={!input.trim()}
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-                !input.trim()
-                  ? 'cursor-not-allowed bg-neutral-800 text-neutral-500 opacity-60'
-                  : 'bg-custom_blue text-white hover:opacity-90'
-              }`}
-            >
+            <PrimaryButton onClick={handleConvert} disabled={!input.trim()}>
               Convert
-            </button>
+            </PrimaryButton>
 
-            <button
-              onClick={handleClear}
-              className="rounded-lg bg-red-800 px-4 py-2 text-sm font-medium text-neutral-100 transition hover:bg-red-700"
-            >
-              Clear
-            </button>
+            <ClearButton onClick={handleClear}>Clear</ClearButton>
           </div>
         </div>
       </div>

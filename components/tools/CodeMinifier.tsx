@@ -9,6 +9,7 @@ import prettier from 'prettier/standalone'
 import parserBabel from 'prettier/plugins/babel'
 import parserHtml from 'prettier/plugins/html'
 import parserPostcss from 'prettier/plugins/postcss'
+import { ClearButton, PrimaryButton, SecondaryButton } from './ToolButtons'
 
 type CodeType = 'html' | 'css' | 'javascript'
 
@@ -123,28 +124,15 @@ const CodeMinifier = () => {
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <button
-              onClick={handleFormat}
-              disabled={!input.trim()}
-              className="rounded-lg bg-custom_blue px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
-            >
+            <PrimaryButton onClick={handleFormat} disabled={!input.trim()}>
               Beautify
-            </button>
+            </PrimaryButton>
 
-            <button
-              onClick={handleMinify}
-              disabled={!input.trim()}
-              className="rounded-lg bg-neutral-800 px-4 py-2 text-sm font-medium text-neutral-100 hover:bg-neutral-700 disabled:opacity-50"
-            >
+            <SecondaryButton onClick={handleMinify} disabled={!input.trim()}>
               Minify
-            </button>
+            </SecondaryButton>
 
-            <button
-              onClick={handleClear}
-              className="rounded-lg bg-red-800 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
-            >
-              Clear
-            </button>
+            <ClearButton onClick={handleClear}>Clear</ClearButton>
           </div>
         </div>
       </div>

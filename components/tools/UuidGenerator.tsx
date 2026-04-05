@@ -14,7 +14,7 @@ const UuidGenerator = () => {
   const [uuids, setUuids] = useState<string[]>([])
   const [options, setOptions] = useState<UUIDOptions>({
     uppercase: false,
-    noHyphens: false,
+    noHyphens: false
   })
   const [copiedStates, setCopiedStates] = useState<boolean[]>([])
 
@@ -126,7 +126,7 @@ const UuidGenerator = () => {
               </label>
             </div>
 
-            <div className="flex grow gap-2">
+            <div className="flex grow gap-2 py-0.5">
               <button
                 onClick={handleGenerate}
                 disabled={isGenerateDisabled}

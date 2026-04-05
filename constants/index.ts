@@ -273,8 +273,8 @@ export const tools: TTools[] = [
       'Sort text alphabetically, with an option to automatically group related items together.'
   },
   {
-    name: 'CSV to JSON Converter',
-    path: '',
+    name: 'CSV & JSON Converter',
+    path: 'csv-json-converter',
     description:
       'Convert CSV data into formatted JSON objects and arrays instantly.'
   },
