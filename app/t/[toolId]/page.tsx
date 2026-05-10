@@ -48,7 +48,8 @@ const ToolsPage = async ({
     'html-css-js-minifier': () => import('@/components/tools/CodeMinifier'),
     'csv-json-converter': () => import('@/components/tools/CsvJsonConverter'),
     'timestamp-converter': () => import('@/components/tools/TimestampConverter'),
-    'case-converter': () => import('@/components/tools/TextCaseConverter')
+    'case-converter': () => import('@/components/tools/TextCaseConverter'),
+    'json-to-ts': () => import('@/components/tools/JsonToTsGenerator')
   } as const
 
   const importer = toolMap[tool.path as keyof typeof toolMap]

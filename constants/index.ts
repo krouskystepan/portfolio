@@ -284,8 +284,7 @@ export const tools: TTools[] = [
   },
   {
     name: 'JSON to TS Type Generator',
-    path: '',
-    // path: 'json-to-ts',
+    path: 'json-to-ts',
     description:
       'Convert JSON objects into clean, typed TypeScript interfaces with one click.'
   },
