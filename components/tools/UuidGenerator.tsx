@@ -89,23 +89,24 @@ const UuidGenerator = () => {
   return (
     <ToolLayout title="UUID Generator">
       <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-5 backdrop-blur-sm">
-        <div className="flex justify-between gap-4">
-          <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
+          <div className="flex w-fit max-w-full flex-col gap-1 self-start sm:self-end">
             <label htmlFor="count" className="mb-1 text-sm text-neutral-300">
               Count (1–500)
             </label>
             <input
               id="count"
+              type="number"
               value={count}
               min={1}
               max={500}
               onChange={(e) => setCount(parseInt(e.target.value) || 0)}
-              className="h-10 w-full rounded-lg border border-white/10 bg-neutral-900 px-3 text-sm text-neutral-100 outline-none focus:ring-2 focus:ring-custom_blue"
+              className="h-10 w-28 max-w-full rounded-lg border border-white/10 bg-neutral-900 px-3 text-sm text-neutral-100 outline-none focus:ring-2 focus:ring-custom_blue"
             />
           </div>
 
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-center gap-2">
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:min-w-[min(100%,280px)]">
+            <div className="flex flex-wrap items-center justify-start gap-x-4 gap-y-2 sm:justify-end">
               <label className="flex items-center gap-2 text-sm text-neutral-300">
                 <input
                   type="checkbox"
@@ -126,11 +127,11 @@ const UuidGenerator = () => {
               </label>
             </div>
 
-            <div className="flex grow gap-2 py-0.5">
+            <div className="flex w-full gap-2 py-0.5 sm:justify-end">
               <button
                 onClick={handleGenerate}
                 disabled={isGenerateDisabled}
-                className={`flex-1 rounded-lg px-4 text-sm font-medium transition ${
+                className={`min-h-10 flex-1 rounded-lg px-4 text-sm font-medium transition sm:max-w-[160px] sm:flex-none ${
                   isGenerateDisabled
                     ? 'cursor-not-allowed bg-neutral-800 text-neutral-500 opacity-60'
                     : 'bg-custom_blue text-white hover:opacity-90'
@@ -141,7 +142,7 @@ const UuidGenerator = () => {
 
               <button
                 onClick={handleClear}
-                className="rounded-lg bg-red-800 px-4 text-sm font-medium text-neutral-100 transition hover:bg-red-700"
+                className="min-h-10 flex-1 rounded-lg bg-red-800 px-4 text-sm font-medium text-neutral-100 transition hover:bg-red-700 sm:max-w-[120px] sm:flex-none"
               >
                 Clear
               </button>
@@ -150,14 +151,14 @@ const UuidGenerator = () => {
         </div>
       </div>
 
-      <div className="overflow-auto rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 text-neutral-100 backdrop-blur-sm">
-        <div className="mb-4 flex items-center justify-between">
+      <div className="overflow-auto rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-4 text-neutral-100 backdrop-blur-sm sm:p-6">
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-lg font-semibold text-white">Generated UUIDs</h2>
           {uuids.length > 0 && (
             <button
               onClick={handleCopyAll}
               disabled={copiedStates[uuids.length]}
-              className={`h-8 rounded-lg bg-neutral-800 px-3 py-1.5 text-xs font-medium transition ${
+              className={`h-8 w-full shrink-0 rounded-lg bg-neutral-800 px-3 py-1.5 text-xs font-medium transition sm:w-auto ${
                 copiedStates[uuids.length]
                   ? 'cursor-default text-custom_blue'
                   : 'text-neutral-100 hover:bg-neutral-700 active:scale-95'
@@ -173,18 +174,19 @@ const UuidGenerator = () => {
             {uuids.map((id, index) => (
               <li
                 key={index}
-                className="flex items-center justify-between rounded-md border border-white/10 bg-neutral-900/60 px-3 py-2"
+                className="flex flex-row items-center gap-3 rounded-md border border-white/10 bg-neutral-900/60 px-3 py-2"
               >
-                <span className="truncate">{id}</span>
-                <div className="ml-3 flex items-center gap-2">
-                  <button
-                    onClick={() => handleLocalCopy(index, id)}
-                    disabled={copiedStates[index]}
-                    className={`rounded-md bg-neutral-800 px-2 py-1 text-xs  transition ${copiedStates[index] ? 'cursor-default text-custom_blue' : 'text-neutral-300 hover:bg-neutral-700 active:scale-95'}`}
-                  >
-                    {copiedStates[index] ? 'Copied!' : 'Copy'}
-                  </button>
-                </div>
+                <span className="min-w-0 flex-1 break-all font-mono text-xs leading-snug sm:text-sm">
+                  {id}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handleLocalCopy(index, id)}
+                  disabled={copiedStates[index]}
+                  className={`shrink-0 whitespace-nowrap rounded-md bg-neutral-800 px-2 py-1 text-xs transition ${copiedStates[index] ? 'cursor-default text-custom_blue' : 'text-neutral-300 hover:bg-neutral-700 active:scale-95'}`}
+                >
+                  {copiedStates[index] ? 'Copied!' : 'Copy'}
+                </button>
               </li>
             ))}
           </ul>

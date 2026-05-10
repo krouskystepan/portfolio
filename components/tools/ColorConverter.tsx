@@ -44,8 +44,8 @@ const ColorConverter = () => {
 
   return (
     <ToolLayout title="Color Converter">
-      <div className="mb-8 flex flex-col rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm">
-        <h2 className="mb-2 text-lg font-semibold text-neutral-100">
+      <div className="mb-8 flex flex-col rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-4 backdrop-blur-sm sm:p-6">
+        <h2 className="mb-2 text-base font-semibold leading-snug text-neutral-100 sm:text-lg">
           Enter any color (HEX, RGB, RGBA, HSL, HSLA, HWB, LAB, LCH, or name)
         </h2>
 
@@ -53,10 +53,10 @@ const ColorConverter = () => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Enter your color here..."
-          className="rounded-lg bg-neutral-900 p-3 text-sm text-neutral-100 outline-none focus:ring-2 focus:ring-custom_blue"
+          className="w-full rounded-lg border border-white/10 bg-neutral-900 p-3 text-sm text-neutral-100 outline-none focus:ring-2 focus:ring-custom_blue"
         />
 
-        <div className="mt-4 flex flex-wrap justify-end gap-3">
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-end sm:[&>button]:w-auto [&>button]:w-full">
           <PrimaryButton onClick={handleConvert} disabled={!input.trim()}>
             Convert
           </PrimaryButton>
@@ -65,7 +65,7 @@ const ColorConverter = () => {
         </div>
       </div>
 
-      <div className="overflow-auto rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm">
+      <div className="overflow-auto rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-4 backdrop-blur-sm sm:p-6">
         <h2 className="mb-2 text-lg font-semibold text-white">Result</h2>
 
         {error ? (
@@ -86,20 +86,21 @@ const ColorConverter = () => {
               }}
             />
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {Object.entries(converted).map(([label, val]) => (
                 <div
                   key={label}
-                  className="flex items-center justify-between gap-4 rounded-lg border border-white/5 bg-neutral-900/40 p-2"
+                  className="flex flex-row items-center gap-3 rounded-lg border border-white/5 bg-neutral-900/40 p-2"
                 >
-                  <div className="flex-1 truncate">
+                  <div className="min-w-0 flex-1 text-xs leading-snug sm:text-sm">
                     <span className="font-medium text-white">{label}:</span>{' '}
-                    <span className="text-neutral-300">{val}</span>
+                    <span className="break-all text-neutral-300">{val}</span>
                   </div>
                   <button
+                    type="button"
                     onClick={() => handleCopy(val, label)}
                     disabled={copiedStates[label]}
-                    className={`rounded-md px-2 py-1 text-xs font-medium transition ${
+                    className={`shrink-0 whitespace-nowrap rounded-md px-2 py-1 text-xs font-medium transition ${
                       copiedStates[label]
                         ? 'cursor-default bg-neutral-900 text-custom_blue'
                         : 'bg-neutral-800 text-neutral-100 hover:bg-neutral-700 active:scale-95'

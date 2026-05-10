@@ -47,7 +47,8 @@ const ToolsPage = async ({
     'alphabet-sorter': () => import('@/components/tools/AlphabetSorter'),
     'html-css-js-minifier': () => import('@/components/tools/CodeMinifier'),
     'csv-json-converter': () => import('@/components/tools/CsvJsonConverter'),
-    'timestamp-converter': () => import('@/components/tools/TimestampConverter')
+    'timestamp-converter': () => import('@/components/tools/TimestampConverter'),
+    'case-converter': () => import('@/components/tools/TextCaseConverter')
   } as const
 
   const importer = toolMap[tool.path as keyof typeof toolMap]

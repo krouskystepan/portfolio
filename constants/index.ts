@@ -231,13 +231,6 @@ export const allAchievements = [
   }
 ] as const
 
-// TODOs
-/*
-- Responsive uuid gen
-- Responsive color conv
-- Filter out invalid achievements via edited local storage
-*/
-
 export const tools: TTools[] = [
   {
     name: 'Text Compare / Diff Tool',
@@ -298,8 +291,7 @@ export const tools: TTools[] = [
   },
   {
     name: 'Text Case Converter',
-    path: '',
-    // path: 'case-converter',
+    path: 'case-converter',
     description:
       'Convert text into camelCase, PascalCase, snake_case, uppercase, and more.'
   },

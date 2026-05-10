@@ -15,6 +15,23 @@ const AchievementContext = createContext<AchievementContextType | undefined>(
   undefined
 )
 
+function parseStoredUnlockedIds(raw: string | null): AchievementID[] {
+  if (!raw?.trim()) return []
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(raw)
+  } catch {
+    return []
+  }
+  if (!Array.isArray(parsed)) return []
+  const ids = parsed.filter(
+    (id): id is AchievementID =>
+      typeof id === 'string' &&
+      allAchievements.some((ach) => ach.id === id)
+  )
+  return [...new Set(ids)]
+}
+
 export const AchievementProvider = ({ children }: { children: ReactNode }) => {
   const [unlockedIds, setUnlockedIds] = useState<AchievementID[]>([])
   const [isInitialized, setIsInitialized] = useState(false)
@@ -23,27 +40,27 @@ export const AchievementProvider = ({ children }: { children: ReactNode }) => {
     if (typeof window === 'undefined') return
 
     const storedUnlocked = localStorage.getItem('unlockedAchievements')
-    const parsed: AchievementID[] = storedUnlocked
-      ? JSON.parse(storedUnlocked)
-      : []
-
-    const validIds = parsed.filter((id) =>
-      allAchievements.some((ach) => ach.id === id)
-    )
+    const validIds = parseStoredUnlockedIds(storedUnlocked)
 
     setUnlockedIds(validIds)
 
-    if (validIds.length !== parsed.length) {
-      localStorage.setItem('unlockedAchievements', JSON.stringify(validIds))
+    const normalized = JSON.stringify(validIds)
+    if (
+      storedUnlocked !== null &&
+      storedUnlocked !== normalized
+    ) {
+      localStorage.setItem('unlockedAchievements', normalized)
     }
 
     setIsInitialized(true)
   }, [])
 
   const unlockAchievement = (id: AchievementID, delay = 0) => {
-    if (unlockedIds.includes(id)) return
+    if (!allAchievements.some((ach) => ach.id === id)) return
 
     setUnlockedIds((prev) => {
+      if (prev.includes(id)) return prev
+
       const newUnlocked = [...prev, id]
       localStorage.setItem('unlockedAchievements', JSON.stringify(newUnlocked))
 
@@ -77,13 +94,8 @@ export const AchievementProvider = ({ children }: { children: ReactNode }) => {
         getAchievementById: (id) =>
           allAchievements.find((ach) => ach.id === id),
         resetAllAchievements,
-        getUnlockedAchievementsAsPercent: () => {
-          const validUnlockedCount = unlockedIds.filter((id) =>
-            allAchievements.some((ach) => ach.id === id)
-          ).length
-
-          return (validUnlockedCount / allAchievements.length) * 100
-        },
+        getUnlockedAchievementsAsPercent: () =>
+          (unlockedIds.length / allAchievements.length) * 100,
         isInitialized,
       }}
     >
