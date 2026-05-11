@@ -48,10 +48,7 @@ const TextAreaWithLineNumbers = ({
     for (let i = 0; i < logicalLines.length; i++) {
       const segment = logicalLines[i]
       mirror.textContent = segment.length === 0 ? '\u00a0' : segment
-      const contentH = Math.max(
-        lh,
-        mirror.offsetHeight - mpt - mpb
-      )
+      const contentH = Math.max(lh, mirror.offsetHeight - mpt - mpb)
       heights.push(contentH)
     }
 
@@ -80,14 +77,14 @@ const TextAreaWithLineNumbers = ({
 
   const rootClass = fillParent
     ? 'relative flex h-full min-h-0 min-w-0 overflow-hidden rounded-lg border border-white/10 bg-neutral-900/50 font-mono text-sm text-neutral-100 focus-within:ring-2 focus-within:ring-custom_blue'
-    : 'relative flex max-h-96 min-h-64 min-w-0 rounded-lg border border-white/10 bg-neutral-900/50 font-mono text-sm text-neutral-100 focus-within:ring-2 focus-within:ring-custom_blue'
+    : 'relative flex min-h-64 max-h-96 min-w-0 overflow-hidden rounded-lg border border-white/10 bg-neutral-900/50 font-mono text-sm text-neutral-100 focus-within:ring-2 focus-within:ring-custom_blue'
 
   return (
     <div className={rootClass}>
       <div
         ref={lineNumberRef}
-        className="h-full min-h-0 shrink-0 select-none overflow-y-auto overflow-x-hidden border-r border-white/10 bg-neutral-950/40 px-2 py-3 text-right text-neutral-500 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        style={{ minWidth: '2.5rem' }}
+        className="min-h-0 shrink-0 select-none self-stretch overflow-y-auto overflow-x-hidden border-r border-white/10 bg-neutral-950/40 py-3 pl-2 pr-2.5 text-right tabular-nums text-neutral-500 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{ minWidth: '2.75rem' }}
       >
         {lineHeights.map((rowHeight, i) => (
           <div
@@ -103,7 +100,7 @@ const TextAreaWithLineNumbers = ({
           </div>
         ))}
       </div>
-      <div className="relative h-full min-h-0 min-w-0 flex-1">
+      <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
         <textarea
           ref={textAreaRef}
           value={value}
@@ -111,7 +108,7 @@ const TextAreaWithLineNumbers = ({
           onScroll={handleScroll}
           placeholder={placeholder}
           spellCheck={false}
-          className="box-border size-full min-h-0 resize-none overflow-y-auto break-words bg-transparent p-3 outline-none"
+          className="box-border min-h-0 w-full flex-1 resize-none overflow-y-auto break-words bg-transparent p-3 outline-none"
         />
         <div
           ref={mirrorRef}
