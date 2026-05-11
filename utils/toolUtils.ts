@@ -1,15 +1,30 @@
 import { TOOL_SECTION_ORDER, TOOL_SECTION_LABELS } from '@/constants'
 import { TTools } from '@/constants/types'
 
+function searchHaystacks(tool: TTools): string[] {
+  const keywords = tool.keywords ?? []
+  return [
+    tool.name.toLowerCase(),
+    tool.description.toLowerCase(),
+    tool.path.toLowerCase(),
+    ...keywords.map((k) => k.toLowerCase())
+  ]
+}
+
+function normalizeSearchTokens(query: string): string[] {
+  return query
+    .toLowerCase()
+    .split(/[\s/&,|/-]+/)
+    .map((t) => t.replace(/^[^a-z0-9]+|[^a-z0-9]+$/g, ''))
+    .filter(Boolean)
+}
+
 export function matchesToolQuery(tool: TTools, query: string): boolean {
-  const q = query.trim().toLowerCase()
-  if (!q) return true
-  return (
-    tool.name.toLowerCase().includes(q) ||
-    tool.description.toLowerCase().includes(q) ||
-    tool.path.toLowerCase().includes(q) ||
-    tool.keywords.some((k) => k.toLowerCase().includes(q))
-  )
+  const tokens = normalizeSearchTokens(query)
+  if (tokens.length === 0) return true
+
+  const haystacks = searchHaystacks(tool)
+  return tokens.every((token) => haystacks.some((h) => h.includes(token)))
 }
 
 export function groupToolsBySection(list: TTools[]) {

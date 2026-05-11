@@ -1,4 +1,5 @@
 import ToolsDirectoryClient from '@/components/tools/ToolsDirectoryClient'
+import { tools } from '@/constants/tools'
 
 export default function ToolsPage() {
   return (
@@ -6,7 +7,7 @@ export default function ToolsPage() {
       <h2 className="mb-8 text-center text-4xl font-bold lg:text-5xl">
         Utility Tools
       </h2>
-      <ToolsDirectoryClient />
+      <ToolsDirectoryClient tools={tools} />
     </div>
   )
 }

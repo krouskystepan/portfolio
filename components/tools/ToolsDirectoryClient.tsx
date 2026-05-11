@@ -3,32 +3,44 @@
 import Link from 'next/link'
 import { ArrowRight, Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { tools } from '@/constants'
+import type { TTools } from '@/constants/types'
 import { matchesToolQuery, groupToolsBySection } from '@/utils/toolUtils'
 
-export default function ToolsDirectoryClient() {
+type ToolsDirectoryClientProps = {
+  tools: TTools[]
+}
+
+export default function ToolsDirectoryClient({
+  tools
+}: ToolsDirectoryClientProps) {
   const [query, setQuery] = useState('')
 
   const filtered = useMemo(
     () => tools.filter((t) => matchesToolQuery(t, query)),
-    [query]
+    [query, tools]
   )
 
   const sections = useMemo(() => groupToolsBySection(filtered), [filtered])
 
   return (
-    <div className="space-y-8">
-      <div className="relative mx-auto max-w-xl">
-        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-neutral-500" />
+    <div className="relative z-20 space-y-8">
+      <form
+        role="search"
+        className="relative z-30 mx-auto max-w-xl"
+        onSubmit={(e) => e.preventDefault()}
+      >
+        <Search className="pointer-events-none absolute left-3 top-1/2 z-10 size-4 -translate-y-1/2 text-neutral-400" />
         <input
-          type="search"
+          type="text"
+          inputMode="search"
+          autoComplete="off"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search tools by name, path, or keyword…"
           aria-label="Filter tools"
-          className="ring-custom_blue/40 w-full rounded-xl border border-white/10 bg-neutral-900/80 py-3 pl-10 pr-4 text-sm text-neutral-100 outline-none placeholder:text-neutral-500 focus:ring-2"
+          className="ring-custom_blue/40 relative z-20 w-full rounded-xl border border-white/10 bg-neutral-900/80 py-3 pl-10 pr-4 text-sm text-neutral-100 outline-none placeholder:text-neutral-500 focus:ring-2"
         />
-      </div>
+      </form>
 
       {filtered.length === 0 ? (
         <p className="text-center text-sm text-neutral-400">
