@@ -10,6 +10,19 @@ import parserBabel from 'prettier/plugins/babel'
 import parserHtml from 'prettier/plugins/html'
 import parserPostcss from 'prettier/plugins/postcss'
 import { ClearButton, PrimaryButton, SecondaryButton } from './ToolButtons'
+import {
+  toolEmptyHintClass,
+  toolErrorBoxClass,
+  toolPanelClass,
+  toolPreOutputClass,
+  toolResultHeaderRowClass,
+  toolResultPanelClass,
+  toolSectionTitleClass,
+  toolSegmentBarClass,
+  toolSegmentTabClass,
+  toolToolbarBetweenClass,
+  ToolCopyButton
+} from './toolUi'
 
 type CodeType = 'html' | 'css' | 'javascript'
 
@@ -99,24 +112,21 @@ const CodeMinifier = () => {
 
   return (
     <ToolLayout title="HTML / CSS / JS Minifier">
-      <div className="flex flex-col rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm">
+      <div className={toolPanelClass}>
         <TextAreaWithLineNumbers
           value={input}
           setValue={setInput}
           placeholder="Paste your code here..."
         />
 
-        <div className="mt-4 flex flex-wrap justify-between gap-3">
-          <div className="flex gap-2">
+        <div className={toolToolbarBetweenClass}>
+          <div className={`${toolSegmentBarClass} w-full sm:w-auto`}>
             {(['html', 'css', 'javascript'] as CodeType[]).map((type) => (
               <button
                 key={type}
+                type="button"
                 onClick={() => setCodeType(type)}
-                className={`rounded-lg px-3 py-1.5 text-sm transition ${
-                  codeType === type
-                    ? 'bg-custom_blue text-white'
-                    : 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700'
-                }`}
+                className={toolSegmentTabClass(codeType === type)}
               >
                 {type.toUpperCase()}
               </button>
@@ -137,35 +147,23 @@ const CodeMinifier = () => {
         </div>
       </div>
 
-      <div className="overflow-auto rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm">
-        <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-white">Result</h2>
+      <div className={toolResultPanelClass}>
+        <div className={toolResultHeaderRowClass}>
+          <h2 className={toolSectionTitleClass}>Result</h2>
 
-          {output && (
-            <button
-              onClick={handleCopy}
-              disabled={copied}
-              className={`h-8 rounded-lg bg-neutral-800 px-3 py-1.5 text-xs font-medium transition ${
-                copied
-                  ? 'cursor-default text-custom_blue'
-                  : 'text-neutral-100 hover:bg-neutral-700 active:scale-95'
-              }`}
-            >
-              {copied ? 'Copied!' : 'Copy'}
-            </button>
-          )}
+          {output ? (
+            <ToolCopyButton copied={copied} onClick={handleCopy} />
+          ) : null}
         </div>
 
         {error ? (
-          <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 font-mono text-sm text-red-400">
+          <div className={toolErrorBoxClass}>
             <strong>Error:</strong> {error}
           </div>
         ) : output ? (
-          <pre className="w-full overflow-auto rounded-lg border border-white/10 bg-neutral-900/50 p-3 font-mono text-sm text-neutral-100">
-            {output}
-          </pre>
+          <pre className={toolPreOutputClass}>{output}</pre>
         ) : (
-          <div className="text-sm text-neutral-400">
+          <div className={toolEmptyHintClass}>
             Output will appear here after processing.
           </div>
         )}

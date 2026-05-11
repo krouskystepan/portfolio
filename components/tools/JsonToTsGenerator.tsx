@@ -5,6 +5,22 @@ import { useEffect, useState } from 'react'
 import TextAreaWithLineNumbers from '../TextAreaWithLineNumbers'
 import ToolLayout from './ToolLayout'
 import { ClearButton, PrimaryButton } from './ToolButtons'
+import {
+  toolEmptyHintClass,
+  toolErrorBoxClass,
+  toolHintMetaClass,
+  toolLabelClass,
+  toolPanelClass,
+  toolPreOutputClass,
+  toolResultHeaderRowClass,
+  toolResultPanelClass,
+  toolSectionTitleClass,
+  toolSegmentBarClass,
+  toolSegmentTabClass,
+  toolToolbarEndClass,
+  toolInputClass,
+  ToolCopyButton
+} from './toolUi'
 
 type PrimitiveShape = { kind: 'primitive'; ts: string }
 type ArrayShape = { kind: 'array'; items: Shape[] }
@@ -282,7 +298,7 @@ function generateTypeScript(
   return ctx.decls.join('\n\n')
 }
 
-const JsonToTsGenerator = () => {
+const JsonToTsGenerator = ({ embedded = false }: { embedded?: boolean } = {}) => {
   const [input, setInput] = useState('')
   const [rootName, setRootName] = useState('Root')
   const [exportMode, setExportMode] = useState<TsExportMode>('automatic')
@@ -332,22 +348,23 @@ const JsonToTsGenerator = () => {
   }
 
   return (
-    <ToolLayout title="JSON to TS Type Generator">
-      <div className="flex flex-col rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm">
-        <label className="mb-2 text-sm font-medium text-neutral-300">
+    <ToolLayout title="JSON to TS Type Generator" embedded={embedded}>
+      <div className={toolPanelClass}>
+        <label className={toolLabelClass} htmlFor="json-ts-root-name">
           Root type name
         </label>
         <input
+          id="json-ts-root-name"
           type="text"
           value={rootName}
           onChange={(e) => setRootName(e.target.value)}
           placeholder="Root"
-          className="ring-custom_blue/40 mb-4 rounded-lg border border-white/10 bg-neutral-900/80 px-3 py-2 font-mono text-sm text-neutral-100 outline-none placeholder:text-neutral-500 focus:ring-2"
+          className={`${toolInputClass} mb-4 font-mono`}
         />
 
-        <p className="mb-2 text-sm font-medium text-neutral-300">Output style</p>
+        <p className={toolLabelClass}>Output style</p>
         <div
-          className="mb-2 flex flex-wrap gap-2 rounded-xl border border-white/10 bg-neutral-900/50 p-1"
+          className={`${toolSegmentBarClass} mb-2 flex flex-wrap`}
           role="group"
           aria-label="TypeScript output style"
         >
@@ -356,17 +373,13 @@ const JsonToTsGenerator = () => {
               key={opt.value}
               type="button"
               onClick={() => setExportMode(opt.value)}
-              className={`flex-1 rounded-lg px-3 py-2 text-center text-xs font-medium transition sm:text-sm ${
-                exportMode === opt.value
-                  ? 'bg-custom_blue text-white shadow-sm'
-                  : 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
-              }`}
+              className={`flex-1 ${toolSegmentTabClass(exportMode === opt.value)}`}
             >
               {opt.label}
             </button>
           ))}
         </div>
-        <p className="mb-4 text-xs leading-relaxed text-neutral-500">
+        <p className={`${toolHintMetaClass} mb-4`}>
           {
             EXPORT_MODE_OPTIONS.find((o) => o.value === exportMode)?.hint
           }
@@ -378,7 +391,7 @@ const JsonToTsGenerator = () => {
           placeholder='Paste JSON here, e.g. { "id": 1, "name": "Ada" }'
         />
 
-        <div className="mt-4 flex flex-wrap justify-end gap-3">
+        <div className={toolToolbarEndClass}>
           <PrimaryButton onClick={handleGenerate} disabled={!input.trim()}>
             Generate types
           </PrimaryButton>
@@ -386,36 +399,23 @@ const JsonToTsGenerator = () => {
         </div>
       </div>
 
-      <div className="overflow-auto rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm">
-        <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-white">TypeScript</h2>
+      <div className={toolResultPanelClass}>
+        <div className={toolResultHeaderRowClass}>
+          <h2 className={toolSectionTitleClass}>TypeScript</h2>
 
-          {output && (
-            <button
-              type="button"
-              onClick={handleCopy}
-              disabled={copied}
-              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
-                copied
-                  ? 'cursor-default bg-neutral-900 text-custom_blue'
-                  : 'bg-neutral-800 text-neutral-100 hover:bg-neutral-700 active:scale-95'
-              }`}
-            >
-              {copied ? 'Copied!' : 'Copy'}
-            </button>
-          )}
+          {output ? (
+            <ToolCopyButton copied={copied} onClick={handleCopy} />
+          ) : null}
         </div>
 
         {error ? (
-          <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 font-mono text-sm text-red-400">
+          <div className={toolErrorBoxClass}>
             <strong>Error:</strong> {error}
           </div>
         ) : output ? (
-          <pre className="relative w-full overflow-auto rounded-lg border border-white/10 bg-neutral-900/50 p-3 font-mono text-sm text-neutral-100">
-            {output}
-          </pre>
+          <pre className={toolPreOutputClass}>{output}</pre>
         ) : (
-          <div className="text-sm text-neutral-400">
+          <div className={toolEmptyHintClass}>
             Generated interfaces and types will appear here.
           </div>
         )}

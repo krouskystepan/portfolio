@@ -6,8 +6,21 @@ import { toast } from 'sonner'
 import TextAreaWithLineNumbers from '../TextAreaWithLineNumbers'
 import ToolLayout from './ToolLayout'
 import { ClearButton, PrimaryButton, SecondaryButton } from './ToolButtons'
+import {
+  toolAccentButtonClass,
+  toolEmptyHintClass,
+  toolErrorBoxClass,
+  toolPanelClass,
+  toolPreOutputClass,
+  toolResultHeaderRowClass,
+  toolResultPanelClass,
+  toolSectionTitleClass,
+  toolToolbarBetweenClass,
+  toolFlexEndButtonsClass,
+  ToolCopyButton
+} from './toolUi'
 
-const JsonFormatter = () => {
+const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
   const [input, setInput] = useState('')
   const [formatted, setFormatted] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -147,25 +160,26 @@ const JsonFormatter = () => {
   }
 
   return (
-    <ToolLayout title="JSON Formatter & Validator">
-      <div className="flex flex-col rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm">
+    <ToolLayout title="JSON Formatter & Validator" embedded={embedded}>
+      <div className={toolPanelClass}>
         <TextAreaWithLineNumbers
           value={input}
           setValue={setInput}
           placeholder="Paste your JSON here..."
         />
 
-        <div className="mt-4 flex flex-wrap justify-between gap-3">
+        <div className={toolToolbarBetweenClass}>
           {(quoteError || unquotedKeyError || trailingCommaError) && (
             <button
+              type="button"
               onClick={handleFixIssues}
-              className="rounded-lg bg-amber-600/90 px-4 py-2 text-sm font-medium text-white transition hover:bg-amber-500"
+              className={toolAccentButtonClass}
             >
               Fix Common Issues
             </button>
           )}
 
-          <div className="flex flex-1 flex-wrap justify-end gap-3">
+          <div className={toolFlexEndButtonsClass}>
             <PrimaryButton onClick={handleFormat} disabled={!input.trim()}>
               Format
             </PrimaryButton>
@@ -179,27 +193,17 @@ const JsonFormatter = () => {
         </div>
       </div>
 
-      <div className="overflow-auto rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm">
-        <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-white">Result</h2>
+      <div className={toolResultPanelClass}>
+        <div className={toolResultHeaderRowClass}>
+          <h2 className={toolSectionTitleClass}>Result</h2>
 
-          {formatted && (
-            <button
-              onClick={handleCopy}
-              disabled={copied}
-              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
-                copied
-                  ? 'cursor-default bg-neutral-900 text-custom_blue'
-                  : 'bg-neutral-800 text-neutral-100 hover:bg-neutral-700 active:scale-95'
-              }`}
-            >
-              {copied ? 'Copied!' : 'Copy'}
-            </button>
-          )}
+          {formatted ? (
+            <ToolCopyButton copied={copied} onClick={handleCopy} />
+          ) : null}
         </div>
 
         {error ? (
-          <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 font-mono text-sm text-red-400">
+          <div className={toolErrorBoxClass}>
             <strong>Error:</strong> {error}
             <div className="mt-2 text-amber-400">
               {quoteError && (
@@ -229,11 +233,11 @@ const JsonFormatter = () => {
           </div>
         ) : formatted ? (
           <pre
-            className="relative w-full overflow-auto overflow-x-hidden text-wrap rounded-lg border border-white/10 bg-neutral-900/50 p-3 font-mono text-sm text-neutral-100"
+            className={`${toolPreOutputClass} overflow-x-hidden text-wrap`}
             dangerouslySetInnerHTML={{ __html: highlightJson(formatted) }}
           />
         ) : (
-          <div className="text-sm text-neutral-400">
+          <div className={toolEmptyHintClass}>
             Output will appear here after formatting.
           </div>
         )}

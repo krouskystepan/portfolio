@@ -3,6 +3,19 @@
 import { useAchievementContext } from '@/context/AchievementContext'
 import { useState, useMemo, useEffect } from 'react'
 import ToolLayout from './ToolLayout'
+import { ClearButton, PrimaryButton } from './ToolButtons'
+import {
+  toolCheckboxLabelClass,
+  toolEmptyHintClass,
+  toolNumberInputClass,
+  toolPanelClass,
+  toolResultHeaderRowClass,
+  toolResultPanelClass,
+  toolSectionTitleClass,
+  toolToolbarEndClass,
+  toolValueRowClass,
+  ToolCopyButton
+} from './toolUi'
 
 type UUIDOptions = {
   uppercase: boolean
@@ -88,10 +101,10 @@ const UuidGenerator = () => {
 
   return (
     <ToolLayout title="UUID Generator">
-      <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-5 backdrop-blur-sm">
+      <div className={toolPanelClass}>
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
           <div className="flex w-fit max-w-full flex-col gap-1 self-start sm:self-end">
-            <label htmlFor="count" className="mb-1 text-sm text-neutral-300">
+            <label htmlFor="count" className={toolCheckboxLabelClass}>
               Count (1–500)
             </label>
             <input
@@ -101,13 +114,13 @@ const UuidGenerator = () => {
               min={1}
               max={500}
               onChange={(e) => setCount(parseInt(e.target.value) || 0)}
-              className="h-10 w-28 max-w-full rounded-lg border border-white/10 bg-neutral-900 px-3 text-sm text-neutral-100 outline-none focus:ring-2 focus:ring-custom_blue"
+              className={toolNumberInputClass}
             />
           </div>
 
           <div className="flex w-full flex-col gap-3 sm:w-auto sm:min-w-[min(100%,280px)]">
             <div className="flex flex-wrap items-center justify-start gap-x-4 gap-y-2 sm:justify-end">
-              <label className="flex items-center gap-2 text-sm text-neutral-300">
+              <label className={toolCheckboxLabelClass}>
                 <input
                   type="checkbox"
                   checked={options.uppercase}
@@ -116,7 +129,7 @@ const UuidGenerator = () => {
                 />
                 Uppercase
               </label>
-              <label className="flex items-center gap-2 text-sm text-neutral-300">
+              <label className={toolCheckboxLabelClass}>
                 <input
                   type="checkbox"
                   checked={options.noHyphens}
@@ -127,73 +140,46 @@ const UuidGenerator = () => {
               </label>
             </div>
 
-            <div className="flex w-full gap-2 py-0.5 sm:justify-end">
-              <button
-                onClick={handleGenerate}
-                disabled={isGenerateDisabled}
-                className={`min-h-10 flex-1 rounded-lg px-4 text-sm font-medium transition sm:max-w-[160px] sm:flex-none ${
-                  isGenerateDisabled
-                    ? 'cursor-not-allowed bg-neutral-800 text-neutral-500 opacity-60'
-                    : 'bg-custom_blue text-white hover:opacity-90'
-                }`}
-              >
+            <div className={`${toolToolbarEndClass} !mt-0 flex-col sm:flex-row`}>
+              <PrimaryButton onClick={handleGenerate} disabled={isGenerateDisabled}>
                 Generate
-              </button>
+              </PrimaryButton>
 
-              <button
-                onClick={handleClear}
-                className="min-h-10 flex-1 rounded-lg bg-red-800 px-4 text-sm font-medium text-neutral-100 transition hover:bg-red-700 sm:max-w-[120px] sm:flex-none"
-              >
-                Clear
-              </button>
+              <ClearButton onClick={handleClear}>Clear</ClearButton>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="overflow-auto rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-4 text-neutral-100 backdrop-blur-sm sm:p-6">
-        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-lg font-semibold text-white">Generated UUIDs</h2>
-          {uuids.length > 0 && (
-            <button
+      <div className={toolResultPanelClass}>
+        <div className={toolResultHeaderRowClass}>
+          <h2 className={toolSectionTitleClass}>Generated UUIDs</h2>
+          {uuids.length > 0 ? (
+            <ToolCopyButton
+              copied={Boolean(copiedStates[uuids.length])}
               onClick={handleCopyAll}
-              disabled={copiedStates[uuids.length]}
-              className={`h-8 w-full shrink-0 rounded-lg bg-neutral-800 px-3 py-1.5 text-xs font-medium transition sm:w-auto ${
-                copiedStates[uuids.length]
-                  ? 'cursor-default text-custom_blue'
-                  : 'text-neutral-100 hover:bg-neutral-700 active:scale-95'
-              }`}
-            >
-              {copiedStates[uuids.length] ? 'Copied All!' : 'Copy All'}
-            </button>
-          )}
+              idleLabel="Copy all"
+              copiedLabel="Copied all!"
+            />
+          ) : null}
         </div>
 
         {uuids.length > 0 ? (
           <ul className="grid grid-cols-1 gap-2 font-mono text-sm sm:grid-cols-2">
             {uuids.map((id, index) => (
-              <li
-                key={index}
-                className="flex flex-row items-center gap-3 rounded-md border border-white/10 bg-neutral-900/60 px-3 py-2"
-              >
+              <li key={index} className={toolValueRowClass}>
                 <span className="min-w-0 flex-1 break-all font-mono text-xs leading-snug sm:text-sm">
                   {id}
                 </span>
-                <button
-                  type="button"
+                <ToolCopyButton
+                  copied={Boolean(copiedStates[index])}
                   onClick={() => handleLocalCopy(index, id)}
-                  disabled={copiedStates[index]}
-                  className={`shrink-0 whitespace-nowrap rounded-md bg-neutral-800 px-2 py-1 text-xs transition ${copiedStates[index] ? 'cursor-default text-custom_blue' : 'text-neutral-300 hover:bg-neutral-700 active:scale-95'}`}
-                >
-                  {copiedStates[index] ? 'Copied!' : 'Copy'}
-                </button>
+                />
               </li>
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-neutral-400">
-            Generated UUIDs will appear here.
-          </p>
+          <p className={toolEmptyHintClass}>Generated UUIDs will appear here.</p>
         )}
       </div>
     </ToolLayout>

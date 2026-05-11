@@ -4,6 +4,19 @@ import { useAchievementContext } from '@/context/AchievementContext'
 import { useState } from 'react'
 import ToolLayout from './ToolLayout'
 import { ClearButton, PrimaryButton } from './ToolButtons'
+import {
+  toolAccentButtonClass,
+  toolEmptyHintClass,
+  toolErrorBoxClass,
+  toolInputClass,
+  toolPanelClass,
+  toolResultPanelClass,
+  toolSectionTitleClass,
+  toolSoftButtonClass,
+  toolToolbarBetweenClass,
+  toolValueRowClass,
+  ToolCopyButton
+} from './toolUi'
 
 type TimestampResult = {
   readable?: string
@@ -117,8 +130,8 @@ const TimestampConverter = () => {
 
   return (
     <ToolLayout title="Timestamp Converter">
-      <div className="mb-8 flex flex-col rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm">
-        <h2 className="mb-2 text-lg font-semibold text-neutral-100">
+      <div className={toolPanelClass}>
+        <h2 className={`mb-3 ${toolSectionTitleClass}`}>
           Enter a Unix timestamp or a date string
         </h2>
 
@@ -126,45 +139,40 @@ const TimestampConverter = () => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="e.g. 1700000000 or 2024-01-01T12:00:00"
-          className="rounded-lg bg-neutral-900 p-3 text-sm text-neutral-100 outline-none focus:ring-2 focus:ring-custom_blue"
+          className={toolInputClass}
         />
 
-        <div className="mt-4 flex flex-wrap justify-between gap-3">
-          <div className="flex gap-3">
+        <div className={toolToolbarBetweenClass}>
+          <div className="flex flex-wrap gap-3">
             <button
+              type="button"
               onClick={() => {
                 const now = Math.floor(Date.now() / 1000)
                 setInput(String(now))
               }}
-              className="rounded-lg bg-neutral-800 px-4 py-2 text-sm font-medium text-neutral-100 transition hover:bg-neutral-700"
+              className={toolSoftButtonClass}
             >
               Now
             </button>
             <button
-              onClick={() => handleAddTime(60 * 60)} // +1 hour
+              type="button"
+              onClick={() => handleAddTime(60 * 60)}
               disabled={!input.trim()}
-              className={`rounded-lg bg-amber-600/90 px-4 py-2 text-sm font-medium text-white transition ${
-                !input.trim()
-                  ? 'cursor-not-allowed opacity-60'
-                  : 'hover:bg-amber-500'
-              }`}
+              className={toolAccentButtonClass}
             >
               +1 hour
             </button>
             <button
-              onClick={() => handleAddTime(60 * 60 * 24)} // +1 day
+              type="button"
+              onClick={() => handleAddTime(60 * 60 * 24)}
               disabled={!input.trim()}
-              className={`rounded-lg bg-amber-600/90 px-4 py-2 text-sm font-medium text-white transition ${
-                !input.trim()
-                  ? 'cursor-not-allowed opacity-60'
-                  : 'hover:bg-amber-500'
-              }`}
+              className={toolAccentButtonClass}
             >
               +1 day
             </button>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <PrimaryButton onClick={handleConvert} disabled={!input.trim()}>
               Convert
             </PrimaryButton>
@@ -174,11 +182,11 @@ const TimestampConverter = () => {
         </div>
       </div>
 
-      <div className="overflow-auto rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 text-neutral-100 backdrop-blur-sm">
-        <h2 className="mb-4 text-lg font-semibold text-white">Result</h2>
+      <div className={toolResultPanelClass}>
+        <h2 className={`mb-3 ${toolSectionTitleClass}`}>Result</h2>
 
         {error ? (
-          <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-400">
+          <div className={toolErrorBoxClass}>
             <strong>Error:</strong> {error}
           </div>
         ) : Object.keys(result).length > 0 ? (
@@ -201,9 +209,7 @@ const TimestampConverter = () => {
             </div>
           </div>
         ) : (
-          <p className="text-sm text-neutral-400">
-            Converted values will appear here.
-          </p>
+          <p className={toolEmptyHintClass}>Converted values will appear here.</p>
         )}
       </div>
     </ToolLayout>
@@ -219,22 +225,12 @@ type ResultRowProps = {
 }
 
 const ResultRow = ({ index, label, value, onCopy, copied }: ResultRowProps) => (
-  <div className="flex items-center justify-between gap-4 rounded-lg border border-white/5 bg-neutral-900/40 p-3">
-    <div className="flex-1 truncate">
+  <div className={toolValueRowClass}>
+    <div className="min-w-0 flex-1">
       <span className="font-medium text-white">{label}: </span>
-      <span className="text-neutral-300">{value}</span>
+      <span className="break-all text-neutral-300">{value}</span>
     </div>
-    <button
-      onClick={() => onCopy(index, value)}
-      disabled={copied}
-      className={`rounded-md px-2 py-1 text-xs font-medium transition ${
-        copied
-          ? 'cursor-default bg-neutral-900 text-custom_blue'
-          : 'bg-neutral-800 text-neutral-100 hover:bg-neutral-700 active:scale-95'
-      }`}
-    >
-      {copied ? 'Copied!' : 'Copy'}
-    </button>
+    <ToolCopyButton copied={copied} onClick={() => onCopy(index, value)} />
   </div>
 )
 

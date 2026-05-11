@@ -5,6 +5,15 @@ import { useMemo, useState } from 'react'
 import TextAreaWithLineNumbers from '@/components/TextAreaWithLineNumbers'
 import ToolLayout from './ToolLayout'
 import { ClearButton } from './ToolButtons'
+import {
+  toolEmptyHintClass,
+  toolMediumCardClass,
+  toolPanelClass,
+  toolResultPanelClass,
+  toolSectionTitleClass,
+  toolToolbarEndClass,
+  ToolCopyButton
+} from './toolUi'
 
 type CaseVariant = {
   label: string
@@ -130,50 +139,38 @@ const TextCaseConverter = () => {
 
   return (
     <ToolLayout title="Text Case Converter">
-      <div className="flex flex-col rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-5 backdrop-blur-sm">
+      <div className={toolPanelClass}>
         <TextAreaWithLineNumbers
           value={input}
           setValue={setInput}
           placeholder="Type or paste text here. Each line is converted separately for case styles."
         />
 
-        <div className="mt-4 flex justify-end gap-2">
+        <div className={toolToolbarEndClass}>
           <ClearButton onClick={clearAll}>Clear</ClearButton>
         </div>
       </div>
 
-      <div className="overflow-auto rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-4 backdrop-blur-sm sm:p-6">
-        <h2 className="mb-4 text-lg font-semibold text-white">Results</h2>
+      <div className={toolResultPanelClass}>
+        <h2 className={`mb-3 ${toolSectionTitleClass}`}>Results</h2>
 
         {!hasAnyOutput ? (
-          <p className="text-sm text-neutral-400">
+          <p className={toolEmptyHintClass}>
             Conversions appear here as you type.
           </p>
         ) : (
           <ul className="grid grid-cols-1 gap-3 font-mono text-sm lg:grid-cols-2">
             {variants.map(({ label, value }) => (
-              <li
-                key={label}
-                className="flex flex-col gap-2 rounded-xl border border-white/10 bg-neutral-900/60 p-4"
-              >
+              <li key={label} className={toolMediumCardClass}>
                 <div className="flex items-start justify-between gap-3">
                   <span className="shrink-0 text-xs font-medium uppercase tracking-wide text-neutral-400">
                     {label}
                   </span>
-                  <button
-                    type="button"
+                  <ToolCopyButton
+                    copied={copiedKey === label}
                     onClick={() => copyValue(label, value)}
                     disabled={!value}
-                    className={`shrink-0 rounded-md bg-neutral-800 px-2 py-1 text-xs transition ${
-                      !value
-                        ? 'cursor-not-allowed text-neutral-600'
-                        : copiedKey === label
-                          ? 'cursor-default text-custom_blue'
-                          : 'text-neutral-300 hover:bg-neutral-700 active:scale-95'
-                    }`}
-                  >
-                    {copiedKey === label ? 'Copied!' : 'Copy'}
-                  </button>
+                  />
                 </div>
                 <pre className="max-h-40 overflow-auto whitespace-pre-wrap break-all text-[13px] leading-relaxed text-neutral-200">
                   {value}

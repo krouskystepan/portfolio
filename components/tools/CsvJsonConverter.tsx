@@ -5,8 +5,42 @@ import { useAchievementContext } from '@/context/AchievementContext'
 import TextAreaWithLineNumbers from '../TextAreaWithLineNumbers'
 import ToolLayout from './ToolLayout'
 import { ClearButton, PrimaryButton, SecondaryButton } from './ToolButtons'
+import {
+  toolEmptyHintClass,
+  toolErrorBoxClass,
+  toolPanelClass,
+  toolPreOutputClass,
+  toolResultHeaderRowClass,
+  toolResultPanelClass,
+  toolSectionTitleClass,
+  toolToolbarEndClass,
+  ToolCopyButton
+} from './toolUi'
 
-const CsvJsonConverter = () => {
+/** Header row + data rows → objects; validates column count per row. */
+function csvRowsToObjects(rows: string[][]): Record<string, string>[] {
+  if (rows.length < 2) {
+    throw new Error('CSV must contain header and at least one row')
+  }
+
+  const headers = rows[0]
+
+  return rows.slice(1).map((row, rowIndex) => {
+    if (row.length !== headers.length) {
+      throw new Error(
+        `Row ${rowIndex + 2} has ${row.length} columns, expected ${headers.length}`
+      )
+    }
+
+    const obj: Record<string, string> = {}
+    headers.forEach((header, i) => {
+      obj[header] = row[i]
+    })
+    return obj
+  })
+}
+
+const CsvJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) => {
   const [input, setInput] = useState('')
   const [output, setOutput] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -57,28 +91,7 @@ const CsvJsonConverter = () => {
 
     try {
       const rows = parseCSV(input)
-
-      if (rows.length < 2) {
-        throw new Error('CSV must contain header and at least one row')
-      }
-
-      const headers = rows[0]
-
-      const json = rows.slice(1).map((row, rowIndex) => {
-        if (row.length !== headers.length) {
-          throw new Error(
-            `Row ${rowIndex + 2} has ${row.length} columns, expected ${headers.length}`
-          )
-        }
-
-        const obj: Record<string, string> = {}
-
-        headers.forEach((header, i) => {
-          obj[header] = row[i]
-        })
-
-        return obj
-      })
+      const json = csvRowsToObjects(rows)
 
       setOutput(JSON.stringify(json, null, 2))
       setError(null)
@@ -144,15 +157,7 @@ const CsvJsonConverter = () => {
 
     try {
       const rows = parseCSV(input)
-      const headers = rows[0]
-
-      const json = rows.slice(1).map((row) => {
-        const obj: Record<string, string> = {}
-        headers.forEach((header, i) => {
-          obj[header] = row[i]
-        })
-        return obj
-      })
+      const json = csvRowsToObjects(rows)
 
       setOutput(JSON.stringify(json))
       setError(null)
@@ -176,15 +181,15 @@ const CsvJsonConverter = () => {
   }
 
   return (
-    <ToolLayout title="CSV & JSON Converter">
-      <div className="flex flex-col rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm">
+    <ToolLayout title="CSV & JSON Converter" embedded={embedded}>
+      <div className={toolPanelClass}>
         <TextAreaWithLineNumbers
           value={input}
           setValue={setInput}
           placeholder="Paste your CSV here..."
         />
 
-        <div className="mt-4 flex flex-wrap justify-end gap-3">
+        <div className={toolToolbarEndClass}>
           <PrimaryButton onClick={convertCSVToJSON} disabled={!input.trim()}>
             CSV to JSON
           </PrimaryButton>
@@ -201,31 +206,23 @@ const CsvJsonConverter = () => {
         </div>
       </div>
 
-      <div className="overflow-auto rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm">
-        <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-white">Result</h2>
+      <div className={toolResultPanelClass}>
+        <div className={toolResultHeaderRowClass}>
+          <h2 className={toolSectionTitleClass}>Result</h2>
 
-          {output && (
-            <button
-              onClick={handleCopy}
-              disabled={copied}
-              className="rounded-lg bg-neutral-800 px-3 py-1.5 text-xs text-white hover:bg-neutral-700"
-            >
-              {copied ? 'Copied!' : 'Copy'}
-            </button>
-          )}
+          {output ? (
+            <ToolCopyButton copied={copied} onClick={handleCopy} />
+          ) : null}
         </div>
 
         {error ? (
-          <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 font-mono text-sm text-red-400">
+          <div className={toolErrorBoxClass}>
             <strong>Error:</strong> {error}
           </div>
         ) : output ? (
-          <pre className="w-full overflow-auto rounded-lg border border-white/10 bg-neutral-900/50 p-3 font-mono text-sm text-neutral-100">
-            {output}
-          </pre>
+          <pre className={toolPreOutputClass}>{output}</pre>
         ) : (
-          <div className="text-sm text-neutral-400">
+          <div className={toolEmptyHintClass}>
             Output will appear here after conversion.
           </div>
         )}

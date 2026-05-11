@@ -5,6 +5,16 @@ import { ColorFormats, parseColor } from '@/utils/colorUtils'
 import { useState } from 'react'
 import ToolLayout from './ToolLayout'
 import { ClearButton, PrimaryButton } from './ToolButtons'
+import {
+  toolEmptyHintClass,
+  toolErrorBoxClass,
+  toolInputClass,
+  toolPanelClass,
+  toolResultPanelClass,
+  toolSectionTitleClass,
+  toolValueRowClass,
+  ToolCopyButton
+} from './toolUi'
 
 const ColorConverter = () => {
   const [input, setInput] = useState('')
@@ -44,8 +54,8 @@ const ColorConverter = () => {
 
   return (
     <ToolLayout title="Color Converter">
-      <div className="mb-8 flex flex-col rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-4 backdrop-blur-sm sm:p-6">
-        <h2 className="mb-2 text-base font-semibold leading-snug text-neutral-100 sm:text-lg">
+      <div className={toolPanelClass}>
+        <h2 className={`mb-3 text-base leading-snug sm:text-lg ${toolSectionTitleClass}`}>
           Enter any color (HEX, RGB, RGBA, HSL, HSLA, HWB, LAB, LCH, or name)
         </h2>
 
@@ -53,10 +63,10 @@ const ColorConverter = () => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Enter your color here..."
-          className="w-full rounded-lg border border-white/10 bg-neutral-900 p-3 text-sm text-neutral-100 outline-none focus:ring-2 focus:ring-custom_blue"
+          className={toolInputClass}
         />
 
-        <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-end sm:[&>button]:w-auto [&>button]:w-full">
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-end">
           <PrimaryButton onClick={handleConvert} disabled={!input.trim()}>
             Convert
           </PrimaryButton>
@@ -65,11 +75,11 @@ const ColorConverter = () => {
         </div>
       </div>
 
-      <div className="overflow-auto rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-4 backdrop-blur-sm sm:p-6">
-        <h2 className="mb-2 text-lg font-semibold text-white">Result</h2>
+      <div className={toolResultPanelClass}>
+        <h2 className={`mb-3 ${toolSectionTitleClass}`}>Result</h2>
 
         {error ? (
-          <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-400">
+          <div className={toolErrorBoxClass}>
             <strong>Error:</strong> {error}
           </div>
         ) : Object.keys(converted).length > 0 ? (
@@ -88,32 +98,21 @@ const ColorConverter = () => {
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {Object.entries(converted).map(([label, val]) => (
-                <div
-                  key={label}
-                  className="flex flex-row items-center gap-3 rounded-lg border border-white/5 bg-neutral-900/40 p-2"
-                >
+                <div key={label} className={toolValueRowClass}>
                   <div className="min-w-0 flex-1 text-xs leading-snug sm:text-sm">
                     <span className="font-medium text-white">{label}:</span>{' '}
                     <span className="break-all text-neutral-300">{val}</span>
                   </div>
-                  <button
-                    type="button"
+                  <ToolCopyButton
+                    copied={Boolean(copiedStates[label])}
                     onClick={() => handleCopy(val, label)}
-                    disabled={copiedStates[label]}
-                    className={`shrink-0 whitespace-nowrap rounded-md px-2 py-1 text-xs font-medium transition ${
-                      copiedStates[label]
-                        ? 'cursor-default bg-neutral-900 text-custom_blue'
-                        : 'bg-neutral-800 text-neutral-100 hover:bg-neutral-700 active:scale-95'
-                    }`}
-                  >
-                    {copiedStates[label] ? 'Copied!' : 'Copy'}
-                  </button>
+                  />
                 </div>
               ))}
             </div>
           </div>
         ) : (
-          <div className="text-sm text-neutral-400">
+          <div className={toolEmptyHintClass}>
             Converted values will appear here.
           </div>
         )}

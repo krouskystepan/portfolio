@@ -40,16 +40,18 @@ const ToolsPage = async ({
   if (!tool) notFound()
 
   const toolMap = {
+    'data-workbench': () => import('@/components/tools/DataWorkbench'),
     'text-diff': () => import('@/components/tools/TextDifference'),
-    'json-formatter': () => import('@/components/tools/JsonFormatter'),
     'uuid-generator': () => import('@/components/tools/UuidGenerator'),
     'color-converter': () => import('@/components/tools/ColorConverter'),
     'alphabet-sorter': () => import('@/components/tools/AlphabetSorter'),
     'html-css-js-minifier': () => import('@/components/tools/CodeMinifier'),
-    'csv-json-converter': () => import('@/components/tools/CsvJsonConverter'),
     'timestamp-converter': () => import('@/components/tools/TimestampConverter'),
     'case-converter': () => import('@/components/tools/TextCaseConverter'),
-    'json-to-ts': () => import('@/components/tools/JsonToTsGenerator')
+    'regex-tester': () => import('@/components/tools/RegexTester'),
+    'slug-generator': () => import('@/components/tools/SlugGenerator'),
+    'url-encoder-decoder': () => import('@/components/tools/UrlEncoderDecoder'),
+    'jwt-decoder': () => import('@/components/tools/JwtDecoder')
   } as const
 
   const importer = toolMap[tool.path as keyof typeof toolMap]
