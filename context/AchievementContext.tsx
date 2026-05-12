@@ -1,6 +1,7 @@
 'use client'
 
 import { allAchievements } from '@/constants'
+import { FIRST_VISIT_DAY_STORAGE_KEY } from '@/constants/achievements'
 import { AchievementContextType, AchievementID } from '@/constants/types'
 import {
   createContext,
@@ -84,6 +85,7 @@ export const AchievementProvider = ({ children }: { children: ReactNode }) => {
   const resetAllAchievements = () => {
     setUnlockedIds([])
     localStorage.removeItem('unlockedAchievements')
+    localStorage.removeItem(FIRST_VISIT_DAY_STORAGE_KEY)
   }
 
   return (

@@ -10,26 +10,11 @@ const nextConfig: NextConfig = {
       {
         source: '/gambling-bot',
         destination: 'https://discord.gg/T9B9pk9a4a',
-        permanent: false, // 302 — use true if you want a 301
-      },
-      {
-        source: '/t/json-formatter',
-        destination: '/t/data-workbench',
-        permanent: true
-      },
-      {
-        source: '/t/csv-json-converter',
-        destination: '/t/data-workbench?tab=csv',
-        permanent: true
-      },
-      {
-        source: '/t/json-to-ts',
-        destination: '/t/data-workbench?tab=ts',
-        permanent: true
+        permanent: false // 302 — use true if you want a 301
       }
     ]
-  },
-  
+  }
+
   // Debugging purposes
   //   reactStrictMode: true,
 }

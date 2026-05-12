@@ -3,11 +3,16 @@ import { useEffect, useRef } from 'react'
 
 export const useIdleAchievement = () => {
   const firstIdleTimer = useRef<NodeJS.Timeout | null>(null)
-  const secondIdleTimer = useRef<NodeJS.Timeout | null>(null)
+  const hasHadVisibleSession = useRef(false)
+  const awaitingReturnFromHidden = useRef(false)
   const { isInitialized, unlockAchievement } = useAchievementContext()
 
   useEffect(() => {
     if (!isInitialized) return
+
+    if (document.visibilityState === 'visible') {
+      hasHadVisibleSession.current = true
+    }
 
     const resetFirstIdleTimer = () => {
       if (firstIdleTimer.current) clearTimeout(firstIdleTimer.current)
@@ -16,36 +21,32 @@ export const useIdleAchievement = () => {
       }, 30000)
     }
 
-    const resetSecondIdleTimer = () => {
-      if (secondIdleTimer.current) clearTimeout(secondIdleTimer.current)
-      secondIdleTimer.current = setTimeout(() => {
-        unlockAchievement('patience-is-key-ii')
-      }, 300_000)
-    }
-
     const handleUserActivity = () => {
       if (document.hidden) return
       resetFirstIdleTimer()
-      resetSecondIdleTimer()
     }
 
     const handleVisibilityChange = () => {
-      if (document.hidden) {
+      if (document.visibilityState === 'hidden') {
+        if (hasHadVisibleSession.current) {
+          awaitingReturnFromHidden.current = true
+        }
         if (firstIdleTimer.current) clearTimeout(firstIdleTimer.current)
-        if (secondIdleTimer.current) clearTimeout(secondIdleTimer.current)
       } else {
+        if (awaitingReturnFromHidden.current) {
+          unlockAchievement('prodigal-tab')
+          awaitingReturnFromHidden.current = false
+        }
+        hasHadVisibleSession.current = true
         resetFirstIdleTimer()
-        resetSecondIdleTimer()
       }
     }
 
     const handleBeforeUnload = () => {
       if (firstIdleTimer.current) clearTimeout(firstIdleTimer.current)
-      if (secondIdleTimer.current) clearTimeout(secondIdleTimer.current)
     }
 
     resetFirstIdleTimer()
-    resetSecondIdleTimer()
 
     window.addEventListener('mousemove', handleUserActivity)
     window.addEventListener('keydown', handleUserActivity)
@@ -56,7 +57,6 @@ export const useIdleAchievement = () => {
 
     return () => {
       if (firstIdleTimer.current) clearTimeout(firstIdleTimer.current)
-      if (secondIdleTimer.current) clearTimeout(secondIdleTimer.current)
       window.removeEventListener('mousemove', handleUserActivity)
       window.removeEventListener('keydown', handleUserActivity)
       window.removeEventListener('click', handleUserActivity)
