@@ -40,8 +40,27 @@ export type AchievementContextType = {
   isInitialized: boolean
 }
 
+export const TOOL_SECTION_ORDER = [
+  'data',
+  'text',
+  'web',
+  'utilities'
+] as const
+
+export type TToolSectionId = (typeof TOOL_SECTION_ORDER)[number]
+
+export const TOOL_SECTION_LABELS: Record<TToolSectionId, string> = {
+  data: 'Data & serialization',
+  text: 'Text & patterns',
+  web: 'Web & encoding',
+  utilities: 'IDs, time & color'
+}
+
 export type TTools = {
   name: string
   path: string
   description: string
+  section: TToolSectionId
+  /** Lowercase tokens for search / filter on the tools index */
+  keywords: string[]
 }

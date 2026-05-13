@@ -4,6 +4,18 @@ import { useAchievementContext } from '@/context/AchievementContext'
 import { useState, useMemo } from 'react'
 import TextAreaWithLineNumbers from '@/components/TextAreaWithLineNumbers'
 import ToolLayout from './ToolLayout'
+import { ClearButton, PrimaryButton } from './ToolButtons'
+import {
+  toolCheckboxLabelClass,
+  toolEmptyHintClass,
+  toolPanelClass,
+  toolPreOutputClass,
+  toolResultHeaderRowClass,
+  toolResultPanelClass,
+  toolSectionTitleClass,
+  toolToolbarBetweenClass,
+  ToolCopyButton
+} from './toolUi'
 
 type SortOptions = { addSpacing: boolean }
 
@@ -75,15 +87,15 @@ const AlphabetSorter = () => {
 
   return (
     <ToolLayout title="Alphabet Sorter">
-      <div className="flex flex-col rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-5 backdrop-blur-sm">
+      <div className={toolPanelClass}>
         <TextAreaWithLineNumbers
           value={input}
           setValue={setInput}
           placeholder="Paste your TEXT here..."
         />
 
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
-          <label className="ml-2 flex items-center gap-2 text-sm text-neutral-300">
+        <div className={toolToolbarBetweenClass}>
+          <label className={toolCheckboxLabelClass}>
             <input
               type="checkbox"
               checked={options.addSpacing}
@@ -94,53 +106,40 @@ const AlphabetSorter = () => {
           </label>
 
           <div className="flex gap-2">
-            <button
-              onClick={sortLines}
-              disabled={isDisabled}
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-                isDisabled
-                  ? 'cursor-not-allowed bg-neutral-800 text-neutral-500 opacity-60'
-                  : 'bg-custom_blue text-white hover:opacity-90'
-              }`}
-            >
+            <PrimaryButton onClick={sortLines} disabled={isDisabled}>
               Sort
-            </button>
+            </PrimaryButton>
 
-            <button
-              onClick={clearAll}
-              className="rounded-lg bg-red-800 px-4 py-2 text-sm font-medium text-neutral-100 transition hover:bg-red-700"
-            >
-              Clear
-            </button>
+            <ClearButton onClick={clearAll}>Clear</ClearButton>
           </div>
         </div>
       </div>
 
-      <div className="overflow-auto rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-white">Sorted Output</h2>
+      <div className={toolResultPanelClass}>
+        <div className={toolResultHeaderRowClass}>
+          <h2 className={toolSectionTitleClass}>Sorted output</h2>
 
-          {output.length > 0 && (
-            <button
+          {output.length > 0 ? (
+            <ToolCopyButton
+              copied={copied}
               onClick={copyAll}
-              disabled={copied}
-              className={`h-8 rounded-lg bg-neutral-800 px-3 py-1.5 text-xs font-medium transition ${
-                copied
-                  ? 'cursor-default text-custom_blue'
-                  : 'text-neutral-100 hover:bg-neutral-700 active:scale-95'
-              }`}
-            >
-              {copied ? 'Copied All!' : 'Copy All'}
-            </button>
-          )}
+              idleLabel="Copy all"
+              copiedLabel="Copied all!"
+            />
+          ) : null}
         </div>
 
-        <pre
-          className="
-          h-72 max-h-[36rem] w-full overflow-auto whitespace-pre-wrap rounded-xl border border-white/10 bg-neutral-900/60 p-4 font-mono text-[13px] leading-[1.6] text-neutral-200"
-        >
-          {output.join('\n')}
-        </pre>
+        {output.length > 0 ? (
+          <pre
+            className={`${toolPreOutputClass} max-h-96 min-h-72 text-[13px] text-neutral-200`}
+          >
+            {output.join('\n')}
+          </pre>
+        ) : (
+          <p className={toolEmptyHintClass}>
+            Sorted lines appear here after you run Sort.
+          </p>
+        )}
       </div>
     </ToolLayout>
   )

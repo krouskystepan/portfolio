@@ -1,17 +1,73 @@
-import React, { useRef } from 'react'
+'use client'
+
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react'
+
+function getLineHeightPx(el: HTMLElement): number {
+  const s = window.getComputedStyle(el)
+  const lh = parseFloat(s.lineHeight)
+  if (Number.isFinite(lh) && lh > 0) return lh
+  const fs = parseFloat(s.fontSize) || 14
+  return Math.round(fs * 1.25)
+}
 
 const TextAreaWithLineNumbers = ({
   value,
   setValue,
   placeholder,
+  fillParent = false
 }: {
   value: string
   setValue: React.Dispatch<React.SetStateAction<string>>
   placeholder?: string
+  /** Stretch to parent height (e.g. paired Original / Modified columns). */
+  fillParent?: boolean
 }) => {
-  const lineCount = value.split('\n').length
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
+  const mirrorRef = useRef<HTMLDivElement>(null)
   const lineNumberRef = useRef<HTMLDivElement>(null)
+  const [lineHeights, setLineHeights] = useState<number[]>([21])
+  const [lineHeightPx, setLineHeightPx] = useState(21)
+
+  const recalcLines = useCallback(() => {
+    const ta = textAreaRef.current
+    const mirror = mirrorRef.current
+    if (!ta || !mirror) return
+
+    const lh = getLineHeightPx(ta)
+    setLineHeightPx(lh)
+
+    const wrapWidth = ta.clientWidth
+    mirror.style.width = `${wrapWidth}px`
+
+    const logicalLines = value.split('\n')
+    const heights: number[] = []
+    const ms = window.getComputedStyle(mirror)
+    const mpt = parseFloat(ms.paddingTop) || 0
+    const mpb = parseFloat(ms.paddingBottom) || 0
+
+    for (let i = 0; i < logicalLines.length; i++) {
+      const segment = logicalLines[i]
+      mirror.textContent = segment.length === 0 ? '\u00a0' : segment
+      const contentH = Math.max(lh, mirror.offsetHeight - mpt - mpb)
+      heights.push(contentH)
+    }
+
+    setLineHeights(heights.length > 0 ? heights : [lh])
+  }, [value])
+
+  useLayoutEffect(() => {
+    recalcLines()
+  }, [recalcLines])
+
+  useLayoutEffect(() => {
+    const ta = textAreaRef.current
+    if (!ta) return
+    const ro = new ResizeObserver(() => {
+      recalcLines()
+    })
+    ro.observe(ta)
+    return () => ro.disconnect()
+  }, [recalcLines])
 
   const handleScroll = () => {
     if (lineNumberRef.current && textAreaRef.current) {
@@ -19,26 +75,47 @@ const TextAreaWithLineNumbers = ({
     }
   }
 
+  const rootClass = fillParent
+    ? 'relative flex h-full min-h-0 min-w-0 overflow-hidden rounded-lg border border-white/10 bg-neutral-900/50 font-mono text-sm text-neutral-100 focus-within:ring-2 focus-within:ring-custom_blue'
+    : 'relative flex min-h-64 max-h-96 min-w-0 overflow-hidden rounded-lg border border-white/10 bg-neutral-900/50 font-mono text-sm text-neutral-100 focus-within:ring-2 focus-within:ring-custom_blue'
+
   return (
-    <div className="relative flex max-h-96 min-h-64 rounded-lg border border-white/10 bg-neutral-900/50 font-mono text-sm text-neutral-100 focus-within:ring-2 focus-within:ring-custom_blue">
+    <div className={rootClass}>
       <div
         ref={lineNumberRef}
-        className="select-none overflow-hidden border-r border-white/10 bg-neutral-950/40 p-3 text-right text-neutral-500"
-        style={{ minWidth: '2.5rem' }}
+        className="min-h-0 shrink-0 select-none self-stretch overflow-y-auto overflow-x-hidden border-r border-white/10 bg-neutral-950/40 py-3 pl-2 pr-2.5 text-right tabular-nums text-neutral-500 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{ minWidth: '2.75rem' }}
       >
-        {Array.from({ length: lineCount }).map((_, i) => (
-          <div key={i}>{i + 1}</div>
+        {lineHeights.map((rowHeight, i) => (
+          <div
+            key={i}
+            className="flex items-start justify-end"
+            style={{
+              minHeight: lineHeightPx,
+              height: rowHeight,
+              lineHeight: `${lineHeightPx}px`
+            }}
+          >
+            {i + 1}
+          </div>
         ))}
       </div>
-      <textarea
-        ref={textAreaRef}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        onScroll={handleScroll}
-        placeholder={placeholder}
-        spellCheck={false}
-        className="h-auto w-full resize-none overflow-y-auto bg-transparent p-3 outline-none"
-      />
+      <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+        <textarea
+          ref={textAreaRef}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onScroll={handleScroll}
+          placeholder={placeholder}
+          spellCheck={false}
+          className="box-border min-h-0 w-full flex-1 resize-none overflow-y-auto break-words bg-transparent p-3 outline-none"
+        />
+        <div
+          ref={mirrorRef}
+          aria-hidden
+          className="pointer-events-none absolute left-0 top-0 box-border whitespace-pre-wrap break-words p-3 font-mono text-sm text-transparent opacity-0"
+        />
+      </div>
     </div>
   )
 }
