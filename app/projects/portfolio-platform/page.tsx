@@ -144,24 +144,24 @@ const PortfolioCaseStudyPage = () => {
         <ProjectSubPageBulletList
           items={[
             <>
-              <code className="text-xs">krouskystepan.com</code> — main
+              <code className="text-xs">krouskystepan.com</code> - main
               portfolio site with projects, tools, and interactive features.
             </>,
             <>
-              <code className="text-xs">darts.krouskystepan.com</code> — a
+              <code className="text-xs">darts.krouskystepan.com</code> - a
               simple static darts score tracker (501 countdown).
             </>,
             <>
-              <code className="text-xs">overlay.chat.krouskystepan.com</code> —
+              <code className="text-xs">overlay.chat.krouskystepan.com</code> -
               frontend chat overlay.
             </>,
             <>
               <code className="text-xs">overlay.alerts.krouskystepan.com</code>{' '}
-              — frontend alerts overlay.
+              - frontend alerts overlay.
             </>,
             <>
               <code className="text-xs">overlay.server.krouskystepan.com</code>{' '}
-              — backend WebSocket service for overlays.
+              - backend WebSocket service for overlays.
             </>
           ]}
         />

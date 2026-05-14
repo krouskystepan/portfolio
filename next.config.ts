@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
       {
         source: '/gambling-bot',
         destination: 'https://discord.gg/T9B9pk9a4a',
-        permanent: false // 302 — use true if you want a 301
+        permanent: false // 302 - use true if you want a 301
       }
     ]
   }

@@ -45,6 +45,19 @@ export const PROJECTS: TProject[] = [
     availability: 'live'
   },
   {
+    id: 'webos-next',
+    name: 'WebOS Next',
+    description:
+      'Client-only browser desktop: themed shell, snap windows, persisted VFS with Explorer and DnD, and built-in apps-state in Zustand and localStorage, no core backend.',
+    image: '/images/projects/webos-next.png',
+    link: {
+      type: 'internal',
+      url: '/projects/webos-next'
+    },
+    tags: ['Next.js', 'React', 'TypeScript', 'Tailwind', 'Zustand', 'TipTap'],
+    availability: 'live'
+  },
+  {
     id: 'wassa',
     name: 'Wassa',
     description:
