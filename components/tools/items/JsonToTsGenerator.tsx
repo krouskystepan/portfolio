@@ -2,9 +2,9 @@
 
 import { useAchievementContext } from '@/context/AchievementContext'
 import { useEffect, useState } from 'react'
-import TextAreaWithLineNumbers from '../TextAreaWithLineNumbers'
-import ToolLayout from './ToolLayout'
-import { ClearButton, PrimaryButton } from './ToolButtons'
+import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
+import ToolLayout from '@/components/tools/_shared/ToolLayout'
+import { ClearButton, PrimaryButton } from '@/components/tools/_shared/ToolButtons'
 import {
   toolEmptyHintClass,
   toolErrorBoxClass,
@@ -20,7 +20,7 @@ import {
   toolToolbarEndClass,
   toolInputClass,
   ToolCopyButton
-} from './toolUi'
+} from '@/components/tools/_shared/toolUi'
 
 type PrimitiveShape = { kind: 'primitive'; ts: string }
 type ArrayShape = { kind: 'array'; items: Shape[] }

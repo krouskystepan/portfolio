@@ -1,4 +1,4 @@
-import ToolsDirectoryClient from '@/components/tools/ToolsDirectoryClient'
+import ToolsDirectoryClient from '@/components/tools/directory/ToolsDirectoryClient'
 import { tools } from '@/constants/tools'
 
 export default function ToolsPage() {

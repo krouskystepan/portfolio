@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import TextAreaWithLineNumbers from '../TextAreaWithLineNumbers'
-import ToolLayout from './ToolLayout'
-import { ClearButton, PrimaryButton } from './ToolButtons'
+import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
+import ToolLayout from '@/components/tools/_shared/ToolLayout'
+import { ClearButton, PrimaryButton } from '@/components/tools/_shared/ToolButtons'
 import {
   toolErrorBoxClass,
   toolPreOutputClass,
@@ -13,7 +13,7 @@ import {
   toolToolbarEndClass,
   toolWarningIntroClass,
   ToolInputPanel
-} from './toolUi'
+} from '@/components/tools/_shared/toolUi'
 
 function decodeBase64Url(part: string): string {
   let base64 = part.replace(/-/g, '+').replace(/_/g, '/')

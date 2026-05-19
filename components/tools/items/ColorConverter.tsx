@@ -3,8 +3,8 @@
 import { useAchievementContext } from '@/context/AchievementContext'
 import { ColorFormats, parseColor } from '@/utils/colorUtils'
 import { useState } from 'react'
-import ToolLayout from './ToolLayout'
-import { ClearButton, PrimaryButton } from './ToolButtons'
+import ToolLayout from '@/components/tools/_shared/ToolLayout'
+import { ClearButton, PrimaryButton } from '@/components/tools/_shared/ToolButtons'
 import {
   toolEmptyHintClass,
   toolErrorBoxClass,
@@ -14,7 +14,7 @@ import {
   toolSectionTitleClass,
   toolValueRowClass,
   ToolCopyButton
-} from './toolUi'
+} from '@/components/tools/_shared/toolUi'
 
 const ColorConverter = () => {
   const [input, setInput] = useState('')

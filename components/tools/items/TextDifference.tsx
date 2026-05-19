@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from 'react'
 import { DiffMethod } from 'react-diff-viewer'
-import TextAreaWithLineNumbers from '../TextAreaWithLineNumbers'
+import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ReactDiffViewer from 'react-diff-viewer'
-import ToolLayout from './ToolLayout'
+import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import {
   toolCheckboxLabelClass,
   toolEmptyHintClass,
@@ -16,7 +16,7 @@ import {
   toolSectionTitleClass,
   toolSegmentBarClass,
   toolSegmentTabClass
-} from './toolUi'
+} from '@/components/tools/_shared/toolUi'
 
 /** Matches portfolio tool surfaces (neutral-950, dashed cards, emerald / red accents) */
 const diffVariables = {
