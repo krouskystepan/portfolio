@@ -2,9 +2,9 @@
 
 import { useAchievementContext } from '@/context/AchievementContext'
 import { useState, useMemo } from 'react'
-import TextAreaWithLineNumbers from '@/components/TextAreaWithLineNumbers'
-import ToolLayout from './ToolLayout'
-import { ClearButton, PrimaryButton } from './ToolButtons'
+import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
+import ToolLayout from '@/components/tools/_shared/ToolLayout'
+import { ClearButton, PrimaryButton } from '@/components/tools/_shared/ToolButtons'
 import {
   toolCheckboxLabelClass,
   toolEmptyHintClass,
@@ -15,7 +15,7 @@ import {
   toolSectionTitleClass,
   toolToolbarBetweenClass,
   ToolCopyButton
-} from './toolUi'
+} from '@/components/tools/_shared/toolUi'
 
 type SortOptions = { addSpacing: boolean }
 

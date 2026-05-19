@@ -2,8 +2,8 @@
 
 import { useAchievementContext } from '@/context/AchievementContext'
 import { useState } from 'react'
-import ToolLayout from './ToolLayout'
-import { ClearButton, PrimaryButton } from './ToolButtons'
+import ToolLayout from '@/components/tools/_shared/ToolLayout'
+import { ClearButton, PrimaryButton } from '@/components/tools/_shared/ToolButtons'
 import {
   toolAccentButtonClass,
   toolEmptyHintClass,
@@ -16,7 +16,7 @@ import {
   toolToolbarBetweenClass,
   toolValueRowClass,
   ToolCopyButton
-} from './toolUi'
+} from '@/components/tools/_shared/toolUi'
 
 type TimestampResult = {
   readable?: string

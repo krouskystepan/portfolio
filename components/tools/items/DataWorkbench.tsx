@@ -2,12 +2,12 @@
 
 import { Suspense, useCallback } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import ToolLayout from './ToolLayout'
+import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import JsonFormatter from './JsonFormatter'
 import CsvJsonConverter from './CsvJsonConverter'
 import YamlJsonConverter from './YamlJsonConverter'
 import JsonToTsGenerator from './JsonToTsGenerator'
-import { toolSegmentBarClass, toolSegmentTabClass } from './toolUi'
+import { toolSegmentBarClass, toolSegmentTabClass } from '@/components/tools/_shared/toolUi'
 
 const TAB_IDS = ['formatter', 'csv', 'yaml', 'ts'] as const
 type TabId = (typeof TAB_IDS)[number]

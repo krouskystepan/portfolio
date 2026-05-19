@@ -3,9 +3,9 @@
 import { useState } from 'react'
 import yaml from 'js-yaml'
 import { useAchievementContext } from '@/context/AchievementContext'
-import TextAreaWithLineNumbers from '../TextAreaWithLineNumbers'
-import ToolLayout from './ToolLayout'
-import { ClearButton, PrimaryButton } from './ToolButtons'
+import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
+import ToolLayout from '@/components/tools/_shared/ToolLayout'
+import { ClearButton, PrimaryButton } from '@/components/tools/_shared/ToolButtons'
 import {
   toolEmptyHintClass,
   toolErrorBoxClass,
@@ -16,7 +16,7 @@ import {
   toolSectionTitleClass,
   toolToolbarEndClass,
   ToolCopyButton
-} from './toolUi'
+} from '@/components/tools/_shared/toolUi'
 
 const YamlJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) => {
   const [input, setInput] = useState('')

@@ -62,4 +62,4 @@ export const SOCIALS = [
 
 export { PROJECT_FILTERS, PROJECTS } from './projects'
 export { allAchievements } from './achievements'
-export { tools } from './tools'
+export { tools, type ToolPath } from './tools'

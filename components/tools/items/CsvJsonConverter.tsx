@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import { useAchievementContext } from '@/context/AchievementContext'
-import TextAreaWithLineNumbers from '../TextAreaWithLineNumbers'
-import ToolLayout from './ToolLayout'
-import { ClearButton, PrimaryButton, SecondaryButton } from './ToolButtons'
+import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
+import ToolLayout from '@/components/tools/_shared/ToolLayout'
+import { ClearButton, PrimaryButton, SecondaryButton } from '@/components/tools/_shared/ToolButtons'
 import {
   toolEmptyHintClass,
   toolErrorBoxClass,
@@ -15,7 +15,7 @@ import {
   toolSectionTitleClass,
   toolToolbarEndClass,
   ToolCopyButton
-} from './toolUi'
+} from '@/components/tools/_shared/toolUi'
 
 /** Header row + data rows → objects; validates column count per row. */
 function csvRowsToObjects(rows: string[][]): Record<string, string>[] {

@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import TextAreaWithLineNumbers from '../TextAreaWithLineNumbers'
-import ToolLayout from './ToolLayout'
-import { ClearButton, PrimaryButton, SecondaryButton } from './ToolButtons'
+import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
+import ToolLayout from '@/components/tools/_shared/ToolLayout'
+import { ClearButton, PrimaryButton, SecondaryButton } from '@/components/tools/_shared/ToolButtons'
 import {
   toolErrorBoxClass,
   toolIntroTextClass,
@@ -13,7 +13,7 @@ import {
   toolSectionTitleClass,
   toolToolbarEndClass,
   ToolInputPanel
-} from './toolUi'
+} from '@/components/tools/_shared/toolUi'
 
 const UrlEncoderDecoder = () => {
   const [input, setInput] = useState('')

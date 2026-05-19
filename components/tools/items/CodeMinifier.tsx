@@ -2,14 +2,14 @@
 
 import { useState } from 'react'
 import { useAchievementContext } from '@/context/AchievementContext'
-import TextAreaWithLineNumbers from '../TextAreaWithLineNumbers'
-import ToolLayout from './ToolLayout'
+import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
+import ToolLayout from '@/components/tools/_shared/ToolLayout'
 
 import prettier from 'prettier/standalone'
 import parserBabel from 'prettier/plugins/babel'
 import parserHtml from 'prettier/plugins/html'
 import parserPostcss from 'prettier/plugins/postcss'
-import { ClearButton, PrimaryButton, SecondaryButton } from './ToolButtons'
+import { ClearButton, PrimaryButton, SecondaryButton } from '@/components/tools/_shared/ToolButtons'
 import {
   toolEmptyHintClass,
   toolErrorBoxClass,
@@ -22,7 +22,7 @@ import {
   toolSegmentTabClass,
   toolToolbarBetweenClass,
   ToolCopyButton
-} from './toolUi'
+} from '@/components/tools/_shared/toolUi'
 
 type CodeType = 'html' | 'css' | 'javascript'
 
