@@ -1,6 +1,6 @@
 import type { TTools } from './types'
 
-export const tools: TTools[] = [
+export const tools = [
   {
     name: 'JSON & data workbench',
     path: 'data-workbench',
@@ -104,4 +104,6 @@ export const tools: TTools[] = [
     section: 'utilities',
     keywords: ['unix', 'epoch', 'timezone', 'date']
   }
-]
+] as const satisfies readonly TTools[]
+
+export type ToolPath = (typeof tools)[number]['path']

@@ -7,7 +7,7 @@ import type { TTools } from '@/constants/types'
 import { matchesToolQuery, groupToolsBySection } from '@/utils/toolUtils'
 
 type ToolsDirectoryClientProps = {
-  tools: TTools[]
+  tools: readonly TTools[]
 }
 
 export default function ToolsDirectoryClient({

@@ -1,4 +1,5 @@
 import { tools } from '@/constants'
+import { isToolPath, loadTool } from '@/components/tools/toolRegistry'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
@@ -39,25 +40,9 @@ const ToolsPage = async ({
 
   if (!tool) notFound()
 
-  const toolMap = {
-    'data-workbench': () => import('@/components/tools/DataWorkbench'),
-    'text-diff': () => import('@/components/tools/TextDifference'),
-    'uuid-generator': () => import('@/components/tools/UuidGenerator'),
-    'color-converter': () => import('@/components/tools/ColorConverter'),
-    'alphabet-sorter': () => import('@/components/tools/AlphabetSorter'),
-    'html-css-js-minifier': () => import('@/components/tools/CodeMinifier'),
-    'timestamp-converter': () => import('@/components/tools/TimestampConverter'),
-    'case-converter': () => import('@/components/tools/TextCaseConverter'),
-    'regex-tester': () => import('@/components/tools/RegexTester'),
-    'slug-generator': () => import('@/components/tools/SlugGenerator'),
-    'url-encoder-decoder': () => import('@/components/tools/UrlEncoderDecoder'),
-    'jwt-decoder': () => import('@/components/tools/JwtDecoder')
-  } as const
+  if (!isToolPath(tool.path)) notFound()
 
-  const importer = toolMap[tool.path as keyof typeof toolMap]
-  if (!importer) notFound()
-
-  const { default: Component } = await importer()
+  const Component = await loadTool(tool.path)
   return <Component />
 }
 

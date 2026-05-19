@@ -2,8 +2,8 @@
 
 import { useAchievementContext } from '@/context/AchievementContext'
 import { useState, useMemo, useEffect } from 'react'
-import ToolLayout from './ToolLayout'
-import { ClearButton, PrimaryButton } from './ToolButtons'
+import ToolLayout from '@/components/tools/_shared/ToolLayout'
+import { ClearButton, PrimaryButton } from '@/components/tools/_shared/ToolButtons'
 import {
   toolCheckboxLabelClass,
   toolEmptyHintClass,
@@ -15,7 +15,7 @@ import {
   toolToolbarEndClass,
   toolValueRowClass,
   ToolCopyButton
-} from './toolUi'
+} from '@/components/tools/_shared/toolUi'
 
 type UUIDOptions = {
   uppercase: boolean

@@ -1,9 +1,9 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import TextAreaWithLineNumbers from '../TextAreaWithLineNumbers'
-import ToolLayout from './ToolLayout'
-import { ClearButton } from './ToolButtons'
+import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
+import ToolLayout from '@/components/tools/_shared/ToolLayout'
+import { ClearButton } from '@/components/tools/_shared/ToolButtons'
 import {
   toolIntroTextClass,
   toolPreOutputClass,
@@ -12,7 +12,7 @@ import {
   toolSectionTitleClass,
   toolToolbarEndClass,
   ToolInputPanel
-} from './toolUi'
+} from '@/components/tools/_shared/toolUi'
 
 function slugify(value: string): string {
   return value

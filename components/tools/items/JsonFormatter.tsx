@@ -3,9 +3,9 @@
 import { useAchievementContext } from '@/context/AchievementContext'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import TextAreaWithLineNumbers from '../TextAreaWithLineNumbers'
-import ToolLayout from './ToolLayout'
-import { ClearButton, PrimaryButton, SecondaryButton } from './ToolButtons'
+import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
+import ToolLayout from '@/components/tools/_shared/ToolLayout'
+import { ClearButton, PrimaryButton, SecondaryButton } from '@/components/tools/_shared/ToolButtons'
 import {
   toolAccentButtonClass,
   toolEmptyHintClass,
@@ -18,7 +18,7 @@ import {
   toolToolbarBetweenClass,
   toolFlexEndButtonsClass,
   ToolCopyButton
-} from './toolUi'
+} from '@/components/tools/_shared/toolUi'
 
 const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
   const [input, setInput] = useState('')
