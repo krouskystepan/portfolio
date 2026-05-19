@@ -36,7 +36,7 @@ const CustomOverlaysCaseStudyPage = () => {
       <Alert
         type="info"
         title="Project Scope"
-        description="The platform focuses exclusively on real-time delivery. No persistence, no dashboards, and no historical data — only low-latency event flow from streaming platforms to on-screen overlays."
+        description="The platform focuses exclusively on real-time delivery. No persistence, no dashboards, and no historical data - only low-latency event flow from streaming platforms to on-screen overlays."
       />
 
       {/* TOC */}

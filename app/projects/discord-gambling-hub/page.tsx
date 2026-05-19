@@ -18,7 +18,7 @@ import {
   Shapes,
   Ticket,
   HandCoins,
-  Layers,
+  Layers
 } from 'lucide-react'
 import Alert from '@/components/Alert'
 import {
@@ -31,7 +31,7 @@ import {
   ProjectSubPageSectionLayout,
   ProjectSubPageTableOfContents,
   ProjectSubPageTag,
-  ProjectSubPageTitle,
+  ProjectSubPageTitle
 } from '@/components/SubPageComponents'
 
 const GamblingBotCaseStudyPage = () => {
@@ -66,7 +66,7 @@ const GamblingBotCaseStudyPage = () => {
           { label: 'VIP Rooms & Access Control', href: '#vip' },
           { label: 'Predictions (Betting Market)', href: '#predictions' },
           { label: 'Admin Web Dashboard', href: '#dashboard' },
-          { label: 'Future Work & Technical Challenges', href: '#future' },
+          { label: 'Future Work & Technical Challenges', href: '#future' }
         ]}
       />
 
@@ -78,7 +78,7 @@ const GamblingBotCaseStudyPage = () => {
       >
         <ProjectSubPageParagraph>
           Gambling BOT started as a way to introduce a structured, persistent
-          casino experience into a Discord community—something deeper than
+          casino experience into a Discord community-something deeper than
           simple “fun” commands. The goal was to design a unified system where
           all layers share the same logic, models, and economic rules.
         </ProjectSubPageParagraph>
@@ -94,7 +94,7 @@ const GamblingBotCaseStudyPage = () => {
             'Casino-style games with fully configurable RTP and fairness controls.',
             'VIP rooms that feel personal, private, automated, and temporary.',
             'A modern admin dashboard for analytics, management, and server customization.',
-            'A shared NPM package providing schemas, validation, helpers, and strong typing across all apps.',
+            'A shared NPM package providing schemas, validation, helpers, and strong typing across all apps.'
           ]}
         />
       </ProjectSubPageSectionLayout>
@@ -122,7 +122,7 @@ const GamblingBotCaseStudyPage = () => {
               'Built with discord.js and CommandKit.',
               'Implements all casino games, VIP management, predictions, and ATM logic.',
               'Handles gameplay, validation, messaging, cooldowns, and transactional state.',
-              'Reads all models and types directly from gambling-bot-shared.',
+              'Reads all models and types directly from gambling-bot-shared.'
             ]}
           />
 
@@ -135,7 +135,7 @@ const GamblingBotCaseStudyPage = () => {
               'Exports all TypeScript types, interfaces, enums, and constants.',
               'Contains all Mongoose schemas and models.',
               'Includes helper functions, validators, and probability utilities.',
-              'Ensures 100% consistency across the bot and dashboard.',
+              'Ensures 100% consistency across the bot and dashboard.'
             ]}
           />
 
@@ -149,7 +149,7 @@ const GamblingBotCaseStudyPage = () => {
               'Authentication via Discord OAuth with role-based access control.',
               'Provides transparency: transaction history, RTP controls, VIP management.',
               'Reads and updates the same MongoDB collections as the bot.',
-              'Uses shared models and utilities from gambling-bot-shared.',
+              'Uses shared models and utilities from gambling-bot-shared.'
             ]}
           />
         </div>
@@ -173,7 +173,7 @@ const GamblingBotCaseStudyPage = () => {
             'Strongly typed constants and enums used by both applications.',
             'Shared helper functions including RTP calculations and probability utilities.',
             'Reusable validation logic for commands, forms, and internal systems.',
-            'Utilities for formatting, randomization, state transitions, and gameplay rules.',
+            'Utilities for formatting, randomization, state transitions, and gameplay rules.'
           ]}
         />
 
@@ -199,13 +199,13 @@ const GamblingBotCaseStudyPage = () => {
         <ProjectSubPageBulletList
           items={[
             <>
-              <code className="text-xs">User</code> — stored per guild,
+              <code className="text-xs">User</code> - stored per guild,
               containing <code className="text-xs">balance</code>,{' '}
               <code className="text-xs">lockedBalance</code>, and daily-streak
               metadata.
             </>,
             <>
-              <code className="text-xs">Transaction</code> — immutable economic
+              <code className="text-xs">Transaction</code> - immutable economic
               log entry with fields such as type (
               <code className="text-xs">deposit</code>,{' '}
               <code className="text-xs">withdraw</code>,{' '}
@@ -219,12 +219,12 @@ const GamblingBotCaseStudyPage = () => {
               <code className="text-xs">system</code>,{' '}
               <code className="text-xs">casino</code>), and optional{' '}
               <code className="text-xs">betId</code>.
-            </>,
+            </>
           ]}
         />
 
         <ProjectSubPageParagraph>
-          The bot never “just updates balance numbers” — every mutation is an
+          The bot never “just updates balance numbers” - every mutation is an
           atomic database operation paired with a transaction document. This
           enables full historical reconstruction for any player, guild, or
           administrative action, supported by compound indexes on guild, user,
@@ -258,7 +258,7 @@ const GamblingBotCaseStudyPage = () => {
             'Lock funds by decrementing balance and creating a bet transaction.',
             'Execute the game logic (single or multi-round flow, animations, embeds).',
             'Compute winnings, update balance, and create win transaction(s).',
-            'Render a final summary embed with optional balance information.',
+            'Render a final summary embed with optional balance information.'
           ]}
         />
 
@@ -283,7 +283,7 @@ const GamblingBotCaseStudyPage = () => {
               'Blackjack detection on the initial deal for both sides.',
               'Player actions implemented via interaction buttons (hit, stand, double).',
               'Dealer reveals cards with short delays, updating the embed each step.',
-              'Final outcomes include win, loss, push, and blackjack-specific cases.',
+              'Final outcomes include win, loss, push, and blackjack-specific cases.'
             ]}
           />
         </ProjectSubPageInfoCard>
@@ -307,7 +307,7 @@ const GamblingBotCaseStudyPage = () => {
               'Bet types: number, color, parity, range, dozen (D1–D3), and column (C1–C3).',
               'Bets parsed from comma-separated input like "10 red, 5 D2".',
               'Game logic resolves each bet using typed helpers.',
-              'Supports multi-spin commands with persistent live results.',
+              'Supports multi-spin commands with persistent live results.'
             ]}
           />
         </ProjectSubPageInfoCard>
@@ -390,7 +390,7 @@ const GamblingBotCaseStudyPage = () => {
           system exposes it explicitly through a dedicated{' '}
           <code className="text-xs">calculateRTP</code> function. This function
           reads the guild’s casino settings and computes the real, effective RTP
-          for every game using probability and configuration data — not
+          for every game using probability and configuration data - not
           hardcoded values.
         </ProjectSubPageParagraph>
 
@@ -465,7 +465,7 @@ const GamblingBotCaseStudyPage = () => {
             <>
               <strong>Blackjack</strong> – currently fixed at ~99.4% to match
               real-world expected return.
-            </>,
+            </>
           ]}
         />
 
@@ -532,7 +532,7 @@ case 'slots': {
             'Linear or exponential reward mode.',
             'Base reward, streak increment or multiplier.',
             'Maximum reward with optional cycle reset behavior.',
-            'Weekly and monthly milestone bonuses.',
+            'Weekly and monthly milestone bonuses.'
           ]}
         />
 
@@ -585,7 +585,7 @@ case 'slots': {
                 </>,
                 'Duration can be specified in days or weeks (e.g., 3d, 1w).',
                 'Total price is based on duration plus an optional creation fee.',
-                'Balance is validated to ensure the user can afford the purchase.',
+                'Balance is validated to ensure the user can afford the purchase.'
               ]}
             />
           </ProjectSubPageInfoCard>
@@ -604,7 +604,7 @@ case 'slots': {
                 <>
                   A corresponding <code className="text-xs">VipRoom</code> entry
                   stores the channel ID and expiration date.
-                </>,
+                </>
               ]}
             />
           </ProjectSubPageInfoCard>
@@ -612,7 +612,7 @@ case 'slots': {
 
         <ProjectSubPageParagraph>
           When a VIP room expires, the channel remains visible but becomes
-          locked — the user loses write permissions. This preserves message
+          locked - the user loses write permissions. This preserves message
           history for light auditing while maintaining the temporary nature of
           the perk.
         </ProjectSubPageParagraph>
@@ -644,7 +644,7 @@ case 'slots': {
             'Users place bets',
             'Autolock triggers (optional)',
             'Admin resolves outcome',
-            'Winners are paid / refunds issued',
+            'Winners are paid / refunds issued'
           ]}
         />
 
@@ -658,7 +658,7 @@ case 'slots': {
             </>,
             'Autolock automatically closes the prediction after a configured timeout.',
             'When resolved, winning bets are paid out as amount × odds.',
-            'Cancelled predictions refund all users and create refund transactions.',
+            'Cancelled predictions refund all users and create refund transactions.'
           ]}
         />
 
@@ -708,7 +708,7 @@ case 'slots': {
         <Alert
           type="error"
           title="TBD – Challenges & Solutions"
-          description="A detailed breakdown of the largest technical obstacles—concurrency, scaling, dashboard ergonomics, anti-abuse mechanisms—will be added as the project matures and real-world usage patterns emerge."
+          description="A detailed breakdown of the largest technical obstacles-concurrency, scaling, dashboard ergonomics, anti-abuse mechanisms-will be added as the project matures and real-world usage patterns emerge."
         />
 
         <ProjectSubPageParagraph className="mt-4">
