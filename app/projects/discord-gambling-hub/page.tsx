@@ -19,6 +19,11 @@ import {
   Ticket,
   HandCoins,
   Layers,
+  Dices,
+  CircleDollarSign,
+  Workflow,
+  TestTube2,
+  Gift
 } from 'lucide-react'
 import Alert from '@/components/Alert'
 import {
@@ -31,288 +36,289 @@ import {
   ProjectSubPageSectionLayout,
   ProjectSubPageTableOfContents,
   ProjectSubPageTag,
-  ProjectSubPageTitle,
+  ProjectSubPageTitle
 } from '@/components/SubPageComponents'
 
 const GamblingBotCaseStudyPage = () => {
   return (
     <div className="mx-auto max-w-4xl px-4 pt-12">
-      {/* HEADER */}
       <header className="mb-8">
         <ProjectSubPageTag text="Case Study" />
         <ProjectSubPageTitle title="Gambling BOT – Discord Casino & Admin Dashboard Ecosystem" />
         <ProjectSubPageDescription
-          description={`Gambling BOT is a full-stack gambling and virtual-economy system built for Discord communities.\nIt combines a feature-rich casino engine, persistent user balances, VIP rooms, predictions, daily bonuses, and a powerful admin dashboard.\nAll gameplay, configuration, logging, and economy interactions share a unified database and a shared NPM package, ensuring consistency across the entire ecosystem.`}
+          description={`A multi-repo virtual economy and casino platform for Discord communities: eleven configurable games, gated ATM deposits, predictions, scheduled raffles, VIP rooms, and a Next.js admin panel.\nAll three apps-Discord bot, admin dashboard, and shared NPM package-read the same Mongoose models, Zod schemas, and RTP math so configuration never drifts between Discord and the web.`}
         />
       </header>
 
       <Alert
         type="info"
-        title="Project Overview"
-        description="The system now consists of three tightly connected parts: a Discord bot for gameplay, an admin dashboard for configuration and insights, and a shared NPM package that provides all shared models, types, and utilities."
+        title="Project overview"
+        description="Three repositories (gambling-bot-discord, gambling-bot-admin, gambling-bot-shared) share MongoDB and gambling-bot-shared. The bot runs on CommandKit with background workers; the dashboard uses Next.js 16, NextAuth (Discord OAuth), and TanStack Table for guild-scoped management."
       />
 
-      {/* TOC */}
       <ProjectSubPageTableOfContents
         title="Contents"
         items={[
           { label: 'Motivation & Goals', href: '#motivation' },
           { label: 'System Architecture', href: '#architecture' },
-          { label: 'Shared Package Architecture', href: '#shared' },
-          { label: 'Economy & Transaction Model', href: '#economy' },
+          { label: 'Shared Package', href: '#shared' },
+          { label: 'Economy & Transactions', href: '#economy' },
           { label: 'Casino Game Engine', href: '#engine' },
-          { label: 'RTP System & Fairness Logic', href: '#rtp' },
-          { label: 'Daily Bonus System', href: '#daily-bonus' },
-          { label: 'VIP Rooms & Access Control', href: '#vip' },
-          { label: 'Predictions (Betting Market)', href: '#predictions' },
-          { label: 'Admin Web Dashboard', href: '#dashboard' },
-          { label: 'Future Work & Technical Challenges', href: '#future' },
+          { label: 'RTP & Fairness', href: '#rtp' },
+          { label: 'Daily Bonus', href: '#daily-bonus' },
+          { label: 'VIP Rooms', href: '#vip' },
+          { label: 'Predictions', href: '#predictions' },
+          { label: 'Raffles', href: '#raffles' },
+          { label: 'Admin Dashboard', href: '#dashboard' },
+          { label: 'Background Workers', href: '#workers' },
+          { label: 'Testing & Quality', href: '#testing' },
+          { label: 'Technical Challenges', href: '#challenges' }
         ]}
       />
 
-      {/* 1. MOTIVATION */}
       <ProjectSubPageSectionLayout
         iconStyle={{ icon: Gamepad2, color: 'text-blue-400' }}
         title="1. Motivation & Goals"
         id="motivation"
       >
         <ProjectSubPageParagraph>
-          Gambling BOT started as a way to introduce a structured, persistent
-          casino experience into a Discord community—something deeper than
-          simple “fun” commands. The goal was to design a unified system where
-          all layers share the same logic, models, and economic rules.
-        </ProjectSubPageParagraph>
-
-        <ProjectSubPageParagraph>
-          Over time, the project matured into a scalable multi-application
-          ecosystem with:
+          The project started as a way to bring a persistent, auditable casino
+          into Discord-deeper than one-off fun commands. The target was a single
+          economic model that moderators can tune without redeploying the bot,
+          while players get transparent rules, history, and fair odds.
         </ProjectSubPageParagraph>
 
         <ProjectSubPageBulletList
           items={[
-            'A persistent virtual currency with complete transaction logging.',
-            'Casino-style games with fully configurable RTP and fairness controls.',
-            'VIP rooms that feel personal, private, automated, and temporary.',
-            'A modern admin dashboard for analytics, management, and server customization.',
-            'A shared NPM package providing schemas, validation, helpers, and strong typing across all apps.',
+            'Per-guild virtual currency with immutable transaction logs and admin-approved deposits/withdrawals (suited to RP servers).',
+            'Configurable casino games with computed RTP, not magic numbers.',
+            'Engagement systems: daily bonuses, VIP rooms, predictions, and recurring raffles.',
+            'A web dashboard for managers and server admins to inspect users, cash flow, and settings.',
+            'One shared TypeScript package so bot and dashboard never disagree on schemas or math.'
           ]}
         />
       </ProjectSubPageSectionLayout>
 
-      {/* 2. ARCHITECTURE */}
       <ProjectSubPageSectionLayout
         iconStyle={{ icon: Server, color: 'text-emerald-400' }}
-        title="2. High-Level Architecture"
+        title="2. System Architecture"
         id="architecture"
       >
         <ProjectSubPageParagraph>
-          The system is composed of three interconnected applications that share
-          the same data structures and logic through a dedicated NPM package.
-          Each runs independently but stays perfectly aligned thanks to shared
-          schemas, helpers, constants, and TypeScript types.
+          Each application deploys independently but stays aligned through{' '}
+          <strong>gambling-bot-shared</strong> and a single MongoDB database.
+          The Discord bot owns gameplay, workers, and Discord API side effects;
+          the dashboard owns OAuth, forms, and read-heavy analytics.
         </ProjectSubPageParagraph>
 
         <div className="grid gap-5 sm:grid-cols-3">
-          {/* DISCORD BOT */}
           <ProjectSubPageInfoCard
             title="Discord Bot"
             icon={Terminal}
             iconColor="text-blue-400"
             items={[
-              'Built with discord.js and CommandKit.',
-              'Implements all casino games, VIP management, predictions, and ATM logic.',
-              'Handles gameplay, validation, messaging, cooldowns, and transactional state.',
-              'Reads all models and types directly from gambling-bot-shared.',
+              'discord.js v14 + CommandKit (slash commands, events, workers).',
+              'Casino, ATM, VIP, predictions, raffles, and mod tooling.',
+              'MongoDB transactions for bets, VIP purchases, and refunds.',
+              'Vitest unit/integration tests with mongodb-memory-server.',
+              'Structured logging via Pino.'
             ]}
           />
 
-          {/* SHARED PACKAGE */}
           <ProjectSubPageInfoCard
-            title="Shared NPM Package"
+            title="Shared Package"
             icon={Layers}
             iconColor="text-purple-400"
             items={[
-              'Exports all TypeScript types, interfaces, enums, and constants.',
-              'Contains all Mongoose schemas and models.',
-              'Includes helper functions, validators, and probability utilities.',
-              'Ensures 100% consistency across the bot and dashboard.',
+              'Mongoose schemas: User, Transaction, GuildConfiguration, Prediction, VipRoom, etc.',
+              'Zod form schemas mirrored in the dashboard.',
+              'calculateRTP, bonus streak helpers, bet validators, formatters.',
+              'Subpath exports: root, ./server, ./schemas.'
             ]}
           />
 
-          {/* DASHBOARD */}
           <ProjectSubPageInfoCard
             title="Admin Dashboard"
             icon={Globe}
             iconColor="text-emerald-400"
             items={[
-              'Built using Next.js, React, Radix UI, Framer Motion, and Tailwind.',
-              'Authentication via Discord OAuth with role-based access control.',
-              'Provides transparency: transaction history, RTP controls, VIP management.',
-              'Reads and updates the same MongoDB collections as the bot.',
-              'Uses shared models and utilities from gambling-bot-shared.',
+              'Next.js 16 App Router, React 19, Tailwind 4, Radix UI.',
+              'NextAuth Discord OAuth; guild access via manager role or Administrator.',
+              'Server actions + shared Zod schemas for settings persistence.',
+              'TanStack Table: users, transactions (filters, PnL summaries).',
+              'Live RTP preview while editing casino settings.'
             ]}
           />
         </div>
+
+        <ProjectSubPageFlowDiagram
+          steps={[
+            'Player runs slash command in Discord',
+            'Bot validates guild config + balances',
+            'MongoDB session writes User + Transaction',
+            'Embed / buttons update in channel',
+            'Manager adjusts settings or reviews logs in dashboard'
+          ]}
+        />
       </ProjectSubPageSectionLayout>
 
-      {/* 3. SHARED PACKAGE MINI-SECTION */}
       <ProjectSubPageSectionLayout
         iconStyle={{ icon: Layers, color: 'text-purple-400' }}
-        title="3. Shared Package Architecture"
+        title="3. Shared Package"
         id="shared"
       >
         <ProjectSubPageParagraph>
-          To prevent desynchronization between the bot and the admin dashboard,
-          all logic that defines the casino ecosystem lives inside a dedicated
-          NPM package: <strong>gambling-bot-shared</strong>.
+          Duplicating types or payout math between bot and dashboard would
+          eventually desync. Everything that defines “what a guild is allowed to
+          configure” lives in the published package and is imported by both
+          apps.
         </ProjectSubPageParagraph>
 
         <ProjectSubPageBulletList
           items={[
-            'Mongoose schemas & models for User, Transaction, Games, Predictions, VIP Rooms, GuildConfiguration.',
-            'Strongly typed constants and enums used by both applications.',
-            'Shared helper functions including RTP calculations and probability utilities.',
-            'Reusable validation logic for commands, forms, and internal systems.',
-            'Utilities for formatting, randomization, state transitions, and gameplay rules.',
+            'Models: User, Transaction, GuildConfiguration, Prediction, VipRoom, BlackjackGame, AtmRequest, Raffle, and related indexes.',
+            'defaultCasinoSettings and readableGameNames for UI labels.',
+            'Zod: casinoSettingsSchema, channelsFormSchema, bonusFormSchema, vipSettingsFormSchema, managerRoleFormSchema.',
+            'Utilities: calculateRTP (per game), calculateBonusReward, generateBonusPreview, validateBetAmount, validatePredictionBet.',
+            'Constants: roulette layout (MINI_NUMBERS), lottery draw sizes, transaction type/source enums.'
           ]}
         />
 
         <Alert
           type="note"
-          title="Benefits of a Shared Core"
-          description="By centralizing all shared logic, the ecosystem becomes easier to maintain, safer to extend, and impossible to desync. Both applications always run on the same logic by design."
+          title="Publish workflow"
+          description="The shared repo versions independently. Bot and admin pin the same version so schema migrations and RTP changes ship together."
         />
       </ProjectSubPageSectionLayout>
 
-      {/* 4. ECONOMY */}
       <ProjectSubPageSectionLayout
         iconStyle={{ icon: Database, color: 'text-amber-400' }}
-        title="4. Economy & Transaction Model"
+        title="4. Economy & Transactions"
         id="economy"
       >
         <ProjectSubPageParagraph>
-          All economy-related schemas now come from the shared NPM package,
-          guaranteeing identical behavior in both the Discord bot and the admin
-          dashboard.
+          Users are scoped per guild. Balances split into three buckets so
+          bonuses, withdrawable cash, and in-flight bets stay separable.
         </ProjectSubPageParagraph>
 
         <ProjectSubPageBulletList
           items={[
             <>
-              <code className="text-xs">User</code> — stored per guild,
-              containing <code className="text-xs">balance</code>,{' '}
-              <code className="text-xs">lockedBalance</code>, and daily-streak
-              metadata.
+              <code className="text-xs">balance</code> - withdrawable cash (ATM
+              withdrawals only touch this).
             </>,
             <>
-              <code className="text-xs">Transaction</code> — immutable economic
-              log entry with fields such as type (
-              <code className="text-xs">deposit</code>,{' '}
-              <code className="text-xs">withdraw</code>,{' '}
-              <code className="text-xs">bet</code>,{' '}
-              <code className="text-xs">win</code>,{' '}
-              <code className="text-xs">bonus</code>,{' '}
-              <code className="text-xs">vip</code>,{' '}
-              <code className="text-xs">refund</code>), source (
-              <code className="text-xs">command</code>,{' '}
-              <code className="text-xs">web</code>,{' '}
-              <code className="text-xs">system</code>,{' '}
-              <code className="text-xs">casino</code>), and optional{' '}
-              <code className="text-xs">betId</code>.
+              <code className="text-xs">bonusBalance</code> - non-withdrawable
+              funds from daily bonuses and admin grants; spent first on casino
+              bets.
             </>,
+            <>
+              <code className="text-xs">lockedBalance</code> - funds reserved
+              while a bet is open; released on settle or refund.
+            </>,
+            <>
+              <code className="text-xs">Transaction</code> - append-only log:
+              types deposit, withdraw, bet, win, refund, bonus, vip; sources
+              command, manual, web, system, casino; optional{' '}
+              <code className="text-xs">betId</code> for correlated rounds.
+            </>
           ]}
         />
 
         <ProjectSubPageParagraph>
-          The bot never “just updates balance numbers” — every mutation is an
-          atomic database operation paired with a transaction document. This
-          enables full historical reconstruction for any player, guild, or
-          administrative action, supported by compound indexes on guild, user,
-          type, source, and betId for fast querying.
+          Casino bets use <code className="text-xs">reserveCasinoBet</code> /
+          <code className="text-xs">settleCasinoWinnings</code> inside MongoDB
+          multi-document transactions: duplicate betId is rejected, bonus
+          balance is consumed before cash, and locked balance tracks exposure
+          until settlement.
         </ProjectSubPageParagraph>
 
         <Alert
           type="warning"
-          title="Gated Deposits & Withdrawals"
-          description="Deposits and withdrawals are not automatic. Players create requests, and admins must approve them. This design makes the system safe for RP servers (e.g., GTA RP), preventing the bot from moving real or sensitive in-game currency on its own."
+          title="Gated ATM"
+          description="Deposits and withdrawals are request-based. Admins approve in Discord or via dashboard actions (register, deposit, withdraw, bonus grant, reset). The bot never moves real in-game currency without human approval-important for GTA RP-style servers."
         />
       </ProjectSubPageSectionLayout>
 
-      {/* 5. GAME ENGINE DESIGN */}
       <ProjectSubPageSectionLayout
         iconStyle={{ icon: Gamepad2, color: 'text-sky-400' }}
-        title="5. Game Engine Design"
+        title="5. Casino Game Engine"
         id="engine"
       >
         <ProjectSubPageParagraph>
-          The casino part of the bot offers several games, each implemented as a
-          slash command with its own betting rules, fairness model, and UX flow.
-          Despite their differences, all games follow the same high-level
-          pattern:
+          Eleven game configs exist in GuildConfiguration (dice, coinflip,
+          slots, lottery, roulette, rps, goldenJackpot, blackjack, prediction
+          limits, raffle house cut, plinko). Playable slash games share the same
+          pipeline:
         </ProjectSubPageParagraph>
 
         <ProjectSubPageNumberedList
           items={[
-            'Validate registration and guild configuration (allowed channels, limits).',
-            'Validate bet size using per-guild min/max limits and the user balance.',
-            'Lock funds by decrementing balance and creating a bet transaction.',
-            'Execute the game logic (single or multi-round flow, animations, embeds).',
-            'Compute winnings, update balance, and create win transaction(s).',
-            'Render a final summary embed with optional balance information.',
+            'Check registration, allowed casino channels, and per-game cooldowns.',
+            'Validate bet against min/max and available cash + bonus.',
+            'reserveCasinoBet with a generated betId.',
+            'Run game logic (RNG, buttons, multi-step embeds).',
+            'settleCasinoWinnings and render result embeds.'
           ]}
         />
 
-        {/* Blackjack */}
+        <div className="grid gap-4 sm:grid-cols-2">
+          <ProjectSubPageInfoCard
+            title="Dice"
+            icon={Dices}
+            iconColor="text-sky-300"
+          >
+            <ProjectSubPageParagraph className="text-sm">
+              Pick a side (1–6), optional multi-roll. Win when the roll matches;
+              payout scales with guild winMultiplier. Simple 1/6 probability
+              model feeds RTP.
+            </ProjectSubPageParagraph>
+          </ProjectSubPageInfoCard>
+
+          <ProjectSubPageInfoCard
+            title="Plinko"
+            icon={Shapes}
+            iconColor="text-pink-400"
+          >
+            <ProjectSubPageParagraph className="text-sm">
+              Drop 1–10 balls through an animated board; each path lands in a
+              bin with configured multipliers. RTP uses binomial probabilities
+              over nine bins (Galton-board style 50/50 left-right steps).
+            </ProjectSubPageParagraph>
+          </ProjectSubPageInfoCard>
+        </div>
+
         <ProjectSubPageInfoCard
           title="Blackjack"
           icon={HandCoins}
           iconColor="text-sky-300"
         >
-          <ProjectSubPageParagraph className="mb-2">
-            Blackjack uses a strongly typed{' '}
-            <code className="text-xs">Card</code> model, generating a shuffled
-            deck and storing it in MongoDB along with player and dealer hands.
-          </ProjectSubPageParagraph>
-
           <ProjectSubPageBulletList
             className="text-sm"
             items={[
-              'Session stored in a dedicated BlackjackGame document.',
-              'Only one active game per user per guild (unique index).',
-              'Dealer hits until 17, with soft-17 support built into hand evaluation.',
-              'Blackjack detection on the initial deal for both sides.',
-              'Player actions implemented via interaction buttons (hit, stand, double).',
-              'Dealer reveals cards with short delays, updating the embed each step.',
-              'Final outcomes include win, loss, push, and blackjack-specific cases.',
+              'Persistent BlackjackGame document; one active hand per user per guild.',
+              'Button interactions: hit, stand, double; dealer hits to 17 with soft-17 rules.',
+              'Background worker auto-stands stale games after one hour.',
+              'Blackjack detection on initial deal for player and dealer.'
             ]}
           />
         </ProjectSubPageInfoCard>
 
-        {/* Roulette */}
         <ProjectSubPageInfoCard
           title="Mini Roulette"
           icon={Disc}
           iconColor="text-red-400"
         >
-          <ProjectSubPageParagraph className="mb-2">
-            Roulette is implemented as a custom 19-field wheel (0–18). Colors
-            are defined using the strongly typed{' '}
-            <code className="text-xs">MINI_NUMBERS</code> map. Players can
-            submit multiple bets in a single command.
-          </ProjectSubPageParagraph>
-
           <ProjectSubPageBulletList
             className="text-sm"
             items={[
-              'Bet types: number, color, parity, range, dozen (D1–D3), and column (C1–C3).',
-              'Bets parsed from comma-separated input like "10 red, 5 D2".',
-              'Game logic resolves each bet using typed helpers.',
-              'Supports multi-spin commands with persistent live results.',
+              'Custom 19-pocket wheel (0–18) via MINI_NUMBERS color map.',
+              'Bet types: number, color, parity, range, dozen, column-multiple bets per command.',
+              'Per-bet-type RTP returned as a map (not a single percentage).'
             ]}
           />
         </ProjectSubPageInfoCard>
 
-        {/* Lottery / Coinflip / Slots */}
         <div className="grid gap-4 sm:grid-cols-3">
           <ProjectSubPageInfoCard
             title="Lottery"
@@ -320,9 +326,8 @@ const GamblingBotCaseStudyPage = () => {
             iconColor="text-purple-300"
           >
             <ProjectSubPageParagraph className="text-sm">
-              Users select a set of numbers. The bot draws unique numbers from a
-              fixed pool, and payouts scale with the number of matches.
-              Probabilities are handled combinatorially in the RTP logic.
+              Players pick numbers; draws use fixed pool sizes. Payout tiers by
+              match count; combinatorics drive RTP.
             </ProjectSubPageParagraph>
           </ProjectSubPageInfoCard>
 
@@ -332,9 +337,8 @@ const GamblingBotCaseStudyPage = () => {
             iconColor="text-yellow-300"
           >
             <ProjectSubPageParagraph className="text-sm">
-              A simple, configurable game where users pick heads or tails and
-              run multiple flips. Rewards use a configurable win multiplier that
-              directly determines the RTP.
+              Heads/tails with optional multi-flip; guild winMultiplier sets
+              RTP.
             </ProjectSubPageParagraph>
           </ProjectSubPageInfoCard>
 
@@ -344,24 +348,21 @@ const GamblingBotCaseStudyPage = () => {
             iconColor="text-pink-400"
           >
             <ProjectSubPageParagraph className="text-sm">
-              Slots use weighted symbols for each spin. Three random symbols
-              appear, and only 3-of-a-kind combinations pay out via configured
-              multipliers in the guild settings.
+              Weighted emoji reels; only triple matches pay using per-combo
+              multipliers in settings.
             </ProjectSubPageParagraph>
           </ProjectSubPageInfoCard>
         </div>
 
-        {/* RPS / Golden Jackpot */}
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <ProjectSubPageInfoCard
-            title="Rock, Paper, Scissors (PvP)"
+            title="RPS (PvP)"
             icon={HandMetal}
             iconColor="text-indigo-300"
           >
             <ProjectSubPageParagraph className="text-sm">
-              A peer-to-peer duel: one user challenges another, both place the
-              same bet, and the winner takes the pot minus a casino cut. All
-              transactions reference the same betId for clean traceability.
+              Challenge flow: matched bets, winner takes pot minus casinoCut;
+              shared betId across both players’ transactions.
             </ProjectSubPageParagraph>
           </ProjectSubPageInfoCard>
 
@@ -371,360 +372,320 @@ const GamblingBotCaseStudyPage = () => {
             iconColor="text-amber-400"
           >
             <ProjectSubPageParagraph className="text-sm">
-              A high-variance game with a one-in-N win chance and a large
-              multiplier. Users buy multiple “tickets”, and the bot draws
-              attempts with optional animations, logging each jackpot hit.
+              High-variance tickets against oneInChance; large winMultiplier;
+              optional simulation commands for moderators.
             </ProjectSubPageParagraph>
           </ProjectSubPageInfoCard>
         </div>
       </ProjectSubPageSectionLayout>
 
-      {/* 6. RTP */}
       <ProjectSubPageSectionLayout
         iconStyle={{ icon: LineChart, color: 'text-cyan-400' }}
-        title="6. RTP Calculation & Fairness Controls"
+        title="6. RTP & Fairness Controls"
         id="rtp"
       >
         <ProjectSubPageParagraph>
-          Instead of treating RTP (Return to Player) as a vague concept, the
-          system exposes it explicitly through a dedicated{' '}
-          <code className="text-xs">calculateRTP</code> function. This function
-          reads the guild’s casino settings and computes the real, effective RTP
-          for every game using probability and configuration data — not
-          hardcoded values.
+          <code className="text-xs">calculateRTP</code> in the shared package
+          derives effective return from guild settings and game-specific
+          probability-not hardcoded labels. The dashboard shows live RTP (with
+          warnings when RTP ≤ 90% or ≥ 100%) while editing casino settings.
         </ProjectSubPageParagraph>
 
-        {/* Visual Layout Overview */}
-        <div className="my-4 rounded-lg border border-neutral-800 bg-neutral-900/40 p-4">
-          <h4 className="mb-3 text-sm font-semibold tracking-wide text-neutral-100">
-            How RTP Is Computed
-          </h4>
-
-          <div className="grid gap-4 text-sm sm:grid-cols-3">
-            <div className="rounded-md bg-neutral-800/40 p-3">
-              <p className="mb-1 font-medium text-neutral-200">Game Rules</p>
-              <p className="text-neutral-300">
-                Each game defines its probability model (dice odds, slot
-                weights, lottery combinations, roulette layout…).
-              </p>
-            </div>
-
-            <div className="rounded-md bg-neutral-800/40 p-3">
-              <p className="mb-1 font-medium text-neutral-200">
-                Guild Settings
-              </p>
-              <p className="text-neutral-300">
-                Win multipliers, symbol weights, odds, and casino cuts are
-                stored in <code className="text-xs">GuildConfiguration</code>.
-              </p>
-            </div>
-
-            <div className="rounded-md bg-neutral-800/40 p-3">
-              <p className="mb-1 font-medium text-neutral-200">RTP Function</p>
-              <p className="text-neutral-300">
-                The system computes expected value for every game, producing a
-                transparent, configurable RTP %.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Bullet Details */}
         <ProjectSubPageBulletList
           className="text-sm"
           items={[
-            <>
-              <strong>Dice</strong> – a fixed 1/6 probability with a
-              configurable win multiplier.
-            </>,
-            <>
-              <strong>Coinflip</strong> – 50/50 outcome scaled by a guild
-              multiplier.
-            </>,
-            <>
-              <strong>Slots</strong> – RTP derived from weighted symbols +
-              multiplier tables using probability across all 3-of-a-kind
-              outcomes.
-            </>,
-            <>
-              <strong>Lottery</strong> – uses combinatorics to compute exact
-              match probabilities.
-            </>,
-            <>
-              <strong>Mini Roulette</strong> – RTP per bet type (number, color,
-              parity, range, dozen, column) based on custom 0–18 wheel.
-            </>,
-            <>
-              <strong>RPS</strong> – simply{' '}
-              <code className="text-xs">1 - casinoCut</code>.
-            </>,
-            <>
-              <strong>Golden Jackpot</strong> –{' '}
-              <code className="text-xs">winMultiplier / oneInChance</code>.
-            </>,
-            <>
-              <strong>Blackjack</strong> – currently fixed at ~99.4% to match
-              real-world expected return.
-            </>,
+            'Dice: (1/6) × winMultiplier.',
+            'Coinflip: 0.5 × winMultiplier.',
+            'Slots: Σ P(3-of-a-kind per symbol) × multiplier.',
+            'Lottery: hypergeometric match probabilities × tier multipliers.',
+            'Roulette: separate RTP per bet type from wheel layout.',
+            'Plinko: binomial path probabilities × bin multipliers.',
+            'RPS: 1 − casinoCut; Golden Jackpot: winMultiplier / oneInChance.',
+            'Blackjack: documented ~99.4% baseline; prediction/raffle RTP not auto-calculated.'
           ]}
         />
 
-        {/* Tiny Code Sample */}
         <div className="mt-6 rounded-lg border border-neutral-800 bg-neutral-900/40 p-4">
           <h4 className="mb-3 text-sm font-semibold tracking-wide text-neutral-100">
-            Example: RTP Calculation Snippet
+            Example: Plinko RTP (binomial bins)
           </h4>
-
-          <pre className="max-w-full overflow-x-auto whitespace-pre-wrap break-words rounded-md bg-neutral-950 p-1 text-[10px] text-neutral-200 sm:p-3 sm:text-xs">
-            {`case 'coinflip': {
-  const { winMultiplier } = settings;
-  return 0.5 * Number(winMultiplier) * 100;
+          <pre className="max-w-full overflow-x-auto whitespace-pre-wrap break-words rounded-md bg-neutral-950 p-3 text-xs text-neutral-200">
+            {`for (let k = 0; k <= N; k++) {
+  const p = C(N,k) * 0.5^k * 0.5^(N-k)
+  rtp += p * binMultipliers[k]
 }
-
-case 'slots': {
-  const { symbolWeights, winMultipliers } = settings;
-  const totalWeight = Object.values(symbolWeights).reduce((a, b) => a + b, 0);
-  let rtp = 0;
-
-  for (const [symbol, weight] of Object.entries(symbolWeights)) {
-    const p = (weight / totalWeight) ** 3; // probability of 3-of-a-kind
-    const multi = winMultipliers[symbol + symbol + symbol] ?? 0;
-    rtp += p * multi;
-  }
-
-  return rtp * 100;
-}`}
+return rtp * 100`}
           </pre>
         </div>
 
-        {/* Why RTP Matters */}
-        <Alert
-          type="note"
-          title="Why RTP Matters"
-          description="RTP gives admins predictable control over how generous or challenging the casino feels. Because the system computes RTP from real probabilities instead of static presets, servers can tune risk level in a transparent and mathematically correct way."
-        />
-
-        {/* Configurable */}
         <Alert
           type="info"
-          title="Fully Configurable Per Guild"
-          description="All RTP-sensitive values (win multipliers, symbol weights, odds, casino cut) are stored directly inside GuildConfiguration. Server admins can adjust them from the dashboard without restarting the bot."
+          title="Per-guild tuning"
+          description="All sensitive knobs (multipliers, weights, cuts, bet limits) live in GuildConfiguration.casinoSettings and are editable from the dashboard without restarting the bot."
         />
       </ProjectSubPageSectionLayout>
 
-      {/* 7. DAILY BONUS */}
       <ProjectSubPageSectionLayout
         iconStyle={{ icon: Clock, color: 'text-amber-400' }}
-        title="7. Daily Bonus & Streak System"
+        title="7. Daily Bonus & Streaks"
         id="daily-bonus"
       >
         <ProjectSubPageParagraph>
-          To keep players engaged without forcing them to gamble constantly, the
-          system includes a flexible daily bonus mechanic. The bonus logic is
-          fully configurable per guild through{' '}
-          <code className="text-xs">bonusSettings</code>, allowing each
-          community to tune progression and pacing.
+          <code className="text-xs">bonusSettings</code> per guild controls
+          linear or exponential streak growth, caps, reset-on-max, and weekly /
+          monthly milestone bonuses. Rewards credit{' '}
+          <code className="text-xs">bonusBalance</code> only-keeping farmed
+          value inside the casino economy.
         </ProjectSubPageParagraph>
 
         <ProjectSubPageBulletList
           className="text-sm"
           items={[
-            'Linear or exponential reward mode.',
-            'Base reward, streak increment or multiplier.',
-            'Maximum reward with optional cycle reset behavior.',
-            'Weekly and monthly milestone bonuses.',
+            '/bonus check - 28-day preview calendar (shared generateBonusPreview).',
+            '/bonus claim - 24h cooldown enforced in DB; streak + transaction logged.',
+            'Dashboard: bonus form + live calendar preview when editing settings.',
+            'Admin can grant or revoke bonus balance from the users table.'
           ]}
-        />
-
-        <ProjectSubPageParagraph>
-          The <code className="text-xs">/bonus</code> command exposes two
-          subcommands:
-          <strong> check</strong> and <strong>claim</strong>. The check
-          subcommand renders a 28-day calendar using emoji icons to represent
-          past, current, and upcoming rewards. The claim subcommand enforces the
-          24-hour cooldown, updates streak progression, writes a{' '}
-          <code className="text-xs">bonus</code> transaction, and updates both
-          <code className="text-xs"> balance</code> and{' '}
-          <code className="text-xs">lockedBalance</code> on the user document.
-        </ProjectSubPageParagraph>
-
-        <Alert
-          type="info"
-          title="Locked Balance for Bonus Rewards"
-          description="Daily bonuses are applied to both balance and lockedBalance. Locked funds cannot be withdrawn immediately and are intended for in-system usage, preventing pure farming behavior while keeping bonuses meaningful."
         />
       </ProjectSubPageSectionLayout>
 
-      {/* 8. VIP ROOMS */}
       <ProjectSubPageSectionLayout
         iconStyle={{ icon: Lock, color: 'text-rose-400' }}
         title="8. VIP Rooms"
         id="vip"
       >
         <ProjectSubPageParagraph>
-          VIP rooms are private text channels that players can purchase for a
-          configurable duration. The system ties together the{' '}
-          <code className="text-xs">GuildConfiguration</code>,{' '}
-          <code className="text-xs">User</code>, and{' '}
-          <code className="text-xs">VipRoom</code> models to manage pricing,
-          ownership, permissions, and expiration.
+          Players buy private channels for a duration (days/weeks). Config
+          covers category, owner/member roles, pricing per day, creation fee,
+          and <strong>multi-member</strong> support (maxMembers,
+          pricePerAdditionalMember).
         </ProjectSubPageParagraph>
 
         <div className="grid gap-5 sm:grid-cols-2">
           <ProjectSubPageInfoCard
-            title="Purchasing Flow"
+            title="Purchase & extend"
             icon={Users}
             iconColor="text-rose-300"
           >
             <ProjectSubPageBulletList
               className="text-sm"
               items={[
-                <>
-                  Purchase is initiated through{' '}
-                  <code className="text-xs">/vip buy</code>.
-                </>,
-                'Duration can be specified in days or weeks (e.g., 3d, 1w).',
-                'Total price is based on duration plus an optional creation fee.',
-                'Balance is validated to ensure the user can afford the purchase.',
+                '/vip buy and /vip extend with atomic balance checks.',
+                'reserveVipPurchase / finalizeVipPurchase pattern mirrors casino bets.',
+                'VIP transactions and VipRoom documents track expiry.'
               ]}
             />
           </ProjectSubPageInfoCard>
 
           <ProjectSubPageInfoCard
-            title="Channel & Role Handling"
+            title="Membership"
             icon={Trophy}
             iconColor="text-yellow-300"
           >
             <ProjectSubPageBulletList
               className="text-sm"
               items={[
-                'A private channel is created in the configured VIP category.',
-                'Permissions restrict access so only the buyer can view and write.',
-                'A VIP role is assigned for visibility and easier moderation.',
-                <>
-                  A corresponding <code className="text-xs">VipRoom</code> entry
-                  stores the channel ID and expiration date.
-                </>,
+                '/vip add-member and remove-member with permission updates.',
+                'Expired rooms: channel stays, write access revoked.',
+                'vipExpiration worker runs every minute.',
+                'Dashboard VIP settings form + VIP table (feature present; sidebar link optional).'
               ]}
             />
           </ProjectSubPageInfoCard>
         </div>
-
-        <ProjectSubPageParagraph>
-          When a VIP room expires, the channel remains visible but becomes
-          locked — the user loses write permissions. This preserves message
-          history for light auditing while maintaining the temporary nature of
-          the perk.
-        </ProjectSubPageParagraph>
-
-        <Alert
-          type="warning"
-          title="Extending VIP Duration"
-          description="Players can extend their VIP room using /vip extend. The system recalculates the total price based on the added time, updates the expiry timestamp, and logs the extension as a VIP transaction."
-        />
       </ProjectSubPageSectionLayout>
 
-      {/* 9. PREDICTIONS */}
       <ProjectSubPageSectionLayout
         iconStyle={{ icon: BarChart3, color: 'text-indigo-400' }}
         title="9. Predictions"
         id="predictions"
       >
         <ProjectSubPageParagraph>
-          Predictions function as an on-chain betting system inside the Discord
-          server: moderators can create events with up to three choices, each
-          with custom odds. Players place bets on one of the options, and
-          payouts are calculated once the event resolves.
+          Moderators run a parimutuel-style market: create an event with up to
+          three choices and odds, players bet in-channel, optional autolock,
+          then resolve or cancel with full refunds.
         </ProjectSubPageParagraph>
 
-        {/* Flow Diagram */}
         <ProjectSubPageFlowDiagram
           steps={[
-            'Admin creates prediction',
-            'Users place bets',
-            'Autolock triggers (optional)',
-            'Admin resolves outcome',
-            'Winners are paid / refunds issued',
+            'Moderator creates prediction',
+            'Players place bets',
+            'Autolock (optional)',
+            'Moderator resolves',
+            'Payouts or refunds + transaction log'
           ]}
         />
 
         <ProjectSubPageBulletList
-          className="mt-6 text-sm"
+          className="text-sm"
           items={[
-            <>
-              <strong>Prediction</strong> documents store title, guild, channel,
-              creator, status, autolock time, and all choices with their odds
-              and attached bets.
-            </>,
-            'Autolock automatically closes the prediction after a configured timeout.',
-            'When resolved, winning bets are paid out as amount × odds.',
-            'Cancelled predictions refund all users and create refund transactions.',
+            'Dedicated prediction action/log channels in guild config.',
+            'predictionAutolock worker (1 min) and predictionCleanup worker (daily).',
+            'validatePredictionBet shared between bot and tests.',
+            'Win payout: stake × odds; cancellations issue refund transactions.'
+          ]}
+        />
+      </ProjectSubPageSectionLayout>
+
+      <ProjectSubPageSectionLayout
+        iconStyle={{ icon: Gift, color: 'text-orange-400' }}
+        title="10. Raffles"
+        id="raffles"
+      >
+        <ProjectSubPageParagraph>
+          Scheduled ticket raffles complement the casino: moderators set ticket
+          price, per-user max tickets, draw time, and repeat interval. Players
+          buy tickets in the raffle channel; the pot pays out minus a
+          configurable house cut.
+        </ProjectSubPageParagraph>
+
+        <ProjectSubPageBulletList
+          className="text-sm"
+          items={[
+            '/raffle create, cancel, and ticket purchase flows with atomic DB updates.',
+            'raffleDraw worker checks every minute for due draws.',
+            'Weighted random winner by ticket count; single-participant edge case refunds.',
+            'Recurring raffles reschedule after each draw.',
+            'Separate raffle action/log channels-configured in dashboard channel settings.'
+          ]}
+        />
+      </ProjectSubPageSectionLayout>
+
+      <ProjectSubPageSectionLayout
+        iconStyle={{ icon: ShieldCheck, color: 'text-emerald-400' }}
+        title="11. Admin Web Dashboard"
+        id="dashboard"
+      >
+        <ProjectSubPageParagraph>
+          After Discord OAuth, users pick a guild where they are Administrator
+          or hold the configured manager role. Routes live under{' '}
+          <code className="text-xs">/dashboard/g/[guildId]/[section]</code> with
+          permission gates (bot present, role check, Discord API rate-limit
+          handling).
+        </ProjectSubPageParagraph>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <ProjectSubPageInfoCard
+            title="General"
+            icon={BarChart3}
+            iconColor="text-emerald-300"
+          >
+            <ProjectSubPageBulletList
+              className="text-sm"
+              items={[
+                'Transactions - paginated table, type/source/date filters, search, cash-flow and game PnL summary panels.',
+                'Home - guild overview placeholder for future analytics.'
+              ]}
+            />
+          </ProjectSubPageInfoCard>
+
+          <ProjectSubPageInfoCard
+            title="Manage"
+            icon={Users}
+            iconColor="text-blue-300"
+          >
+            <ProjectSubPageBulletList
+              className="text-sm"
+              items={[
+                'Users - Discord member list with register/unregister, deposit, withdraw, bonus grant, balance reset.',
+                'VIPs - active VIP channels table (management UI built).'
+              ]}
+            />
+          </ProjectSubPageInfoCard>
+        </div>
+
+        <ProjectSubPageParagraph>
+          Settings (admin-only sidebar group): channel bindings for ATM, casino,
+          prediction, and raffle; manager role; VIP pricing and roles; bonus
+          progression with calendar preview; full casino accordion per game with
+          RTP headers and Zod-validated save.
+        </ProjectSubPageParagraph>
+
+        <Alert
+          type="note"
+          title="Public casino overview"
+          description="A separate /[guildId] route can render read-only casino cards (bets, multipliers, RTP breakdown) for transparency pages-useful for communities that want players to inspect house rules without dashboard access."
+        />
+      </ProjectSubPageSectionLayout>
+
+      <ProjectSubPageSectionLayout
+        iconStyle={{ icon: Workflow, color: 'text-violet-400' }}
+        title="12. Background Workers"
+        id="workers"
+      >
+        <ProjectSubPageParagraph>
+          Long-running Discord bots cannot rely on players to finish every
+          session. A shared <code className="text-xs">runWorkerLoop</code>{' '}
+          scheduler starts on clientReady and runs idempotent jobs on intervals.
+        </ProjectSubPageParagraph>
+
+        <ProjectSubPageBulletList
+          items={[
+            'VIP expiration - 1 min: revoke write access, sync permissions.',
+            'Prediction autolock - 1 min: close betting at configured time.',
+            'Raffle auto-draw - 1 min: pick winner, pay pot, reschedule repeats.',
+            'Guild settings sync - 6 h: refresh cached config from MongoDB.',
+            'Blackjack auto-stand - 1 h (delayed start): resolve abandoned hands.',
+            'Prediction cleanup - daily: archive or remove stale documents.'
+          ]}
+        />
+      </ProjectSubPageSectionLayout>
+
+      <ProjectSubPageSectionLayout
+        iconStyle={{ icon: TestTube2, color: 'text-teal-400' }}
+        title="13. Testing & Quality"
+        id="testing"
+      >
+        <ProjectSubPageParagraph>
+          The Discord bot repo treats correctness as part of the product: Vitest
+          with separate unit and integration targets, ESLint + Prettier +{' '}
+          <code className="text-xs">tsc --noEmit</code> in CI-style{' '}
+          <code className="text-xs">pnpm check</code>.
+        </ProjectSubPageParagraph>
+
+        <ProjectSubPageBulletList
+          className="text-sm"
+          items={[
+            'Unit: blackjack engine, roulette math, plinko path/render, RTP helpers, bet validation, cooldowns.',
+            'Integration: casinoBet sessions, daily bonus claims, prediction bets, raffle DB, VIP DB, workers (autolock, raffle draw, blackjack autostand).',
+            'mongodb-memory-server for hermetic database tests.',
+            'Moderator simulate-* commands for dice, slots, lottery, golden jackpot, and transaction stress tests.'
+          ]}
+        />
+      </ProjectSubPageSectionLayout>
+
+      <ProjectSubPageSectionLayout
+        iconStyle={{ icon: CircleDollarSign, color: 'text-red-400' }}
+        title="14. Technical Challenges"
+        id="challenges"
+      >
+        <ProjectSubPageParagraph>
+          Building a Discord-first financial surface forces trade-offs that a
+          typical web app does not hit as hard.
+        </ProjectSubPageParagraph>
+
+        <ProjectSubPageBulletList
+          items={[
+            'Concurrency - MongoDB transactions + unique betId indexes prevent double-spend and duplicate settlement when users spam interactions.',
+            'Dual balance - bonus-first bet consumption and locked balance keep withdrawable cash honest while still rewarding streak play.',
+            'Interaction latency - multi-step games (blackjack, plinko animations) need clear error handling and workers for abandoned state.',
+            'Config drift - central package + Zod schemas + guild sync worker keep bot memory and dashboard writes aligned.',
+            'Permission model - dashboard distinguishes Discord Administrator vs configured manager role; settings UI hidden from managers who only need transactions/users.',
+            'RP safety - gated ATM and manual transaction source document every balance change for moderator review.'
           ]}
         />
 
         <Alert
           type="info"
-          title="Admin-Driven, Player-Visible"
-          description="Predictions are created and resolved by moderators, but every step is visible to players through Discord embeds. All payouts and refunds are still logged internally for admins."
+          title="Community & repos"
+          description="Public Discord: discord.gg/Y2mMQN5QVE. Open-source repos: gambling-bot-discord, gambling-bot-admin, gambling-bot-shared on GitHub (krouskystepan)."
         />
-      </ProjectSubPageSectionLayout>
-
-      {/* TBD */}
-      <ProjectSubPageSectionLayout
-        iconStyle={{ icon: ShieldCheck, color: 'text-emerald-400' }}
-        title="10. Admin Web Dashboard (TBD)"
-        id="dashboard"
-      >
-        <ProjectSubPageParagraph>
-          The web dashboard is built using Next.js, React, Radix UI and Tailwind
-          CSS. Authentication is handled through Discord OAuth, with access
-          restricted to users who hold the manager role or the Administrator
-          permission. The dashboard operates on the same Mongoose models as the
-          bot, making it the central place for configuring every aspect of the
-          casino.
-        </ProjectSubPageParagraph>
-
-        <Alert
-          type="warning"
-          title="TBD – Dashboard Management Views"
-          description="Planned dashboard features include transaction analytics, casino settings management (including RTP controls), user inspectors, VIP room administration, and prediction control panels. This section will be expanded as the admin interface is fully implemented."
-        />
-      </ProjectSubPageSectionLayout>
-
-      {/* TBD */}
-      <ProjectSubPageSectionLayout
-        iconStyle={{ icon: Terminal, color: 'text-red-400' }}
-        title="11. Future Work & Technical Challenges (TBD)"
-        id="future"
-      >
-        <ProjectSubPageParagraph>
-          Developing a unified Discord–web ecosystem brings a number of deeper
-          engineering problems: ensuring consistency between rapid Discord
-          interactions and database state, preventing race conditions in
-          multiplayer flows, and designing indexes that remain efficient under
-          transaction-heavy workloads.
-        </ProjectSubPageParagraph>
-
-        <Alert
-          type="error"
-          title="TBD – Challenges & Solutions"
-          description="A detailed breakdown of the largest technical obstacles—concurrency, scaling, dashboard ergonomics, anti-abuse mechanisms—will be added as the project matures and real-world usage patterns emerge."
-        />
-
-        <ProjectSubPageParagraph className="mt-4">
-          For now, the core effort focuses on strong typing, clean data
-          modeling, and a unified user experience across Discord and the
-          dashboard. As new features are introduced, this section will grow into
-          a log of problems encountered and the architectural decisions that
-          solved them.
-        </ProjectSubPageParagraph>
       </ProjectSubPageSectionLayout>
 
       <section className="mt-8 border-t border-neutral-800 pt-8">
         <p className="text-sm text-neutral-400">
-          This page is a living case study of the Gambling BOT ecosystem. As the
-          dashboard, Discord bot, and shared package evolve, this write-up will
-          be updated to reflect new architectural decisions and best practices.
+          Living case study for the Gambling BOT ecosystem-updated as games,
+          dashboard sections, and shared package releases ship.
         </p>
       </section>
     </div>
