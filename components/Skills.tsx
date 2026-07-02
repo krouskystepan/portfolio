@@ -21,7 +21,7 @@ const Skills = () => {
           repeat: Infinity,
           repeatType: 'loop',
           duration: 30,
-          ease: 'linear',
+          ease: 'linear'
         }}
       >
         {[...SKILLS, ...SKILLS].map((skill, index) => (

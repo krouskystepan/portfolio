@@ -14,25 +14,21 @@ const AboutMe = () => {
         </h2>
         <p className="text-center text-lg text-neutral-300 sm:text-xl">
           My name is <span className="font-semibold">Štěpán Krouský</span>, I'm
-          a <span className="font-semibold">FullStack Developer</span> based in
-          the Czech Republic. I focus on creating a{' '}
-          <span className="font-semibold">polished UI/UX.</span> I like to
-          create projects with an{' '}
-          <span className="font-semibold">emphasis on perfectionism</span> in
-          the frontend and backend.
+          a <span className="font-semibold">QA Automation Engineer</span> and{' '}
+          <span className="font-semibold">Full Stack Developer</span> based in
+          the Czech Republic. I develop Python-based test automation for
+          automotive infotainment systems and build production web applications
+          with <span className="font-semibold">React, Next.js,</span> and{' '}
+          <span className="font-semibold">TypeScript.</span>
           <br />
           <br />
-          My main stack currently includes{' '}
-          <span className="font-semibold">React/Next.js</span> in combination
-          with <span className="font-semibold">Tailwind CSS</span> and{' '}
-          <span className="font-semibold">TypeScript.</span> I strongly believe
-          in the importance of a{' '}
-          <span className="font-semibold">
-            high-quality user interface and experience.
-          </span>{' '}
-          Therefore, I strive to integrate{' '}
-          <span className="font-semibold">modern technologies</span> into my
-          work to achieve optimal results for my projects.
+          On the web side, I focus on creating a{' '}
+          <span className="font-semibold">polished UI/UX</span> with an{' '}
+          <span className="font-semibold">emphasis on quality</span> across the
+          frontend and backend. In QA, I work with tools like{' '}
+          <span className="font-semibold">Jira</span> and{' '}
+          <span className="font-semibold">Codebeamer</span> to design and
+          maintain automated test suites in agile, international teams.
         </p>
       </div>
     </div>

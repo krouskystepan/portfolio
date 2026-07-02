@@ -148,6 +148,11 @@ const PortfolioCaseStudyPage = () => {
               portfolio site with projects, tools, and interactive features.
             </>,
             <>
+              <code className="text-xs">cv.krouskystepan.com</code> — multilingual
+              interactive resume with PDF export, also reachable via{' '}
+              <code className="text-xs">krouskystepan.com/cv</code>.
+            </>,
+            <>
               <code className="text-xs">darts.krouskystepan.com</code> — a
               simple static darts score tracker (501 countdown).
             </>,

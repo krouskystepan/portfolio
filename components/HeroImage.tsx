@@ -26,13 +26,17 @@ const HeroImage = () => {
   }
 
   return (
-    <div ref={imageRef} onMouseMove={handleMouseMove}>
+    <div
+      ref={imageRef}
+      onMouseMove={handleMouseMove}
+      className="relative size-full"
+    >
       <Image
         priority
-        className="size-full rounded-xl border border-white/80 transition-colors duration-200 hover:bg-white/90 md:rounded-lg"
+        className="rounded-xl border border-white/80 object-cover transition-colors duration-200 hover:bg-white/90 md:rounded-lg"
         src="/images/profile.webp"
-        width={270}
-        height={270}
+        fill
+        sizes="(min-width: 1280px) 384px, (min-width: 768px) 320px, 288px"
         quality={80}
         alt="Profile picture"
       />
