@@ -61,7 +61,7 @@ const Footer = () => {
                 achievementId === 'achievementLink' ? undefined : '_blank'
               }
               rel="noopener noreferrer"
-              className={`border border-neutral-800 bg-neutral-900 p-3 shadow-md transition hover:bg-neutral-800/80 hover:shadow-lg sm:p-4 ${index === 0 ? 'rounded-l-xl' : ''} ${index === footerSocials.length - 1 ? 'rounded-r-xl' : ''}`}
+              className={`flex items-center justify-center border border-neutral-800 bg-neutral-900 p-3 shadow-md transition hover:bg-neutral-800/80 hover:shadow-lg sm:p-4 ${index === 0 ? 'rounded-l-xl' : ''} ${index === footerSocials.length - 1 ? 'rounded-r-xl' : ''}`}
             >
               {achievementId === 'pet-cat' ? (
                 <GitHubIcon
@@ -69,7 +69,7 @@ const Footer = () => {
                   path={iconPath}
                   alt={label}
                   size={24}
-                  className="size-4 sm:size-6"
+                  className="block size-5 shrink-0 sm:size-7"
                 />
               ) : (
                 <Image
