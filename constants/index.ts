@@ -2,6 +2,7 @@ export type { TToolSectionId } from './types'
 export { TOOL_SECTION_ORDER, TOOL_SECTION_LABELS } from './types'
 
 export const BASE_URL = 'https://krouskystepan.com'
+export const CV_URL = 'https://cv.krouskystepan.com'
 
 export const NAV_LINKS = [
   {

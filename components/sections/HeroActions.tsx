@@ -1,7 +1,7 @@
 'use client'
 
 import GitHubIcon from '@/components/GitHubIcon'
-import { SOCIALS } from '@/constants'
+import { CV_URL, SOCIALS } from '@/constants'
 import { ArrowUpRight } from 'lucide-react'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
@@ -16,12 +16,14 @@ const primaryButtonClassName = `${shardClasses} border-white bg-white text-neutr
 const HeroActionButton = ({
   href,
   external,
+  openInNewTab = true,
   ariaLabel,
   variant = 'social',
   children
 }: {
   href: string
   external?: boolean
+  openInNewTab?: boolean
   ariaLabel?: string
   variant?: 'social' | 'primary'
   children: ReactNode
@@ -33,8 +35,9 @@ const HeroActionButton = ({
     return (
       <a
         href={href}
-        target="_blank"
-        rel="noopener noreferrer"
+        {...(openInNewTab
+          ? { target: '_blank', rel: 'noopener noreferrer' }
+          : {})}
         aria-label={ariaLabel}
         className={className}
       >
@@ -114,7 +117,13 @@ const HeroActions = () => {
         </HeroActionButton>
       )}
 
-      <HeroActionButton href="/cv" ariaLabel="View CV" variant="primary">
+      <HeroActionButton
+        href={CV_URL}
+        external
+        openInNewTab={false}
+        ariaLabel="View CV"
+        variant="primary"
+      >
         <span>CV</span>
         <ArrowUpRight
           size={18}

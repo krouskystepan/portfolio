@@ -41,6 +41,7 @@ const ContactMe = () => {
               <Link
                 key={index}
                 href={social.source}
+                aria-label={social.label}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={
@@ -51,7 +52,7 @@ const ContactMe = () => {
                   <GitHubIcon
                     id={social.achievementId}
                     path={social.iconPath}
-                    alt={social.label}
+                    alt=""
                     size={28}
                     className="size-5 sm:size-7"
                   />

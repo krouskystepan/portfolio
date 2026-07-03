@@ -57,6 +57,7 @@ const Footer = () => {
             <Link
               key={index}
               href={source}
+              aria-label={label}
               target={
                 achievementId === 'achievementLink' ? undefined : '_blank'
               }
@@ -67,7 +68,7 @@ const Footer = () => {
                 <GitHubIcon
                   id={achievementId}
                   path={iconPath}
-                  alt={label}
+                  alt=""
                   size={24}
                   className="block size-5 shrink-0 sm:size-7"
                 />
