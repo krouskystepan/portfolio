@@ -44,7 +44,7 @@ const GamblingBotCaseStudyPage = () => {
     <div className="mx-auto max-w-4xl px-4 pt-12">
       <header className="mb-8">
         <ProjectSubPageTag text="Case Study" />
-        <ProjectSubPageTitle title="Gambling BOT – Discord Casino & Admin Dashboard Ecosystem" />
+        <ProjectSubPageTitle title="Gambling BOT - Discord Casino & Admin Dashboard Ecosystem" />
         <ProjectSubPageDescription
           description={`A multi-repo virtual economy and casino platform for Discord communities: eleven configurable games, gated ATM deposits, predictions, scheduled raffles, VIP rooms, and a Next.js admin panel.\nAll three apps-Discord bot, admin dashboard, and shared NPM package-read the same Mongoose models, Zod schemas, and RTP math so configuration never drifts between Discord and the web.`}
         />
@@ -269,7 +269,7 @@ const GamblingBotCaseStudyPage = () => {
             iconColor="text-sky-300"
           >
             <ProjectSubPageParagraph className="text-sm">
-              Pick a side (1–6), optional multi-roll. Win when the roll matches;
+              Pick a side (1-6), optional multi-roll. Win when the roll matches;
               payout scales with guild winMultiplier. Simple 1/6 probability
               model feeds RTP.
             </ProjectSubPageParagraph>
@@ -281,7 +281,7 @@ const GamblingBotCaseStudyPage = () => {
             iconColor="text-pink-400"
           >
             <ProjectSubPageParagraph className="text-sm">
-              Drop 1–10 balls through an animated board; each path lands in a
+              Drop 1-10 balls through an animated board; each path lands in a
               bin with configured multipliers. RTP uses binomial probabilities
               over nine bins (Galton-board style 50/50 left-right steps).
             </ProjectSubPageParagraph>
@@ -312,7 +312,7 @@ const GamblingBotCaseStudyPage = () => {
           <ProjectSubPageBulletList
             className="text-sm"
             items={[
-              'Custom 19-pocket wheel (0–18) via MINI_NUMBERS color map.',
+              'Custom 19-pocket wheel (0-18) via MINI_NUMBERS color map.',
               'Bet types: number, color, parity, range, dozen, column-multiple bets per command.',
               'Per-bet-type RTP returned as a map (not a single percentage).'
             ]}

@@ -27,7 +27,7 @@ const CustomOverlaysCaseStudyPage = () => {
       {/* HEADER */}
       <header className="mb-8">
         <ProjectSubPageTag text="Case Study" />
-        <ProjectSubPageTitle title="Custom Streaming Overlays – Real-Time Event Platform (Kick & StreamElements)" />
+        <ProjectSubPageTitle title="Custom Streaming Overlays - Real-Time Event Platform (Kick & StreamElements)" />
         <ProjectSubPageDescription
           description={`A full-stack real-time overlay platform built around a custom Node.js WebSocket server.\nThe system aggregates live events from Kick and StreamElements, normalizes them, and pushes them to browser-based overlays used directly in OBS.\nThe entire project is structured as a TypeScript monorepo with a shared contract layer.`}
         />

@@ -3,7 +3,10 @@
 import { useAchievementContext } from '@/context/AchievementContext'
 import { useState, useMemo, useEffect } from 'react'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
-import { ClearButton, PrimaryButton } from '@/components/tools/_shared/ToolButtons'
+import {
+  ClearButton,
+  PrimaryButton
+} from '@/components/tools/_shared/ToolButtons'
 import {
   toolCheckboxLabelClass,
   toolEmptyHintClass,
@@ -105,7 +108,7 @@ const UuidGenerator = () => {
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
           <div className="flex w-fit max-w-full flex-col gap-1 self-start sm:self-end">
             <label htmlFor="count" className={toolCheckboxLabelClass}>
-              Count (1–500)
+              Count (1-500)
             </label>
             <input
               id="count"
@@ -140,8 +143,13 @@ const UuidGenerator = () => {
               </label>
             </div>
 
-            <div className={`${toolToolbarEndClass} !mt-0 flex-col sm:flex-row`}>
-              <PrimaryButton onClick={handleGenerate} disabled={isGenerateDisabled}>
+            <div
+              className={`${toolToolbarEndClass} !mt-0 flex-col sm:flex-row`}
+            >
+              <PrimaryButton
+                onClick={handleGenerate}
+                disabled={isGenerateDisabled}
+              >
                 Generate
               </PrimaryButton>
 
@@ -179,7 +187,9 @@ const UuidGenerator = () => {
             ))}
           </ul>
         ) : (
-          <p className={toolEmptyHintClass}>Generated UUIDs will appear here.</p>
+          <p className={toolEmptyHintClass}>
+            Generated UUIDs will appear here.
+          </p>
         )}
       </div>
     </ToolLayout>
