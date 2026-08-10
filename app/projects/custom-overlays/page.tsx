@@ -11,6 +11,7 @@ import {
 import Alert from '@/components/Alert'
 import {
   ProjectSubPageBulletList,
+  ProjectCaseStudyBreadcrumb,
   ProjectSubPageDescription,
   ProjectSubPageFlowDiagram,
   ProjectSubPageInfoCard,
@@ -24,6 +25,8 @@ import {
 const CustomOverlaysCaseStudyPage = () => {
   return (
     <div className="mx-auto max-w-4xl px-4 pt-12">
+      <ProjectCaseStudyBreadcrumb projectId="custom-overlays" />
+
       {/* HEADER */}
       <header className="mb-8">
         <ProjectSubPageTag text="Case Study" />

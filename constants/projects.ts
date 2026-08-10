@@ -7,7 +7,7 @@ export const PROJECTS: TProject[] = [
     id: 'discord-gambling-hub',
     name: 'Discord Gambling Hub',
     description:
-      'A modular Discord gambling and economy system featuring multiple casino-style games, a virtual currency backend, and an integrated Next.js admin dashboard for real-time player and game management.',
+      'A multi-repo Discord casino and virtual economy platform: configurable games with computed RTP, gated ATM and ledger, VIP/predictions/raffles/quests, and a Next.js admin dashboard sharing one TypeScript package with the bot.',
     image: '/images/projects/discord-gambling-bot.png',
     link: {
       type: 'internal',
@@ -18,8 +18,8 @@ export const PROJECTS: TProject[] = [
       'Node.js',
       'Discord.js',
       'TypeScript',
-      'Tailwind',
-      'MongoDB'
+      'MongoDB',
+      'CommandKit'
     ],
     availability: 'live'
   },

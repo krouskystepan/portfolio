@@ -11,6 +11,7 @@ import {
 import Alert from '@/components/Alert'
 import {
   ProjectSubPageBulletList,
+  ProjectCaseStudyBreadcrumb,
   ProjectSubPageDescription,
   ProjectSubPageInfoCard,
   ProjectSubPageParagraph,
@@ -23,6 +24,8 @@ import {
 const PortfolioCaseStudyPage = () => {
   return (
     <div className="mx-auto max-w-4xl px-4 pt-12">
+      <ProjectCaseStudyBreadcrumb projectId="portfolio-platform" />
+
       {/* HEADER */}
       <header className="mb-8">
         <ProjectSubPageTag text="Case Study" />
