@@ -41,35 +41,44 @@ const CasinoPage = () => {
         chapter="Casino"
       />
 
-      <header className="mb-8">
-        <ProjectSubPageTag text="Chapter 3" />
-        <ProjectSubPageTitle title="Casino Engine & Fairness" />
-        <ProjectSubPageDescription
-          description="A full suite of configurable games, from instant rolls to multi-bet interactive sessions, share one reserve/settle pipeline. RTP is computed from guild settings and probability models, not marketing labels. Per-game enable toggles let ops turn titles on or off without redeploying."
-        />
-      </header>
+      <div className="mb-12 grid gap-8 lg:grid-cols-[minmax(0,1fr)_17.5rem] lg:items-start lg:gap-12">
+        <header className="min-w-0">
+          <ProjectSubPageTag text="Chapter 3" />
+          <ProjectSubPageTitle title="Casino Engine & Fairness" />
+          <ProjectSubPageDescription
+            description="A full suite of configurable games, from instant rolls to multi-bet interactive sessions, share one reserve/settle pipeline. RTP is computed from guild settings and probability models, not marketing labels. Per-game enable toggles let ops turn titles on or off without redeploying."
+          />
+        </header>
 
-      <ProjectSubPageFigure
-        alt="Blackjack multi-hand session in Discord"
-        caption="Interactive session UX: blackjack, baccarat, mines, hilo, slots, or roulette."
-        filenameHint="blackjack-session.png"
-      />
+        <aside className="mx-auto w-full max-w-sm lg:row-span-2 lg:mx-0 lg:sticky lg:top-24 lg:max-w-none">
+          <ProjectSubPageFigure
+            alt="Blackjack multi-hand session in Discord"
+            caption="Session UX in Discord."
+            filenameHint="blackjack-session.png"
+            aspect="embed"
+            className="my-0 mx-0 max-w-none"
+          />
+        </aside>
 
-      <ProjectSubPageSectionLayout
-        iconStyle={{ icon: Gamepad2, color: 'text-sky-400' }}
-        title="Shared play pipeline"
-        id="pipeline"
-      >
-        <ProjectSubPageNumberedList
-          items={[
-            'Check registration, casino channels, per-game enabled flag, and cooldowns.',
-            'Validate bet against min/max and available cash + bonus.',
-            'reserveCasinoBet with a generated betId (or multi-bet slip for session games).',
-            'Run game logic - RNG for instant games, button-driven state for interactive ones.',
-            'settleCasinoWinnings / refunds and render result embeds.',
-          ]}
-        />
-      </ProjectSubPageSectionLayout>
+        <div className="min-w-0">
+          <ProjectSubPageSectionLayout
+            iconStyle={{ icon: Gamepad2, color: 'text-sky-400' }}
+            title="Shared play pipeline"
+            id="pipeline"
+            className="mt-8 lg:mt-0"
+          >
+            <ProjectSubPageNumberedList
+              items={[
+                'Check registration, casino channels, per-game enabled flag, and cooldowns.',
+                'Validate bet against min/max and available cash + bonus.',
+                'reserveCasinoBet with a generated betId (or multi-bet slip for session games).',
+                'Run game logic - RNG for instant games, button-driven state for interactive ones.',
+                'settleCasinoWinnings / refunds and render result embeds.',
+              ]}
+            />
+          </ProjectSubPageSectionLayout>
+        </div>
+      </div>
 
       <ProjectSubPageSectionLayout
         iconStyle={{ icon: Dices, color: 'text-blue-400' }}
@@ -87,6 +96,7 @@ const CasinoPage = () => {
             title="Dice"
             icon={Dices}
             iconColor="text-sky-300"
+            className="h-full"
           >
             <ProjectSubPageBulletList
               className="text-sm"
@@ -99,23 +109,10 @@ const CasinoPage = () => {
           </ProjectSubPageInfoCard>
 
           <ProjectSubPageInfoCard
-            title="Coinflip"
-            icon={Coins}
-            iconColor="text-yellow-300"
-          >
-            <ProjectSubPageBulletList
-              className="text-sm"
-              items={[
-                'Heads/tails with optional multi-flip.',
-                'Guild winMultiplier sets payout and RTP (0.5 x multiplier).',
-              ]}
-            />
-          </ProjectSubPageInfoCard>
-
-          <ProjectSubPageInfoCard
             title="Limbo"
             icon={LineChart}
             iconColor="text-cyan-300"
+            className="h-full"
           >
             <ProjectSubPageBulletList
               className="text-sm"
@@ -128,16 +125,16 @@ const CasinoPage = () => {
           </ProjectSubPageInfoCard>
 
           <ProjectSubPageInfoCard
-            title="Plinko"
-            icon={Shapes}
-            iconColor="text-pink-400"
+            title="Coinflip"
+            icon={Coins}
+            iconColor="text-yellow-300"
+            className="h-full"
           >
             <ProjectSubPageBulletList
               className="text-sm"
               items={[
-                'Drop 1-10 balls through an animated board into multiplier bins.',
-                'RTP uses binomial path probabilities over nine bins (Galton-board 50/50 left-right steps).',
-                'Bin multipliers are editable in guild casino settings with live RTP preview.',
+                'Heads/tails with optional multi-flip.',
+                'winMultiplier sets payout and RTP (0.5 × multiplier).',
               ]}
             />
           </ProjectSubPageInfoCard>
@@ -146,12 +143,13 @@ const CasinoPage = () => {
             title="Lottery"
             icon={Ticket}
             iconColor="text-purple-300"
+            className="h-full"
           >
             <ProjectSubPageBulletList
               className="text-sm"
               items={[
-                'Players pick numbers; draws use fixed pool sizes from shared constants.',
-                'Payout tiers by match count; hypergeometric / combinatoric probabilities drive RTP.',
+                'Pick numbers; draws use fixed shared pool sizes.',
+                'Match-count payouts; RTP from combinatoric odds.',
               ]}
             />
           </ProjectSubPageInfoCard>
@@ -160,6 +158,7 @@ const CasinoPage = () => {
             title="Golden Jackpot"
             icon={Gem}
             iconColor="text-amber-400"
+            className="sm:col-span-2"
           >
             <ProjectSubPageBulletList
               className="text-sm"
@@ -178,18 +177,54 @@ const CasinoPage = () => {
         title="Interactive sessions"
         id="interactive"
       >
-        <ProjectSubPageParagraph>
-          These games are not one-shot RNG replies. Each one keeps a durable
-          MongoDB session, Discord button UI, locked balances, and workers that
-          nudge or settle when a player walks away. That is where most of the
-          engineering weight sits.
-        </ProjectSubPageParagraph>
+        <div className="grid items-start gap-8 md:grid-cols-[minmax(0,1fr)_16rem] md:gap-10">
+          <div className="min-w-0 space-y-4">
+            <ProjectSubPageParagraph>
+              Unlike instant titles (dice, coinflip, limbo, lottery, golden
+              jackpot), these games stay open across messages. Each keeps a
+              durable MongoDB session, Discord button UI, locked balances, and
+              workers that nudge or settle when a player walks away: blackjack,
+              baccarat, mines, hi-lo, plinko, roulette, and slots.
+            </ProjectSubPageParagraph>
 
-        <ProjectSubPageFigure
-          alt="Baccarat multi-bet slip"
-          caption="Multi-bet / side-bet session: baccarat slip or blackjack with insurance and pairs."
-          filenameHint="baccarat-multibet.png"
-        />
+            <h3 className="text-base font-semibold text-neutral-100">
+              How a session runs
+            </h3>
+            <ProjectSubPageParagraph>
+              The player opens a table, configures a stake (or a multi-line
+              slip), plays through buttons, then rebet / change / close without
+              restarting the command. While a stake is live, balances stay locked
+              so a refresh, reconnect, or mid-hand crash cannot double-spend.
+              House edge and multipliers are snapshotted when the round locks so
+              mid-play config edits cannot rewrite an open hand.
+            </ProjectSubPageParagraph>
+
+            <h3 className="text-base font-semibold text-neutral-100">
+              What keeps it safe
+            </h3>
+            <ProjectSubPageBulletList
+              className="text-sm"
+              items={[
+                'Shared lifecycle: open table → configure bet → play → rebet / change / close.',
+                'Locks held until settle, cash-out, refund, or idle recovery.',
+                'Idle nudge workers DM after long inactivity; timeout workers auto-resolve or close and refund.',
+                'Orphan cleanup and lock reconciliation cover guild leaves and stuck in-flight rows.',
+                'Multi-bet slips where it matters - baccarat sides, blackjack insurance and pairs.',
+                'Per-game enable flags and channel gates still apply before a session can open.',
+              ]}
+            />
+          </div>
+
+          <aside className="mx-auto w-full max-w-sm md:mx-0 md:sticky md:top-24 md:max-w-none">
+            <ProjectSubPageFigure
+              alt="Baccarat multi-bet slip"
+              caption="Multi-bet session in Discord."
+              filenameHint="baccarat-multibet.png"
+              aspect="embed"
+              className="my-0 mx-0 max-w-none"
+            />
+          </aside>
+        </div>
       </ProjectSubPageSectionLayout>
 
       <ProjectSubPageSectionLayout
@@ -302,17 +337,43 @@ const CasinoPage = () => {
         id="hilo"
       >
         <ProjectSubPageParagraph>
-          Card streak game on a full 52-card deck without replacement. Each
-          correct Higher / Lower / Same guess compounds the multiplier; a wrong
-          guess busts. Cash-out unlocks after the first successful streak step.
+          Continuous streak table on a full 52-card deck without replacement.
+          Open a table, set a bet, Deal, then guess Higher / Draw / Lower to
+          compound the multiplier. Cash out after a correct guess, or bust on a
+          miss. After a round: Rebet, Change bet, or Close.
         </ProjectSubPageParagraph>
 
         <ProjectSubPageBulletList
           items={[
+            'Phases: BETTING → WAITING → SETTLING → RESULT, with remaining deck, streak, and compound multiplier persisted on the session.',
             'Step multiplier is fair given remaining cards and the chosen guess, then scaled by (1 - houseEdge). Same-rank outcomes lose Higher/Lower (Draw is its own choice).',
-            'Empty deck forces cash-out. Session persists remaining deck, streak, and multiplier snapshot across Discord interactions.',
-            'Guess timeout (1h): if streak >= 1, auto cash-out; otherwise auto-play the safest remaining guess, then cash out if it wins. DM nudge at 30 minutes.',
-            'Empty betting/result tables idle-close around 24h. RTP tracks (1 - houseEdge) like Mines: same mental model for managers.',
+            'Correct guesses CONTINUE the streak (card-to-beat updates); empty deck forces cash-out; bust ends the round at 0.',
+            'Optional skipAnimations for faster table play. House edge is snapshotted when the round locks.',
+            'Idle: DM nudge after ~30m waiting. After ~1h, an active streak auto cash-outs; otherwise the safest first guess is auto-played. Abandoned BETTING/RESULT tables close after ~24h.',
+            'RTP tracks (1 - houseEdge) x 100: same mental model as Mines for managers.',
+          ]}
+        />
+      </ProjectSubPageSectionLayout>
+
+      <ProjectSubPageSectionLayout
+        iconStyle={{ icon: Shapes, color: 'text-pink-400' }}
+        title="Plinko"
+        id="plinko"
+      >
+        <ProjectSubPageParagraph>
+          Plinko is no longer a one-shot slash reply. It is a durable board
+          session: set a unit bet, then Drop x1 / x5 / x10 as many times as you
+          want. Each ball pays the bin multiplier where it lands. Rebet / Change
+          / Close sit between drops the same way as other interactive tables.
+        </ProjectSubPageParagraph>
+
+        <ProjectSubPageBulletList
+          items={[
+            'Session phases: ready → dropping → result. Pending ball paths are predetermined for an in-flight batch and recovered if the process restarts mid-drop.',
+            'Unit bet + ballsCount (1-10) lock exposure up front; activeBetId + lockedAmount track the open batch until settle.',
+            'RTP still uses binomial path probabilities over nine bins (Galton-board 50/50 steps). Bin multipliers are editable with live RTP preview; mirrored bin editors keep the board symmetric.',
+            'Optional skipAnimations. Idle nudge after ~3h; boards close after ~24h with no new drop (locks refunded via the same recovery path as other session games).',
+            'Covered by plinkoIdleNudge / plinkoIdleClose workers, locked-balance reconciliation, and orphan cleanup when a guild leaves.',
           ]}
         />
       </ProjectSubPageSectionLayout>
@@ -398,12 +459,12 @@ const CasinoPage = () => {
             'Slots: Σ P(symbol)^3 x triple multiplier from guild weights.',
             'Lottery: hypergeometric match probabilities x tier multipliers.',
             'Roulette: separate RTP per bet type from the 19-pocket MINI_NUMBERS layout.',
-            'Plinko: binomial path probabilities x bin multipliers.',
+            'Plinko: binomial path probabilities x bin multipliers (interactive Drop batches on a durable board).',
             'RPS: (1 - houseEdge) x 100 on the matched pot.',
             'Golden Jackpot: winMultiplier / oneInChance.',
             'Blackjack: ~99.5% main-game baseline at S17 defaults; exact helpers for insurance, Perfect Pairs, and 21+3 vs shoe size.',
             'Baccarat: per-side RTP from published 8-deck probabilities (player/banker/tie + side bets).',
-            'Mines & Hi-Lo: (1 - houseEdge) x 100 with fair combinatorial / remaining-deck step math underneath.',
+            'Mines & Hi-Lo: (1 - houseEdge) x 100 with fair combinatorial / remaining-deck streak math underneath.',
             'Limbo: house-edge aware target-multiplier model.',
             'Prediction / raffle markets: odds and house cut are explicit; not folded into the same auto-RTP map as table games.',
           ]}

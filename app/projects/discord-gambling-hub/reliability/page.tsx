@@ -1,5 +1,6 @@
 import {
   CircleDollarSign,
+  FileText,
   TestTube2,
   Workflow,
 } from 'lucide-react'
@@ -36,7 +37,7 @@ const ReliabilityPage = () => {
         <ProjectSubPageTag text="Chapter 6" />
         <ProjectSubPageTitle title="Testing & Reliability" />
         <ProjectSubPageDescription
-          description="A Discord-first financial surface fails in ways a typical web app does not. Background workers close abandoned sessions, reconciliation recovers stuck locks, and Vitest covers the math and ledger paths both apps share."
+          description="A Discord-first financial surface fails in ways a typical web app does not. Background workers close abandoned sessions, reconciliation recovers stuck locks, and Vitest covers the math and ledger paths both apps share. The bot also ships generated catalogs of every slash command and worker job."
         />
       </header>
 
@@ -54,21 +55,24 @@ const ReliabilityPage = () => {
         <ProjectSubPageParagraph>
           Long-running Discord bots cannot rely on players to finish every
           session. A shared <code className="text-xs">runWorkerLoop</code>{' '}
-          scheduler starts on clientReady and runs idempotent jobs on intervals.
-          Optional worker-log channels surface what ran.
+          scheduler starts on clientReady and runs idempotent jobs on intervals
+          defined in <code className="text-xs">workerDefinitions.ts</code>.
+          Optional worker-log channels surface what ran. The full schedule is
+          cataloged in <code className="text-xs">docs/WORKERS_STRUCTURE.txt</code>.
         </ProjectSubPageParagraph>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <ProjectSubPageInfoCard
-            title="Economy & engagement"
+            title="Economy & engagement (~1m / 6h / 1d)"
             icon={Workflow}
             iconColor="text-violet-300"
             items={[
-              'VIP expiration (~1 min) + expiry warning before lapse.',
+              'VIP expiry warning + VIP expiration (~1 min).',
               'Prediction autolock (~1 min).',
               'Raffle auto-draw (~1 min) with recurring reschedule.',
-              'Guild settings sync (hours) - refresh cached config from MongoDB.',
-              'banRoleSync, guildOrphanCleanup.',
+              'Guild settings sync (~6h) - backfill/normalize older configs.',
+              'Ban role sync (~6h) - Discord banned roles vs DB ban state.',
+              'Guild orphan cleanup (~1d) - purge data for guilds the bot left.',
             ]}
           />
           <ProjectSubPageInfoCard
@@ -76,14 +80,45 @@ const ReliabilityPage = () => {
             icon={CircleDollarSign}
             iconColor="text-amber-300"
             items={[
-              'Idle nudge (~3h) + idle close (~24h) for blackjack, baccarat, mines, hilo, roulette, slots.',
+              'Casino in-flight recovery (~1 min) - finish or refund mid-deal/spin after crash.',
+              'Idle nudge + idle close for blackjack, baccarat, mines, roulette, slots, plinko (~1h jobs; ~3h nudge / ~24h close).',
               'Blackjack autostand on long-stalled hands (declines stuck insurance).',
               'Mines auto-resolve: cash out if any safe reveals, else forfeit.',
-              'Hi-Lo timeout (~1h): cash out or safest auto-guess then cash out.',
-              'casinoInFlightRecovery + lockedBalanceReconciliation for stuck money / mid-deal state.',
+              'Hi-Lo: DM after ~30m waiting; timeout (~1h) cash-out or safest auto-guess; idle-close abandoned tables (~24h).',
+              'Locked balance reconciliation (~15m) - unlock leftovers that no longer match an active bet.',
             ]}
           />
         </div>
+      </ProjectSubPageSectionLayout>
+
+      <ProjectSubPageSectionLayout
+        iconStyle={{ icon: FileText, color: 'text-blue-400' }}
+        title="Command & worker catalogs"
+        id="catalogs"
+      >
+        <ProjectSubPageParagraph>
+          The Discord repo keeps machine-readable docs next to the code so the
+          player/mod surface and the background schedule stay reviewable without
+          spelunking folders.
+        </ProjectSubPageParagraph>
+
+        <ProjectSubPageBulletList
+          items={[
+            <>
+              <code className="text-xs">docs/COMMANDS_STRUCTURE.txt</code> -
+              full slash-command tree: player (misc) ATM / casino / utils vs mod
+              auth, setup-*, events, and ops tools (ban, history, manage-balance,
+              money-manager, …).
+            </>,
+            <>
+              <code className="text-xs">docs/WORKERS_STRUCTURE.txt</code> -
+              every job with interval, start delay, and a one-line purpose (from
+              VIP expiry to plinko idle close).
+            </>,
+            'Generated / updated from the live CommandKit command tree and workerDefinitions so docs do not quietly drift from production behavior.',
+            'Dev helpers (/mock-db, /mock-worker-db, /clear-mock-db) seed realistic or intentionally broken state to exercise admin UI and workers.',
+          ]}
+        />
       </ProjectSubPageSectionLayout>
 
       <ProjectSubPageSectionLayout
@@ -100,8 +135,8 @@ const ReliabilityPage = () => {
 
         <ProjectSubPageBulletList
           items={[
-            'Unit: blackjack/baccarat/mines/hilo engines, roulette math, plinko path/render, RTP helpers (incl. side bets), bet validation, cooldowns, slip merge helpers.',
-            'Integration: casinoBet sessions, daily bonus claims, prediction bets, raffle DB, VIP DB, workers (autolock, raffle draw, blackjack autostand, idle resolve).',
+            'Unit: blackjack/baccarat/mines/hilo engines (incl. continuous streak settle), roulette math, plinko path/render, RTP helpers (incl. side bets), bet validation, cooldowns, slip merge helpers.',
+            'Integration: casinoBet sessions, plinko session DB + recovery, daily bonus claims, prediction bets, raffle DB, VIP DB, workers (autolock, raffle draw, blackjack autostand, idle resolve).',
             'mongodb-memory-server for hermetic database tests.',
             'Shared package tests cover domain math used by both bot and admin.',
             'Moderator simulate / audit scripts for economy stress and jackpot-style math checks.',
@@ -123,7 +158,7 @@ const ReliabilityPage = () => {
           items={[
             'Concurrency - MongoDB transactions + unique betId indexes prevent double-spend and duplicate settlement when users spam interactions.',
             'Dual balance - bonus-first bet consumption and locked balance keep withdrawable cash honest while still rewarding streak/quest play.',
-            'Abandoned sessions - multi-step Discord UIs (blackjack splits, baccarat slips, mines boards) need idle workers, in-flight recovery, and lock reconciliation.',
+            'Abandoned sessions - multi-step Discord UIs (blackjack splits, baccarat slips, mines boards, plinko drop batches, hi-lo streaks) need idle workers, in-flight recovery, and lock reconciliation.',
             'Config drift - central package + Zod schemas + guild sync worker keep bot memory and dashboard writes aligned.',
             'Permission model - dashboard distinguishes Discord Administrator vs configured manager role; settings UI hidden from limited managers.',
             'RP safety - gated ATM and audited staff actions document every sensitive balance change for moderator review.',
@@ -138,7 +173,7 @@ const ReliabilityPage = () => {
           {
             label: 'gambling-bot-discord',
             href: GAMBLING_HUB_LINKS.discord,
-            description: 'Bot + workers + integration tests.',
+            description: 'Bot + workers + command/worker docs + integration tests.',
           },
           {
             label: 'gambling-bot-shared',

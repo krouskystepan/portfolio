@@ -26,7 +26,7 @@ export const GAMBLING_HUB_CHAPTERS: GamblingHubChapter[] = [
     slug: 'casino',
     title: 'Casino Engine & Fairness',
     summary:
-      'Instant and interactive games, multi-bet sessions, per-game toggles, and computed RTP.',
+      'Instant and interactive casino games, multi-bet sessions, per-game toggles, and computed RTP.',
     href: `${GAMBLING_HUB_BASE}/casino`,
   },
   {

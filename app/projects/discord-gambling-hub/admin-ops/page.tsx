@@ -80,11 +80,11 @@ const AdminOpsPage = () => {
             title="General"
             icon={BarChart3}
             iconColor="text-emerald-300"
+            className="h-full"
             items={[
               'Overview - guild snapshot and quick health signals.',
-              'System health - deeper runtime / config health checks (incl. casino side-bet settings).',
-              'Transactions - TanStack Table with type/source/date filters, search, cash-flow and game PnL panels.',
-              'ATM approval queue - approve/deny deposit & withdraw requests from the web.',
+              'System health - runtime / config checks (incl. casino side bets).',
+              'Transactions - filters, search, cash-flow and game PnL panels.',
               'Reports - exportable ops views.',
               'Staff actions & settings-change audits - who changed what.',
             ]}
@@ -93,11 +93,13 @@ const AdminOpsPage = () => {
             title="Manage"
             icon={Users}
             iconColor="text-blue-300"
+            className="h-full"
             items={[
-              'Users - Discord member list with register/unregister, deposit, withdraw, bonus grant, balance reset.',
+              'Users - register/unregister, deposit, withdraw, bonus, reset.',
+              'ATM approval queue - approve/deny deposit & withdraw requests.',
               'VIPs - active VIP channels table.',
-              'Predictions, raffles, quests - create/inspect without living in Discord embeds.',
-              'Bans & moderation tooling - including ban table and related Discord role sync.',
+              'Predictions, raffles, quests - create/inspect from the web.',
+              'Bans & moderation - ban table and Discord role sync.',
             ]}
           />
         </div>

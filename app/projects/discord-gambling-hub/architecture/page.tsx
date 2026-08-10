@@ -137,7 +137,7 @@ const ArchitecturePage = () => {
 
         <ProjectSubPageBulletList
           items={[
-            'Models & indexes: User, Transaction, GuildConfiguration, Prediction, VipRoom, AtmRequest, Raffle, quest progress, plus session docs (BlackjackGame, Baccarat, Mines, Hi-Lo, Roulette, Slots, …).',
+            'Models & indexes: User, Transaction, GuildConfiguration, Prediction, VipRoom, AtmRequest, Raffle, quest progress, plus session docs (BlackjackGame, Baccarat, Mines, Hi-Lo, Plinko, Roulette, Slots, …).',
             'Defaults & labels: defaultCasinoSettings, readableGameNames / readableGameValueNames for admin form copy.',
             'Zod forms: casino settings (including nested side-bet records), channels, bonus, VIP, pay, manager role, moderation, and more.',
             'Utilities: calculateRTP (per game + side bets), calculateBonusReward, generateBonusPreview, validateBetAmount, validatePredictionBet, fair mines/hilo multipliers.',
@@ -183,7 +183,8 @@ const ArchitecturePage = () => {
           items={[
             'Bot: CommandKit app with services per domain (casino, atm, vip, predictions, raffles, quests, moderation, guild, discord).',
             'Admin: feature folders (general / manage / settings / dev) over Next.js App Router + server actions + TanStack Table.',
-            'Shared MongoDB: users scoped per guild; session documents for interactive games; append-only transactions.',
+            'Shared MongoDB: users scoped per guild; session documents for interactive games (blackjack, baccarat, mines, hi-lo, plinko, roulette, slots); append-only transactions.',
+            'Generated catalogs: docs/COMMANDS_STRUCTURE.txt and docs/WORKERS_STRUCTURE.txt mirror the live slash-command tree and worker schedule.',
             'Structured logging (Pino) on the bot; Vitest + mongodb-memory-server across repos; pnpm check (format, lint, types, coverage).',
             'Local linking scripts keep all three repos on one shared package during development; CI publishes shared independently.',
           ]}

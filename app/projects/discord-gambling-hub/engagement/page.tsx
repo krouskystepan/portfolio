@@ -35,24 +35,43 @@ const EngagementPage = () => {
         chapter="Engagement"
       />
 
-      <header className="mb-8">
-        <ProjectSubPageTag text="Chapter 4" />
-        <ProjectSubPageTitle title="Engagement Systems" />
-        <ProjectSubPageDescription
-          description="Retention is more than another game. Daily bonus streaks, VIP rooms, predictions markets, scheduled raffles, and quests keep guilds active between casino rounds, still on the same ledger and guild configuration."
-        />
-      </header>
+      <div className="mb-12 grid items-start gap-8 md:grid-cols-[minmax(0,1fr)_16rem] md:gap-10">
+        <header className="min-w-0 space-y-4">
+          <div>
+            <ProjectSubPageTag text="Chapter 4" />
+            <ProjectSubPageTitle title="Engagement Systems" />
+            <ProjectSubPageDescription
+              description="Retention is more than another game. Daily bonus streaks, VIP rooms, predictions markets, scheduled raffles, and quests keep guilds active between casino rounds, still on the same ledger and guild configuration."
+            />
+          </div>
 
-      <ProjectSubPageFigure
-        alt="VIP room or quests UI"
-        caption="Engagement surfaces: VIP settings, quest board, raffle channel, or prediction market."
-        filenameHint="engagement-vip-quests.png"
-      />
+          <ProjectSubPageBulletList
+            className="text-sm"
+            items={[
+              'Daily bonus streaks credit bonusBalance only - farm stays in-casino.',
+              'VIP rooms: timed private channels with buy / extend / member flow.',
+              'Predictions and raffles run on the same ledger as casino play.',
+              'Quests push repeat engagement between rounds without new currency.',
+            ]}
+          />
+        </header>
+
+        <aside className="mx-auto w-full max-w-sm md:mx-0 md:max-w-none">
+          <ProjectSubPageFigure
+            alt="VIP room or quests UI"
+            caption="Engagement surfaces in Discord."
+            filenameHint="engagement-vip-quests.png"
+            aspect="embed"
+            className="my-0 mx-0 max-w-none"
+          />
+        </aside>
+      </div>
 
       <ProjectSubPageSectionLayout
         iconStyle={{ icon: Clock, color: 'text-amber-400' }}
         title="Daily bonus & streaks"
         id="bonus"
+        className="mt-0"
       >
         <ProjectSubPageParagraph>
           Per-guild <code className="text-xs">bonusSettings</code> control
