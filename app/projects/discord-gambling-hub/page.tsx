@@ -175,17 +175,6 @@ const GamblingBotHubPage = () => {
           }
         ]}
       />
-
-      <section className="mt-4 border-t border-neutral-800 pt-8">
-        <p className="text-sm text-neutral-400">
-          Hiring-oriented case study: architecture and product decisions, not a
-          setup guide. Screenshots: add files under{' '}
-          <code className="text-xs">
-            public/images/projects/discord-gambling-hub/
-          </code>{' '}
-          using the filename hints on each figure placeholder.
-        </p>
-      </section>
     </>
   )
 }
