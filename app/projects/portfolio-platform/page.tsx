@@ -11,6 +11,7 @@ import {
 import Alert from '@/components/Alert'
 import {
   ProjectSubPageBulletList,
+  ProjectCaseStudyBreadcrumb,
   ProjectSubPageDescription,
   ProjectSubPageInfoCard,
   ProjectSubPageParagraph,
@@ -23,10 +24,12 @@ import {
 const PortfolioCaseStudyPage = () => {
   return (
     <div className="mx-auto max-w-4xl px-4 pt-12">
+      <ProjectCaseStudyBreadcrumb projectId="portfolio-platform" />
+
       {/* HEADER */}
       <header className="mb-8">
         <ProjectSubPageTag text="Case Study" />
-        <ProjectSubPageTitle title="Portfolio Platform – Next.js, VPS & Subdomain Services" />
+        <ProjectSubPageTitle title="Portfolio Platform - Next.js, VPS & Subdomain Services" />
         <ProjectSubPageDescription
           description={`This project is my personal portfolio platform, built and hosted on custom infrastructure.\nBeyond presenting projects, it serves as a controlled environment for experimenting with frontend architecture, deployment workflows, subdomain-based services, and small interactive features.\nThe platform is designed to be incrementally extensible without architectural rewrites.`}
         />
@@ -148,9 +151,9 @@ const PortfolioCaseStudyPage = () => {
               portfolio site with projects, tools, and interactive features.
             </>,
             <>
-              <code className="text-xs">cv.krouskystepan.com</code> — multilingual
-              interactive resume with PDF export, also reachable via{' '}
-              <code className="text-xs">krouskystepan.com/cv</code>.
+              <code className="text-xs">cv.krouskystepan.com</code> —
+              multilingual interactive resume with PDF export, also reachable
+              via <code className="text-xs">krouskystepan.com/cv</code>.
             </>,
             <>
               <code className="text-xs">darts.krouskystepan.com</code> — a
