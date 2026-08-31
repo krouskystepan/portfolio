@@ -13,6 +13,7 @@ const Project = ({ project, index }: { project: TProject; index: number }) => {
   const { unlockAchievement } = useAchievementContext()
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const leaveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const activeRef = useRef(false)
   const [visibleConfetti, setVisibleConfetti] = useState(false)
@@ -20,6 +21,11 @@ const Project = ({ project, index }: { project: TProject; index: number }) => {
   const handleMouseEnter = () => {
     if (project.id !== 'discord-gambling-hub') return
     if (activeRef.current) return
+
+    if (leaveTimeoutRef.current) {
+      clearTimeout(leaveTimeoutRef.current)
+      leaveTimeoutRef.current = null
+    }
 
     activeRef.current = true
     setVisibleConfetti(true)
@@ -34,108 +40,106 @@ const Project = ({ project, index }: { project: TProject; index: number }) => {
 
     setVisibleConfetti(false)
 
-    setTimeout(() => {
+    leaveTimeoutRef.current = setTimeout(() => {
       activeRef.current = false
+      leaveTimeoutRef.current = null
     }, 700)
   }
 
   const isReversed = index % 2 === 1
 
+  const ctaLabel =
+    project.link.type === 'website'
+      ? 'Go To Website'
+      : project.link.type === 'external'
+        ? 'Visit Project'
+        : 'View Project'
+
   return (
-    <div
+    <article
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`group/container relative mx-auto flex h-[32rem] w-full flex-col gap-0 overflow-hidden rounded-lg border-2 border-neutral-800 bg-neutral-900 text-center sm:h-[28rem] md:h-96 md:max-w-3xl md:flex-row md:gap-10 md:text-start md:[&>*]:basis-1/2 ${isReversed ? 'md:flex-row-reverse' : ''}`}
-      data-pattern="stripes"
-      style={{ '--opacity': '0.03' } as CSSProperties}
+      className="group/container relative mx-auto w-full max-w-5xl"
     >
-      {project.id === 'discord-gambling-hub' && (
+      <div
+        className="relative grid overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900 md:min-h-[22rem] md:grid-cols-2 md:items-stretch"
+        data-pattern="stripes"
+        style={{ '--opacity': '0.03' } as CSSProperties}
+      >
+        {project.id === 'discord-gambling-hub' && visibleConfetti && (
+          <CustomConfetti />
+        )}
+        {project.availability && (
+          <span
+            className={`absolute top-0 z-10 rounded-b-lg border-x border-b border-neutral-800 px-2.5 py-1 text-xs font-semibold text-white ${
+              isReversed ? 'right-4' : 'left-4'
+            } ${getAvailabilityDetails(project.availability).className}`}
+          >
+            {getAvailabilityDetails(project.availability).label}
+          </span>
+        )}
+
         <div
-          className={`pointer-events-none absolute inset-0 transition-opacity duration-700 ${
-            visibleConfetti ? 'opacity-50' : 'opacity-0'
+          className={`relative z-10 flex min-w-0 flex-col px-5 pb-6 pt-10 text-center sm:px-8 md:px-10 md:py-10 md:text-start ${
+            isReversed ? 'md:order-2' : 'md:order-1'
           }`}
         >
-          <CustomConfetti />
+          <h3 className="text-2xl font-semibold sm:text-3xl">{project.name}</h3>
+          <p className="mt-3 line-clamp-6 text-base leading-relaxed text-neutral-300 md:line-clamp-none">
+            {project.description}
+          </p>
+
+          <div className="mt-6 flex flex-col gap-4 md:mt-auto md:pt-6">
+            <ul className="flex flex-wrap justify-center gap-2 md:justify-start">
+              {project.tags.map((tag) => (
+                <li
+                  key={tag}
+                  className="rounded-lg border border-dashed border-white/25 bg-gradient-to-br from-white/15 to-white/5 px-3 py-1 text-sm text-white shadow-md backdrop-blur-sm"
+                >
+                  {tag}
+                </li>
+              ))}
+            </ul>
+
+            <Link
+              href={project.link.url}
+              target={project.link.type === 'internal' ? undefined : '_blank'}
+              rel={
+                project.link.type === 'internal'
+                  ? undefined
+                  : 'noopener noreferrer'
+              }
+              className="mx-auto flex w-full max-w-lg items-center justify-center gap-1 rounded-lg border border-neutral-800 bg-neutral-800/80 py-2.5 text-center transition-colors duration-200 hover:bg-neutral-700 md:mx-0 md:max-w-full"
+            >
+              <span>{ctaLabel}</span>
+              {project.link.type === 'website' && <Globe size={16} />}
+              {project.link.type === 'external' && <ExternalLink size={16} />}
+              {project.link.type === 'internal' && <ChevronRight size={16} />}
+            </Link>
+          </div>
         </div>
-      )}
-      {project.availability && (
-        <span
-          className={`absolute left-1/2 top-0 -translate-x-1/2 rounded-b-lg border-x-2 border-b-2 border-neutral-800 px-2 py-1 text-xs font-semibold text-white ${isReversed ? 'md:left-full md:-translate-x-full md:rounded-bl-lg md:rounded-br-none md:border-l-2 md:border-r-0' : 'md:left-0 md:translate-x-0 md:rounded-bl-none md:rounded-br-lg md:border-l-0 md:border-r-2'} ${getAvailabilityDetails(project.availability).className}`}
+
+        <div
+          className={`relative z-10 min-h-[14rem] overflow-hidden border-t border-neutral-800 md:min-h-full md:border-t-0 ${
+            isReversed
+              ? 'md:order-1 md:border-r md:border-neutral-800'
+              : 'md:order-2 md:border-l md:border-neutral-800'
+          }`}
         >
-          {getAvailabilityDetails(project.availability).label}
-        </span>
-      )}
-      <div
-        className={`flex flex-col px-4 py-7 md:pb-7 md:pl-10 md:pt-10 ${isReversed ? 'md:pl-4 md:pr-10' : 'md:pl-10'}`}
-      >
-        <h3 className="mt-2 text-3xl font-semibold md:mt-0">{project.name}</h3>
-        <p className="mt-3 line-clamp-5 text-base md:line-clamp-6">
-          {project.description}
-        </p>
-        <div className="mt-auto flex flex-col gap-3">
-          <ul className="mt-3 flex flex-wrap justify-center gap-2 md:mt-auto md:justify-center">
-            {project.tags.map((tag) => (
-              <li
-                key={tag}
-                className="rounded-lg border border-dashed border-white/25 bg-gradient-to-br from-white/15 to-white/5 px-3 py-1 text-sm text-white shadow-md backdrop-blur-sm transition-transform duration-300 md:group-hover/container:rotate-3 md:group-hover/container:even:-rotate-3"
-              >
-                {tag}
-              </li>
-            ))}
-          </ul>
-
-          <Link
-            href={project.link.url}
-            target={project.link.type === 'internal' ? undefined : '_blank'}
-            rel={
-              project.link.type === 'internal'
-                ? undefined
-                : 'noopener noreferrer'
-            }
-            className="group mx-auto flex w-full max-w-lg items-center justify-center rounded-lg border border-neutral-800 bg-neutral-700 py-2 text-center transition-colors duration-200 hover:bg-neutral-700/80 md:max-w-full"
-          >
-            <>
-              {project.link.type === 'website' && (
-                <>
-                  <span className="mr-1">Go To Website</span>
-                  <Globe size={16} />
-                </>
-              )}
-
-              {project.link.type === 'external' && (
-                <>
-                  <span className="mr-1">Visit Project</span>
-                  <ExternalLink size={16} />
-                </>
-              )}
-
-              {project.link.type === 'internal' && (
-                <>
-                  <span className="mr-0.5">View Project</span>
-                  <ChevronRight size={16} />
-                </>
-              )}
-            </>
-          </Link>
-        </div>
-      </div>
-
-      <div
-        className={`relative mx-auto w-full max-w-56 min-[380px]:max-w-80 min-[480px]:max-w-[26rem] sm:max-w-lg md:absolute md:top-8 md:w-[28.25rem] ${isReversed ? 'md:-left-32' : 'md:-right-32'} md:shadow-2xl md:transition-all md:duration-200 md:group-hover/container:scale-[102%] ${isReversed ? 'md:group-hover/container:rotate-3' : 'md:group-hover/container:-rotate-3'}`}
-      >
-        <div className="relative aspect-[4/5] overflow-hidden rounded-t-lg border border-neutral-700">
+          {/* Full width, top-aligned — bottom may clip */}
           <Image
             src={project.image}
             alt={`Project ${project.name} image`}
-            fill
-            priority
+            width={2400}
+            height={1600}
+            priority={index < 2}
             unoptimized
-            sizes="(min-width: 768px) 28.25rem, 100vw"
-            className="object-cover"
+            sizes="(min-width: 768px) 40vw, 100vw"
+            className="absolute inset-x-0 top-0 h-auto w-full max-w-none"
           />
         </div>
       </div>
-    </div>
+    </article>
   )
 }
 

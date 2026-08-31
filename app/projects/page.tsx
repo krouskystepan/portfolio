@@ -19,7 +19,7 @@ const Projects = () => {
       : PROJECTS.filter((p) => p.availability === filter)
 
   return (
-    <section className="flex w-full flex-col px-4 py-12">
+    <section className="mx-auto flex w-full max-w-6xl flex-col px-4 py-12">
       <BackgroundFade className="bg-gradient-to-b from-neutral-900/60 to-transparent" />
 
       <div className="z-10">
@@ -27,7 +27,7 @@ const Projects = () => {
           My Projects
         </h2>
 
-        <div className="mb-6 flex justify-center sm:mb-10">
+        <div className="mb-8 flex justify-center sm:mb-12">
           <div className="relative flex overflow-hidden rounded-xl border-2 border-neutral-800 p-1 backdrop-blur">
             <motion.div
               layoutId="availability-highlight"
@@ -58,11 +58,11 @@ const Projects = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-10">
+        <div className="grid grid-cols-1 gap-8 md:gap-12">
           <AnimatePresence mode="wait">
             <motion.div
               key={filter}
-              className="grid grid-cols-1 gap-10"
+              className="grid grid-cols-1 gap-8 md:gap-12"
               initial="hidden"
               animate="show"
               exit="hidden"

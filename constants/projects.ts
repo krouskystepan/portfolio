@@ -15,11 +15,17 @@ export const PROJECTS: TProject[] = [
     },
     tags: [
       'Next.js',
+      'TypeScript',
       'Node.js',
       'Discord.js',
-      'TypeScript',
+      'CommandKit',
       'MongoDB',
-      'CommandKit'
+      'Mongoose',
+      'Zod',
+      'NextAuth',
+      'Tailwind',
+      'Vitest',
+      'PM2'
     ],
     availability: 'live'
   },
@@ -103,4 +109,4 @@ export const PROJECTS: TProject[] = [
     tags: ['Next.js', 'Shadcn', 'Tailwind', 'Stripe'],
     availability: 'demo'
   }
-] as const
+]
