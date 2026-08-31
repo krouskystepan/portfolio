@@ -32,14 +32,13 @@ const GamblingBotHubPage = () => {
       <Alert
         type="info"
         title="Status"
-        description="Feature-complete for the current scope and shaped for real guild ops. Further games or dashboard surfaces can still land, but the core platform is done: economy, casino sessions, engagement systems, workers, and admin tooling."
+        description="Shipped for the current scope: multi-repo economy and casino, European roulette, interactive sessions, engagement systems, admin ops, presentation demo, workers, CI/VPS deploy, and Vitest coverage. Core platform is complete."
       />
 
       <ProjectSubPageFigure
         alt="Discord Gambling Hub overview"
-        src="/images/projects/discord-gambling-hub/architecture-overview.png"
+        src="/images/projects/discord-gambling-hub/hub-overview.png"
         caption="Discord bot and admin dashboard overview."
-        filenameHint="architecture-overview.png"
       />
 
       <ProjectSubPageSectionLayout

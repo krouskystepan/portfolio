@@ -7,7 +7,7 @@ export const PROJECTS: TProject[] = [
     id: 'discord-gambling-hub',
     name: 'Discord Gambling Hub',
     description:
-      'A multi-repo Discord casino and virtual economy platform: configurable games with computed RTP, gated ATM and ledger, VIP/predictions/raffles/quests, and a Next.js admin dashboard sharing one TypeScript package with the bot.',
+      'A multi-repo Discord casino and virtual economy platform: European roulette and interactive sessions with computed RTP, gated ATM and ledger, VIP/predictions/raffles/quests, a Next.js admin with read-only presentation demo, and one shared TypeScript package.',
     image: '/images/projects/discord-gambling-bot.png',
     link: {
       type: 'internal',

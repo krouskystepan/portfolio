@@ -9,7 +9,6 @@ import {
   LineChart,
   Shapes,
   Ticket,
-  Workflow,
 } from 'lucide-react'
 import Alert from '@/components/Alert'
 import {
@@ -53,8 +52,8 @@ const CasinoPage = () => {
         <aside className="mx-auto w-full max-w-sm lg:row-span-2 lg:mx-0 lg:sticky lg:top-24 lg:max-w-none">
           <ProjectSubPageFigure
             alt="Blackjack multi-hand session in Discord"
+            src="/images/projects/discord-gambling-hub/blackjack-session.png"
             caption="Session UX in Discord."
-            filenameHint="blackjack-session.png"
             aspect="embed"
             className="my-0 mx-0 max-w-none"
           />
@@ -218,8 +217,8 @@ const CasinoPage = () => {
           <aside className="mx-auto w-full max-w-sm md:mx-0 md:sticky md:top-24 md:max-w-none">
             <ProjectSubPageFigure
               alt="Baccarat multi-bet slip"
+              src="/images/projects/discord-gambling-hub/baccarat-multibet.png"
               caption="Multi-bet session in Discord."
-              filenameHint="baccarat-multibet.png"
               aspect="embed"
               className="my-0 mx-0 max-w-none"
             />
@@ -238,53 +237,18 @@ const CasinoPage = () => {
           settled through the same reserve/settle ledger as every other game.
         </ProjectSubPageParagraph>
 
-        <ProjectSubPageInfoCard
-          title="Core play"
-          icon={HandCoins}
-          iconColor="text-sky-300"
-        >
-          <ProjectSubPageBulletList
-            className="text-sm"
-            items={[
-              'Hit, stand, double, and split from Discord buttons on a persisted session (phases: betting, insurance, player, dealer, result).',
-              'Multi-split up to 4 hands total. Matching ranks only; Aces split once from the original deal (no Ace resplit) and auto-finish after one card each.',
-              'Double only on two-card hands: it reserves an equal extra stake and doubles that hand bet.',
-              'Natural blackjack settled at dealer peek: player BJ pays the blackjack multiplier, both BJ pushes, dealer BJ loses the main. Mid-hand 21 pays normal win, not BJ.',
-              'Dealer stands on soft 17 (S17). Fresh shoe every hand from guild deckCount (2-8, default 6).',
-            ]}
-          />
-        </ProjectSubPageInfoCard>
-
-        <ProjectSubPageInfoCard
-          title="Insurance & side bets"
-          icon={Gem}
-          iconColor="text-amber-300"
-        >
-          <ProjectSubPageBulletList
-            className="text-sm"
-            items={[
-              'Insurance offered when the dealer upcard is Ace and insurance multiplier is enabled. Stake is half the main bet; pays only if dealer has blackjack.',
-              'Perfect Pairs on the player first two: perfect / colored / mixed, each with its own multiplier.',
-              '21+3 on player two + dealer up: suited trips, straight flush, three of a kind, straight, flush (suited trips require enough decks).',
-              'Side bets and insurance disable cleanly by setting multipliers to 0 in guild config. Shared RTP helpers compute live percentages in the admin panel.',
-            ]}
-          />
-        </ProjectSubPageInfoCard>
-
-        <ProjectSubPageInfoCard
-          title="Idle & recovery"
-          icon={Workflow}
-          iconColor="text-violet-300"
-        >
-          <ProjectSubPageBulletList
-            className="text-sm"
-            items={[
-              'Idle nudge after hours of inactivity; auto-stand after a long stall (declines insurance if stuck there).',
-              'Empty tables idle-close with lock cleanup. Rebet / Change / Close between hands so tables stay usable without restarting the command.',
-              'Main-game RTP approximated from S17 outcome weights; insurance / pairs / 21+3 use exact helpers vs shoe size.',
-            ]}
-          />
-        </ProjectSubPageInfoCard>
+        <ProjectSubPageBulletList
+          items={[
+            'Hit, stand, double, and split from Discord buttons on a persisted session (phases: betting, insurance, player, dealer, result).',
+            'Multi-split up to 4 hands. Matching ranks only; Aces split once from the original deal (no Ace resplit) and auto-finish after one card each.',
+            'Double only on two-card hands: reserves an equal extra stake and doubles that hand bet.',
+            'Natural blackjack settled at dealer peek: player BJ pays the blackjack multiplier, both BJ pushes, dealer BJ loses the main. Mid-hand 21 pays normal win, not BJ.',
+            'Insurance on Ace-up when enabled (half the main bet). Perfect Pairs and 21+3 side bets with their own multipliers; set any to 0 to disable.',
+            'Dealer stands on soft 17 (S17). Fresh shoe every hand from guild deckCount (2-8, default 6).',
+            'Idle nudge after hours of inactivity; auto-stand after a long stall. Empty tables idle-close with lock cleanup. Rebet / Change / Close between hands.',
+            'Main-game RTP approximated from S17 outcome weights; insurance / pairs / 21+3 use exact helpers vs shoe size.',
+          ]}
+        />
       </ProjectSubPageSectionLayout>
 
       <ProjectSubPageSectionLayout
@@ -380,20 +344,22 @@ const CasinoPage = () => {
 
       <ProjectSubPageSectionLayout
         iconStyle={{ icon: Disc, color: 'text-red-400' }}
-        title="Mini Roulette"
+        title="Roulette"
         id="roulette"
       >
         <ProjectSubPageParagraph>
-          Custom 19-pocket wheel (0-18: one green, nine red, nine black) with a
-          multi-bet slip, up to 8 lines per spin. Same type+value lines merge by
-          summing amounts before the wheel spins.
+          Live European single-zero table in Discord (0-36: one green, eighteen
+          red, eighteen black) with a multi-bet slip, up to 8 lines per spin.
+          Same type+value lines merge by summing amounts before the wheel spins.
+          Animation and result use the full IRL pocket order - any pocket can
+          land.
         </ProjectSubPageParagraph>
 
         <ProjectSubPageBulletList
           items={[
-            'Bet types: straight number, color, parity, range (low 1-9 / high 10-18), dozen bands, and columns. Zero loses color/parity/range/dozen/column.',
+            'Bet types: straight number, color, parity, range (low 1-18 / high 19-36), dozens, and columns. Zero loses color/parity/range/dozen/column.',
             'Live table session: betting, spinning, result, then Rebet / Change. Idle nudge and close refund locked slip funds.',
-            'Default multipliers encode the mini-wheel geometry (e.g. number 18x). Per-type RTP is derived from the 19-pocket layout in shared calculateRTP.',
+            'Defaults match European geometry (straight number 36x). Per-type RTP from shared calculateRTP over the full wheel.',
           ]}
         />
       </ProjectSubPageSectionLayout>
@@ -458,7 +424,7 @@ const CasinoPage = () => {
             'Coinflip: 0.5 x winMultiplier.',
             'Slots: Σ P(symbol)^3 x triple multiplier from guild weights.',
             'Lottery: hypergeometric match probabilities x tier multipliers.',
-            'Roulette: separate RTP per bet type from the 19-pocket MINI_NUMBERS layout.',
+            'Roulette: separate RTP per bet type from the European 0-36 single-zero layout.',
             'Plinko: binomial path probabilities x bin multipliers (interactive Drop batches on a durable board).',
             'RPS: (1 - houseEdge) x 100 on the matched pot.',
             'Golden Jackpot: winMultiplier / oneInChance.',

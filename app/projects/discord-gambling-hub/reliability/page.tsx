@@ -1,6 +1,7 @@
 import {
   CircleDollarSign,
   FileText,
+  Rocket,
   TestTube2,
   Workflow,
 } from 'lucide-react'
@@ -37,15 +38,46 @@ const ReliabilityPage = () => {
         <ProjectSubPageTag text="Chapter 6" />
         <ProjectSubPageTitle title="Testing & Reliability" />
         <ProjectSubPageDescription
-          description="A Discord-first financial surface fails in ways a typical web app does not. Background workers close abandoned sessions, reconciliation recovers stuck locks, and Vitest covers the math and ledger paths both apps share. The bot also ships generated catalogs of every slash command and worker job."
+          description="A Discord-first financial surface fails in ways a typical web app does not. Background workers close abandoned sessions, reconciliation recovers stuck locks, and Vitest covers the math and ledger paths both apps share. CI gates merges, the shared package auto-publishes to npm, and the bot redeploys to a VPS under PM2 so production does not stay down."
         />
       </header>
 
       <ProjectSubPageFigure
-        alt="Worker logs or test coverage overview"
-        caption="Reliability surfaces: worker log channel, health panel, or CI check output."
-        filenameHint="reliability-workers-tests.png"
+        alt="Worker schedule and reliability checks"
+        src="/images/projects/discord-gambling-hub/reliability-workers-tests.png"
+        caption="Worker schedule and reliability checks from the ops tooling."
       />
+
+      <ProjectSubPageSectionLayout
+        iconStyle={{ icon: Rocket, color: 'text-sky-400' }}
+        title="CI, release & VPS deploy"
+        id="deploy"
+      >
+        <ProjectSubPageParagraph>
+          Ops reliability is not only workers and tests. The three-repo split
+          has an explicit ship path: quality gates on every PR, automatic npm
+          publish for shared, and SSH deploy of the Discord bot to a VPS under
+          PM2. (The admin panel is a separate web deploy and is not the focus
+          here.)
+        </ProjectSubPageParagraph>
+
+        <ProjectSubPageBulletList
+          items={[
+            'gambling-bot-discord PRs: GitHub Actions runs coverage, Prettier, ESLint, tsc, build, and Vitest before merge.',
+            'Push to main triggers deploy: Actions opens SSH to the VPS (retries on flaky connections) and runs the host deploy script as a dedicated deploy user.',
+            'Production process is PM2 (ecosystem.config.cjs): fork mode, autorestart, 300M memory restart, logs under /var/log/gambling-bot, env loaded from a path outside the app tree.',
+            'Deploy updates the app and reloads the supervised process so the bot does not stay offline - PM2 keeps it alive and brings it back under the same service definition.',
+            'gambling-bot-shared: version bump → merge main → release workflow runs checks, builds, and publishes to npm (skips if that version is already on the registry). Consumers bump the dependency when ready.',
+            'Shared bump script (pnpm bump) + CI release keeps Discord and admin on the same published package instead of drifting private copies.',
+          ]}
+        />
+
+        <Alert
+          type="info"
+          title="Why this belongs in the case study"
+          description="A casino bot that is correct in tests but dies for minutes on every release still loses money and trust. Supervised VPS deploys and an npm release train are part of the reliability story, not side chores."
+        />
+      </ProjectSubPageSectionLayout>
 
       <ProjectSubPageSectionLayout
         iconStyle={{ icon: Workflow, color: 'text-violet-400' }}
@@ -63,29 +95,31 @@ const ReliabilityPage = () => {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <ProjectSubPageInfoCard
-            title="Economy & engagement (~1m / 6h / 1d)"
+            title="Economy & engagement"
             icon={Workflow}
             iconColor="text-violet-300"
+            className="h-full"
             items={[
-              'VIP expiry warning + VIP expiration (~1 min).',
+              'VIP expiry warning + expiration (~1 min).',
               'Prediction autolock (~1 min).',
-              'Raffle auto-draw (~1 min) with recurring reschedule.',
-              'Guild settings sync (~6h) - backfill/normalize older configs.',
-              'Ban role sync (~6h) - Discord banned roles vs DB ban state.',
-              'Guild orphan cleanup (~1d) - purge data for guilds the bot left.',
+              'Raffle auto-draw (~1 min) with reschedule.',
+              'Guild settings sync (~6h) - normalize configs.',
+              'Ban role sync (~6h) - Discord roles vs DB.',
+              'Guild orphan cleanup (~1d) - left guilds.',
             ]}
           />
           <ProjectSubPageInfoCard
             title="Session recovery"
             icon={CircleDollarSign}
             iconColor="text-amber-300"
+            className="h-full"
             items={[
-              'Casino in-flight recovery (~1 min) - finish or refund mid-deal/spin after crash.',
-              'Idle nudge + idle close for blackjack, baccarat, mines, roulette, slots, plinko (~1h jobs; ~3h nudge / ~24h close).',
-              'Blackjack autostand on long-stalled hands (declines stuck insurance).',
-              'Mines auto-resolve: cash out if any safe reveals, else forfeit.',
-              'Hi-Lo: DM after ~30m waiting; timeout (~1h) cash-out or safest auto-guess; idle-close abandoned tables (~24h).',
-              'Locked balance reconciliation (~15m) - unlock leftovers that no longer match an active bet.',
+              'In-flight recovery (~1 min) - finish or refund after crash.',
+              'Idle nudge / close for table games (~3h / ~24h).',
+              'Blackjack autostand on stalled hands.',
+              'Mines auto-resolve: cash out or forfeit.',
+              'Hi-Lo idle: nudge, cash-out, or auto-guess.',
+              'Lock reconciliation (~15m) - clear stuck locks.',
             ]}
           />
         </div>
@@ -116,7 +150,7 @@ const ReliabilityPage = () => {
               VIP expiry to plinko idle close).
             </>,
             'Generated / updated from the live CommandKit command tree and workerDefinitions so docs do not quietly drift from production behavior.',
-            'Dev helpers (/mock-db, /mock-worker-db, /clear-mock-db) seed realistic or intentionally broken state to exercise admin UI and workers.',
+            'Dev helpers (/mock-db, /mock-worker-db, /clear-mock-db) seed users, MockUserProfile avatars, and intentionally broken state for admin UI and workers.',
           ]}
         />
       </ProjectSubPageSectionLayout>
@@ -135,10 +169,10 @@ const ReliabilityPage = () => {
 
         <ProjectSubPageBulletList
           items={[
-            'Unit: blackjack/baccarat/mines/hilo engines (incl. continuous streak settle), roulette math, plinko path/render, RTP helpers (incl. side bets), bet validation, cooldowns, slip merge helpers.',
+            'Unit: blackjack/baccarat/mines/hilo engines (incl. continuous streak settle), European roulette planSpin/infer, plinko path/render, RTP helpers (incl. side bets), bet validation, cooldowns, slip merge helpers.',
             'Integration: casinoBet sessions, plinko session DB + recovery, daily bonus claims, prediction bets, raffle DB, VIP DB, workers (autolock, raffle draw, blackjack autostand, idle resolve).',
             'mongodb-memory-server for hermetic database tests.',
-            'Shared package tests cover domain math used by both bot and admin.',
+            'Shared package tests cover domain math used by both bot and admin (incl. roulette win/RTP over the European wheel).',
             'Moderator simulate / audit scripts for economy stress and jackpot-style math checks.',
           ]}
         />

@@ -2,7 +2,6 @@ import {
   ArrowLeft,
   ArrowRight,
   ExternalLink,
-  ImageIcon,
   type LucideIcon
 } from 'lucide-react'
 import Image from 'next/image'
@@ -329,7 +328,6 @@ export const ProjectSubPageBreadcrumb = ({
   )
 }
 
-/** Default case-study crumb: Projects / {project name} [/ chapter] */
 export const ProjectCaseStudyBreadcrumb = ({
   projectId,
   chapter
@@ -410,17 +408,12 @@ export const ProjectSubPageFigure = ({
   src,
   alt,
   caption,
-  filenameHint,
-  /** Placeholder frame only. Real images keep natural aspect. */
   aspect = 'wide',
   className
 }: {
-  src?: string
+  src: string
   alt: string
   caption?: string
-  /** Suggested filename under public/images/projects/discord-gambling-hub/ */
-  filenameHint?: string
-  /** `wide` ≈ 16:9 (admin). `embed` ≈ 3:4 (Discord message / embed crop). */
   aspect?: 'wide' | 'embed'
   className?: string
 }) => {
@@ -433,35 +426,19 @@ export const ProjectSubPageFigure = ({
         (isEmbed ? 'my-6 mx-auto max-w-md' : 'my-6')
       }`}
     >
-      {src ? (
-        <Image
-          src={src}
-          alt={alt}
-          width={isEmbed ? 900 : 1920}
-          height={isEmbed ? 1200 : 1080}
-          className="h-auto w-full"
-          sizes={
-            isEmbed
-              ? '(min-width: 448px) 448px, 100vw'
-              : '(min-width: 896px) 896px, 100vw'
-          }
-          unoptimized
-        />
-      ) : (
-        <div
-          className={`flex w-full flex-col items-center justify-center gap-2 bg-neutral-950/50 px-4 text-center ${
-            isEmbed ? 'aspect-[3/4]' : 'aspect-video'
-          }`}
-        >
-          <ImageIcon size={28} className="text-neutral-600" />
-          <p className="text-sm font-medium text-neutral-400">
-            Screenshot pending
-          </p>
-          {filenameHint && (
-            <p className="font-mono text-xs text-neutral-600">{filenameHint}</p>
-          )}
-        </div>
-      )}
+      <Image
+        src={src}
+        alt={alt}
+        width={isEmbed ? 900 : 1920}
+        height={isEmbed ? 1200 : 1080}
+        className="h-auto w-full"
+        sizes={
+          isEmbed
+            ? '(min-width: 448px) 448px, 100vw'
+            : '(min-width: 896px) 896px, 100vw'
+        }
+        unoptimized
+      />
       {caption && (
         <figcaption className="border-t border-neutral-800 bg-neutral-900/40 px-4 py-3 text-sm text-neutral-400">
           {caption}

@@ -1,5 +1,6 @@
 import {
   BarChart3,
+  Presentation,
   Settings2,
   ShieldCheck,
   Users,
@@ -43,8 +44,8 @@ const AdminOpsPage = () => {
 
       <ProjectSubPageFigure
         alt="Admin dashboard overview"
-        caption="Admin dashboard: overview, transactions, or casino settings with live RTP."
-        filenameHint="admin-overview.png"
+        src="/images/projects/discord-gambling-hub/admin-overview.png"
+        caption="Admin dashboard overview with guild snapshot and health signals."
       />
 
       <ProjectSubPageSectionLayout
@@ -130,14 +131,37 @@ const AdminOpsPage = () => {
 
         <ProjectSubPageFigure
           alt="Casino settings with RTP preview"
+          src="/images/projects/discord-gambling-hub/admin-casino-settings.png"
           caption="Casino settings accordion: per-game enable flags and live RTP."
-          filenameHint="admin-casino-settings.png"
+        />
+      </ProjectSubPageSectionLayout>
+
+      <ProjectSubPageSectionLayout
+        iconStyle={{ icon: Presentation, color: 'text-rose-400' }}
+        title="Presentation / demo mode"
+        id="presentation"
+      >
+        <ProjectSubPageParagraph>
+          The admin app ships an always-on read-only demo at{' '}
+          <code className="text-xs">/present/*</code> in the same deploy - not a
+          second site. A sentinel demo guild and an internal presentation header
+          feed synthetic session + fixture data so reviewers can walk the full UI
+          without Discord OAuth or production guild access.
+        </ProjectSubPageParagraph>
+
+        <ProjectSubPageBulletList
+          items={[
+            'Reads come from static fixtures (guild, members, transactions, ATM queue, health, audits) with realistic avatars.',
+            'Writes are blocked with rejectDemoMutation / assertNotDemoMutation so demo never mutates real data.',
+            'Bot-side /mock-db seeds parallel mock users and MockUserProfile docs (usernames + avatar URLs) for local/dev dashboards.',
+            'Next image config allows the avatar host so presentation and mock tables render real portraits instead of broken images.',
+          ]}
         />
 
         <Alert
           type="note"
           title="Public casino overview"
-          description="A separate /[guildId] (and presentation) route can render read-only casino cards (bets, multipliers, RTP) for communities that want transparent house rules without dashboard access."
+          description="Guilds can also expose a read-only /[guildId] casino card view (bets, multipliers, RTP) for transparent house rules without full dashboard access."
         />
       </ProjectSubPageSectionLayout>
 

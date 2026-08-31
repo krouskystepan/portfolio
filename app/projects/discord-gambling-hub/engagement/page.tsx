@@ -59,8 +59,8 @@ const EngagementPage = () => {
         <aside className="mx-auto w-full max-w-sm md:mx-0 md:max-w-none">
           <ProjectSubPageFigure
             alt="VIP room or quests UI"
+            src="/images/projects/discord-gambling-hub/engagement-vip-quests.png"
             caption="Engagement surfaces in Discord."
-            filenameHint="engagement-vip-quests.png"
             aspect="embed"
             className="my-0 mx-0 max-w-none"
           />

@@ -1,39 +1,24 @@
-# Case study screenshots
+# Discord Gambling Hub – case study images
 
-Drop images here, then set the matching `src` on `ProjectSubPageFigure` components
-(or keep placeholders until you are ready).
-
-Figures keep the image’s natural aspect ratio (`h-auto w-full`). Do not pad Discord
-shots to fake a wide frame.
-
-Pass `aspect="embed"` on Discord figures (placeholder ≈ 3:4, max-width). Admin /
-composite figures stay default `aspect="wide"` (placeholder ≈ 16:9).
-
-## Aspect ratios
-
-| Source | Ratio | Why |
-|--------|-------|-----|
-| Admin dashboard | ~16:9 (or 16:10) | Wide UI; looks intentional full-bleed |
-| Discord embeds / bot UI | ~3:4 or 4:5 (tight crop) | Embeds are tall cards; 16:9 leaves empty chrome |
-| Composites (e.g. hub overview) | Whatever fits the collage | Can stay wide |
-
-For Discord: crop to the embed plus a little channel context. Skip padding to 16:9.
-
-## Suggested filenames
-
-| File | Where it appears | Typical crop |
-|------|------------------|--------------|
-| `architecture-overview.png` | Hub + Architecture chapter | Composite / wide OK |
-| `economy-transactions.png` | Economy chapter | Discord embed crop |
-| `blackjack-session.png` | Casino chapter (interactive session) | Discord embed crop |
-| `baccarat-multibet.png` | Casino chapter (multi-bet) | Discord embed crop |
-| `mines-board.png` | Casino chapter (mines) - optional | Discord embed crop |
-| `hilo-streak.png` | Casino chapter (hi-lo) - optional | Discord embed crop |
-| `engagement-vip-quests.png` | Engagement chapter | Discord embed crop |
-| `admin-overview.png` | Admin & Ops chapter | Admin ~16:9 |
-| `admin-casino-settings.png` | Admin & Ops chapter (settings / RTP) | Admin ~16:9 |
-| `reliability-workers-tests.png` | Testing & Reliability chapter | Admin or terminal; wide OK |
-
-Path prefix in Next.js:
+Drop files here with these exact names. Path in the app:
 
 `/images/projects/discord-gambling-hub/<filename>`
+
+## Crops
+
+- **Admin / composite / diagram:** ~16:9 (wide)
+- **Discord embeds:** ~3:4 or 4:5, tight crop around the embed (no fake 16:9 padding)
+
+## Files
+
+| File | Page | What to show |
+|------|------|--------------|
+| `hub-overview.png` | Hub | Composite of Discord bot UI + admin dashboard (product overview) |
+| `architecture-diagram.png` | Architecture | System diagram: Discord bot, shared package, admin, MongoDB |
+| `economy-transactions.png` | Economy | Admin Transactions page: filters, cash-flow/PnL summary, money-movement table |
+| `blackjack-session.png` | Casino (hero) | Discord blackjack session embed (multi-hand / table UI) |
+| `baccarat-multibet.png` | Casino (sessions) | Discord baccarat multi-bet slip embed |
+| `engagement-vip-quests.png` | Engagement | Discord VIP / quests / raffle / prediction surface |
+| `admin-overview.png` | Admin & Ops | Admin dashboard overview (guild snapshot / health) |
+| `admin-casino-settings.png` | Admin & Ops | Casino settings with live RTP / per-game toggles |
+| `reliability-workers-tests.png` | Reliability | Worker logs, health panel, or CI / Vitest output |

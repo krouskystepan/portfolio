@@ -40,14 +40,14 @@ export const GAMBLING_HUB_CHAPTERS: GamblingHubChapter[] = [
     slug: 'admin-ops',
     title: 'Admin Dashboard & Ops',
     summary:
-      'Guild-scoped dashboard, ATM queue, audits, health, reports, and settings with live RTP.',
+      'Guild-scoped dashboard, ATM queue, audits, settings with live RTP, and /present demo mode.',
     href: `${GAMBLING_HUB_BASE}/admin-ops`,
   },
   {
     slug: 'reliability',
     title: 'Testing & Reliability',
     summary:
-      'Background workers, Vitest coverage, lock reconciliation, and the hard problems the system had to solve.',
+      'CI, VPS/PM2 deploys, workers, Vitest coverage, and the hard problems the system had to solve.',
     href: `${GAMBLING_HUB_BASE}/reliability`,
   },
 ]

@@ -46,8 +46,8 @@ const ArchitecturePage = () => {
 
       <ProjectSubPageFigure
         alt="Multi-repo architecture diagram"
-        caption="Architecture overview: bot, shared package, admin, MongoDB."
-        filenameHint="architecture-overview.png"
+        src="/images/projects/discord-gambling-hub/architecture-diagram.png"
+        caption="System diagram: Discord bot, shared package, admin, MongoDB."
       />
 
       <ProjectSubPageSectionLayout
@@ -141,7 +141,7 @@ const ArchitecturePage = () => {
             'Defaults & labels: defaultCasinoSettings, readableGameNames / readableGameValueNames for admin form copy.',
             'Zod forms: casino settings (including nested side-bet records), channels, bonus, VIP, pay, manager role, moderation, and more.',
             'Utilities: calculateRTP (per game + side bets), calculateBonusReward, generateBonusPreview, validateBetAmount, validatePredictionBet, fair mines/hilo multipliers.',
-            'Constants: MINI_NUMBERS roulette layout, lottery draw sizes, baccarat 8-deck probs, transaction type/source enums.',
+            'Constants: European roulette layout (0-36), lottery draw sizes, baccarat 8-deck probs, transaction type/source enums.',
           ]}
         />
 

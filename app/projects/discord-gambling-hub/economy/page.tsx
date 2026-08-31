@@ -42,9 +42,9 @@ const EconomyPage = () => {
       </header>
 
       <ProjectSubPageFigure
-        alt="Transaction log and balance buckets"
-        caption="Economy surfaces: transactions table or ATM queue in the admin dashboard."
-        filenameHint="economy-transactions.png"
+        alt="Admin transactions table with cash flow and PnL"
+        src="/images/projects/discord-gambling-hub/economy-transactions.png"
+        caption="Admin transactions table: cash flow, PnL, and the full money-movement log."
       />
 
       <ProjectSubPageSectionLayout
