@@ -46,6 +46,7 @@ const ReliabilityPage = () => {
         alt="Worker schedule and reliability checks"
         src="/images/projects/discord-gambling-hub/reliability-workers-tests.png"
         caption="Worker schedule and reliability checks from the ops tooling."
+        priority
       />
 
       <ProjectSubPageSectionLayout

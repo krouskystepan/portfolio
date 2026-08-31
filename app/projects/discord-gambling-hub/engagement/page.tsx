@@ -63,6 +63,7 @@ const EngagementPage = () => {
             caption="Engagement surfaces in Discord."
             aspect="embed"
             className="my-0 mx-0 max-w-none"
+            priority
           />
         </aside>
       </div>

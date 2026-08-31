@@ -39,6 +39,7 @@ const GamblingBotHubPage = () => {
         alt="Discord Gambling Hub overview"
         src="/images/projects/discord-gambling-hub/hub-overview.png"
         caption="Discord bot and admin dashboard overview."
+        priority
       />
 
       <ProjectSubPageSectionLayout

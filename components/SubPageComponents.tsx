@@ -409,13 +409,15 @@ export const ProjectSubPageFigure = ({
   alt,
   caption,
   aspect = 'wide',
-  className
+  className,
+  priority = false
 }: {
   src: string
   alt: string
   caption?: string
   aspect?: 'wide' | 'embed'
   className?: string
+  priority?: boolean
 }) => {
   const isEmbed = aspect === 'embed'
 
@@ -437,6 +439,8 @@ export const ProjectSubPageFigure = ({
             ? '(min-width: 448px) 448px, 100vw'
             : '(min-width: 896px) 896px, 100vw'
         }
+        loading="eager"
+        priority={priority}
         unoptimized
       />
       {caption && (

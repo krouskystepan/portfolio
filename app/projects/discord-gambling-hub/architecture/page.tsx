@@ -48,6 +48,7 @@ const ArchitecturePage = () => {
         alt="Multi-repo architecture diagram"
         src="/images/projects/discord-gambling-hub/architecture-diagram.png"
         caption="System diagram: Discord bot, shared package, admin, MongoDB."
+        priority
       />
 
       <ProjectSubPageSectionLayout

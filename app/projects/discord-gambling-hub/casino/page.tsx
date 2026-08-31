@@ -56,6 +56,7 @@ const CasinoPage = () => {
             caption="Session UX in Discord."
             aspect="embed"
             className="my-0 mx-0 max-w-none"
+            priority
           />
         </aside>
 

@@ -46,6 +46,7 @@ const AdminOpsPage = () => {
         alt="Admin dashboard overview"
         src="/images/projects/discord-gambling-hub/admin-overview.png"
         caption="Admin dashboard overview with guild snapshot and health signals."
+        priority
       />
 
       <ProjectSubPageSectionLayout

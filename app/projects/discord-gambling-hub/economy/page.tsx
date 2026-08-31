@@ -45,6 +45,7 @@ const EconomyPage = () => {
         alt="Admin transactions table with cash flow and PnL"
         src="/images/projects/discord-gambling-hub/economy-transactions.png"
         caption="Admin transactions table: cash flow, PnL, and the full money-movement log."
+        priority
       />
 
       <ProjectSubPageSectionLayout
