@@ -62,7 +62,7 @@ const Project = ({ project, index }: { project: TProject; index: number }) => {
       className="group/container relative mx-auto w-full max-w-5xl"
     >
       <div
-        className="relative grid overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900 md:min-h-[22rem] md:grid-cols-2 md:items-stretch"
+        className="relative grid overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900 lg:min-h-[22rem] lg:grid-cols-2 lg:items-stretch"
         data-pattern="stripes"
         style={{ '--opacity': '0.03' } as CSSProperties}
       >
@@ -80,17 +80,17 @@ const Project = ({ project, index }: { project: TProject; index: number }) => {
         )}
 
         <div
-          className={`relative z-10 flex min-w-0 flex-col px-5 pb-6 pt-10 text-center sm:px-8 md:px-10 md:py-10 md:text-start ${
-            isReversed ? 'md:order-2' : 'md:order-1'
+          className={`relative z-10 flex min-w-0 flex-col px-5 pb-6 pt-10 text-center sm:px-8 lg:px-10 lg:py-10 lg:text-start ${
+            isReversed ? 'lg:order-2' : 'lg:order-1'
           }`}
         >
           <h3 className="text-2xl font-semibold sm:text-3xl">{project.name}</h3>
-          <p className="mt-3 line-clamp-6 text-base leading-relaxed text-neutral-300 md:line-clamp-none">
+          <p className="mt-3 line-clamp-6 text-base leading-relaxed text-neutral-300 lg:line-clamp-none">
             {project.description}
           </p>
 
-          <div className="mt-6 flex flex-col gap-4 md:mt-auto md:pt-6">
-            <ul className="flex flex-wrap justify-center gap-2 md:justify-start">
+          <div className="mt-6 flex flex-col gap-4 lg:mt-auto lg:pt-6">
+            <ul className="flex flex-wrap justify-center gap-2 lg:justify-start">
               {project.tags.map((tag) => (
                 <li
                   key={tag}
@@ -109,7 +109,7 @@ const Project = ({ project, index }: { project: TProject; index: number }) => {
                   ? undefined
                   : 'noopener noreferrer'
               }
-              className="mx-auto flex w-full max-w-lg items-center justify-center gap-1 rounded-lg border border-neutral-800 bg-neutral-800/80 py-2.5 text-center transition-colors duration-200 hover:bg-neutral-700 md:mx-0 md:max-w-full"
+              className="mx-auto flex w-full max-w-lg items-center justify-center gap-1 rounded-lg border border-neutral-800 bg-neutral-800/80 py-2.5 text-center transition-colors duration-200 hover:bg-neutral-700 lg:mx-0 lg:max-w-full"
             >
               <span>{ctaLabel}</span>
               {project.link.type === 'website' && <Globe size={16} />}
@@ -120,13 +120,12 @@ const Project = ({ project, index }: { project: TProject; index: number }) => {
         </div>
 
         <div
-          className={`relative z-10 min-h-[14rem] overflow-hidden border-t border-neutral-800 md:min-h-full md:border-t-0 ${
+          className={`relative z-10 min-h-[14rem] overflow-hidden border-t border-neutral-800 sm:min-h-[20rem] lg:min-h-full lg:border-t-0 ${
             isReversed
-              ? 'md:order-1 md:border-r md:border-neutral-800'
-              : 'md:order-2 md:border-l md:border-neutral-800'
+              ? 'lg:order-1 lg:border-r lg:border-neutral-800'
+              : 'lg:order-2 lg:border-l lg:border-neutral-800'
           }`}
         >
-          {/* Full width, top-aligned — bottom may clip */}
           <Image
             src={project.image}
             alt={`Project ${project.name} image`}
