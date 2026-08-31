@@ -23,17 +23,19 @@ const CustomConfetti = () => {
     '#F28500',
     '#8ECAE6',
     '#F72585',
-    '#3A86FF',
+    '#3A86FF'
   ]
 
   return (
-    <Confetti
-      mode="fall"
-      fadeOutHeight={1.1}
-      particleCount={200}
-      shapeSize={14}
-      colors={COLORS}
-    />
+    <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden opacity-20">
+      <Confetti
+        mode="fall"
+        fadeOutHeight={1.1}
+        particleCount={200}
+        shapeSize={14}
+        colors={COLORS}
+      />
+    </div>
   )
 }
 
