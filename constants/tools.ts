@@ -135,6 +135,14 @@ export const tools = [
     description: 'Convert Unix timestamps to readable dates and vice versa.',
     section: 'utilities',
     keywords: ['unix', 'epoch', 'timezone', 'date']
+  },
+  {
+    name: 'QR code generator',
+    path: 'qr-code',
+    description:
+      'Encode text or a URL as a QR code in the browser. Download PNG or SVG.',
+    section: 'utilities',
+    keywords: ['qr', 'barcode', 'url', 'png', 'svg']
   }
 ] as const satisfies readonly TTools[]
 

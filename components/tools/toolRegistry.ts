@@ -17,7 +17,8 @@ const loaders = {
   'jwt-decoder': () => import('@/components/tools/items/JwtDecoder'),
   'uuid-generator': () => import('@/components/tools/items/UuidGenerator'),
   'color-converter': () => import('@/components/tools/items/ColorConverter'),
-  'timestamp-converter': () => import('@/components/tools/items/TimestampConverter')
+  'timestamp-converter': () => import('@/components/tools/items/TimestampConverter'),
+  'qr-code': () => import('@/components/tools/items/QrCodeGenerator')
 } as const satisfies Record<ToolPath, ToolLoader>
 
 export type { ToolPath }
