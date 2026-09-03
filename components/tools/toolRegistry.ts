@@ -9,6 +9,7 @@ const loaders = {
   'case-converter': () => import('@/components/tools/items/TextCaseConverter'),
   'alphabet-sorter': () => import('@/components/tools/items/AlphabetSorter'),
   'regex-tester': () => import('@/components/tools/items/RegexTester'),
+  'unicode-ascii': () => import('@/components/tools/items/UnicodeAsciiConverter'),
   'slug-generator': () => import('@/components/tools/items/SlugGenerator'),
   'html-css-js-minifier': () => import('@/components/tools/items/CodeMinifier'),
   'url-encoder-decoder': () => import('@/components/tools/items/UrlEncoderDecoder'),

@@ -1,59 +1,56 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
-import { ClearButton, PrimaryButton, SecondaryButton } from '@/components/tools/_shared/ToolButtons'
+import { ClearButton } from '@/components/tools/_shared/ToolButtons'
 import {
   toolErrorBoxClass,
+  toolHintMetaClass,
   toolIntroTextClass,
   toolPreOutputClass,
   toolResultHeaderRowClass,
   toolResultPanelClass,
   toolSectionTitleClass,
-  toolToolbarEndClass,
+  toolSegmentBarClass,
+  toolSegmentTabClass,
+  toolToolbarBetweenClass,
+  ToolCopyButton,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
+import { useAchievementContext } from '@/context/AchievementContext'
+import {
+  decodeUrlText,
+  encodeUrlText,
+  type UrlCodecMode
+} from '@/utils/urlCodec'
 
 const UrlEncoderDecoder = () => {
   const [input, setInput] = useState('')
-  const [output, setOutput] = useState('')
-  const [error, setError] = useState<string | null>(null)
+  const [mode, setMode] = useState<UrlCodecMode>('component')
+  const [copied, setCopied] = useState<'encoded' | 'decoded' | null>(null)
+  const { unlockAchievement } = useAchievementContext()
 
-  const encodeComponent = () => {
-    if (!input) {
-      setOutput('')
-      setError(null)
-      return
-    }
+  const encoded = useMemo(() => {
+    if (!input) return { value: '', error: null as string | null }
     try {
-      setOutput(encodeURIComponent(input))
-      setError(null)
+      return { value: encodeUrlText(input, mode), error: null }
     } catch (err) {
-      setError((err as Error).message)
-      setOutput('')
+      return {
+        value: '',
+        error: (err as Error).message || 'This text cannot be encoded.'
+      }
     }
-  }
+  }, [input, mode])
 
-  const decodeComponent = () => {
-    if (!input.trim()) {
-      setOutput('')
-      setError(null)
-      return
-    }
-    try {
-      setOutput(decodeURIComponent(input.trim()))
-      setError(null)
-    } catch (err) {
-      setError((err as Error).message)
-      setOutput('')
-    }
-  }
+  const decoded = useMemo(() => decodeUrlText(input, mode), [input, mode])
 
-  const handleClear = () => {
-    setInput('')
-    setOutput('')
-    setError(null)
+  const handleCopy = async (which: 'encoded' | 'decoded', value: string) => {
+    if (!value) return
+    await navigator.clipboard.writeText(value)
+    unlockAchievement('clipboard-master')
+    setCopied(which)
+    setTimeout(() => setCopied(null), 1500)
   }
 
   return (
@@ -61,41 +58,99 @@ const UrlEncoderDecoder = () => {
       <ToolInputPanel
         intro={
           <p className={toolIntroTextClass}>
-            Uses <code>encodeURIComponent</code> and{' '}
-            <code>decodeURIComponent</code> for query components and UTF-8 text.
+            Encoding and decoding update as you type. Use{' '}
+            <strong>Component</strong> for query values and form fields (spaces
+            become <code>%20</code>). Use <strong>Full URI</strong> when you
+            have a complete URL and want to keep <code>:/?#[]@!$&amp;&apos;()*+,;=</code>{' '}
+            intact.
           </p>
         }
       >
         <TextAreaWithLineNumbers
           value={input}
           setValue={setInput}
-          placeholder="Paste text or an encoded value..."
+          placeholder="Paste text, a query value, or an encoded string..."
         />
 
-        <div className={toolToolbarEndClass}>
-          <PrimaryButton onClick={encodeComponent} disabled={!input}>
-            Encode
-          </PrimaryButton>
-          <SecondaryButton onClick={decodeComponent} disabled={!input.trim()}>
-            Decode
-          </SecondaryButton>
-          <ClearButton onClick={handleClear}>Clear</ClearButton>
+        <div className={toolToolbarBetweenClass}>
+          <div className={`${toolSegmentBarClass} w-full sm:w-auto`}>
+            {(
+              [
+                ['component', 'Component'],
+                ['uri', 'Full URI']
+              ] as const
+            ).map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => setMode(id)}
+                className={toolSegmentTabClass(mode === id)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <ClearButton
+            onClick={() => {
+              setInput('')
+              setCopied(null)
+            }}
+          >
+            Clear
+          </ClearButton>
         </div>
+        <p className={`${toolHintMetaClass} mt-3`}>
+          Encoded and decoded results both appear below. Copy the one you need.
+        </p>
       </ToolInputPanel>
 
-      <div className={toolResultPanelClass}>
-        <div className={toolResultHeaderRowClass}>
-          <h2 className={toolSectionTitleClass}>Result</h2>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className={toolResultPanelClass}>
+          <div className={toolResultHeaderRowClass}>
+            <h2 className={toolSectionTitleClass}>Encoded</h2>
+            {input && encoded.value ? (
+              <ToolCopyButton
+                copied={copied === 'encoded'}
+                onClick={() => handleCopy('encoded', encoded.value)}
+              />
+            ) : null}
+          </div>
+          {encoded.error ? (
+            <div className={toolErrorBoxClass}>{encoded.error}</div>
+          ) : (
+            <pre className={toolPreOutputClass}>
+              {encoded.value || (
+                <span className="text-neutral-500">
+                  Percent-encoded output appears here.
+                </span>
+              )}
+            </pre>
+          )}
         </div>
-        {error ? (
-          <div className={toolErrorBoxClass}>{error}</div>
-        ) : (
+
+        <div className={toolResultPanelClass}>
+          <div className={toolResultHeaderRowClass}>
+            <h2 className={toolSectionTitleClass}>Decoded</h2>
+            {input && decoded.value ? (
+              <ToolCopyButton
+                copied={copied === 'decoded'}
+                onClick={() => handleCopy('decoded', decoded.value)}
+              />
+            ) : null}
+          </div>
+          {decoded.warning ? (
+            <div className={`${toolErrorBoxClass} mb-3`}>{decoded.warning}</div>
+          ) : null}
           <pre className={toolPreOutputClass}>
-            {output || (
-              <span className="text-neutral-500">Output appears here.</span>
+            {input ? (
+              decoded.value
+            ) : (
+              <span className="text-neutral-500">
+                Decoded text appears here.
+              </span>
             )}
           </pre>
-        )}
+        </div>
       </div>
     </ToolLayout>
   )

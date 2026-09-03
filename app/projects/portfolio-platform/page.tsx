@@ -252,7 +252,7 @@ const PortfolioCaseStudyPage = () => {
             'UUID generator.',
             'Color format converter.',
             'Timestamp converter.',
-            'Text case and alphabet sorting utilities.'
+            'Text case, alphabet sorting, and Unicode / ASCII conversion utilities.'
           ]}
         />
       </ProjectSubPageSectionLayout>

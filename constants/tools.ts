@@ -51,6 +51,22 @@ export const tools = [
     keywords: ['regexp', 'pattern', 'match']
   },
   {
+    name: 'Unicode / ASCII converter',
+    path: 'unicode-ascii',
+    description:
+      'Turn accents and fancy letters into plain ASCII, or look up what a character is.',
+    section: 'text',
+    keywords: [
+      'unicode',
+      'ascii',
+      'escape',
+      'codepoint',
+      'utf-8',
+      'entities',
+      'transliterate'
+    ]
+  },
+  {
     name: 'Slug generator',
     path: 'slug-generator',
     description:
@@ -59,20 +75,20 @@ export const tools = [
     keywords: ['url', 'permalink', 'seo']
   },
   {
-    name: 'HTML / CSS / JS Minifier',
+    name: 'HTML / CSS / JS / Python Minifier',
     path: 'html-css-js-minifier',
     description:
-      'Minify or beautify HTML, CSS, or JavaScript code to optimize performance.',
+      'Minify or beautify HTML, CSS, JavaScript, or Python.',
     section: 'web',
-    keywords: ['minify', 'beautify', 'prettier', 'bundle']
+    keywords: ['minify', 'beautify', 'prettier', 'bundle', 'python']
   },
   {
     name: 'URL encoder / decoder',
     path: 'url-encoder-decoder',
     description:
-      'Encode and decode text with URI component rules (UTF-8 safe) for query strings.',
+      'Live percent-encode and decode for query values or full URLs (UTF-8).',
     section: 'web',
-    keywords: ['encodeURIComponent', 'decodeURIComponent', 'percent']
+    keywords: ['encodeURIComponent', 'decodeURIComponent', 'percent', 'url']
   },
   {
     name: 'JWT decode (no verification)',
