@@ -54,7 +54,7 @@ export const tools = [
     name: 'Unicode / ASCII converter',
     path: 'unicode-ascii',
     description:
-      'Turn accents and fancy letters into plain ASCII, or look up what a character is.',
+      'Turn text into ASCII/decimal/hex codes and back, or fold accents to plain letters.',
     section: 'text',
     keywords: [
       'unicode',

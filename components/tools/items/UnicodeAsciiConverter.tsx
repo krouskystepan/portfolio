@@ -42,16 +42,16 @@ const UnicodeAsciiConverter = () => {
       <ToolInputPanel
         intro={
           <p className={toolIntroTextClass}>
-            Convert accents, fancy letters, dashes, and codes like{' '}
-            <code>{'\\u00E9'}</code> into plain ASCII. Results update as you
-            type.
+            Paste text or ASCII codes. Hello becomes 72 101 108 108 111, and
+            those numbers become Hello. Also handles <code>{'\\u00E9'}</code>,
+            hex, and <code>U+0048</code>.
           </p>
         }
       >
         <TextAreaWithLineNumbers
           value={input}
           setValue={setInput}
-          placeholder={'Café - 𝒽𝑒𝓁𝓁𝑜 \\u00E9'}
+          placeholder="Hello  or  72 101 108 108 111"
         />
         <div className={toolToolbarEndClass}>
           <ClearButton onClick={() => setInput('')}>Clear</ClearButton>
