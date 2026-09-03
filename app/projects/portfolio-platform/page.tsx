@@ -252,6 +252,7 @@ const PortfolioCaseStudyPage = () => {
             'UUID generator.',
             'Color format converter.',
             'Timestamp converter.',
+            'QR code generator (PNG / SVG).',
             'Text case, alphabet sorting, and Unicode / ASCII conversion utilities.'
           ]}
         />
