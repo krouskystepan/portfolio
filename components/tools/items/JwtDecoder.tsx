@@ -3,7 +3,10 @@
 import { useState } from 'react'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
-import { ClearButton, PrimaryButton } from '@/components/tools/_shared/ToolButtons'
+import {
+  ClearButton,
+  PrimaryButton
+} from '@/components/tools/_shared/ToolButtons'
 import {
   toolErrorBoxClass,
   toolPreOutputClass,
@@ -63,8 +66,8 @@ const JwtDecoder = () => {
       <ToolInputPanel
         intro={
           <p className={toolWarningIntroClass}>
-            Decodes Base64URL segments only. Signature is{' '}
-            <strong>not</strong> verified — never paste production secrets here.
+            Decodes Base64URL segments only. Signature is <strong>not</strong>{' '}
+            verified - never paste production secrets here.
           </p>
         }
       >
@@ -101,9 +104,7 @@ const JwtDecoder = () => {
           <div className={toolResultHeaderRowClass}>
             <h2 className={toolSectionTitleClass}>Header</h2>
           </div>
-          <pre
-            className={`${toolPreOutputClass} max-h-80 text-xs sm:text-sm`}
-          >
+          <pre className={`${toolPreOutputClass} max-h-80 text-xs sm:text-sm`}>
             {header || (
               <span className="text-neutral-500">Decoded header JSON.</span>
             )}
@@ -113,9 +114,7 @@ const JwtDecoder = () => {
           <div className={toolResultHeaderRowClass}>
             <h2 className={toolSectionTitleClass}>Payload</h2>
           </div>
-          <pre
-            className={`${toolPreOutputClass} max-h-80 text-xs sm:text-sm`}
-          >
+          <pre className={`${toolPreOutputClass} max-h-80 text-xs sm:text-sm`}>
             {payload || (
               <span className="text-neutral-500">Decoded payload JSON.</span>
             )}

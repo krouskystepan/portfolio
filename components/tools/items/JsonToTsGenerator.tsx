@@ -4,7 +4,10 @@ import { useAchievementContext } from '@/context/AchievementContext'
 import { useEffect, useState } from 'react'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
-import { ClearButton, PrimaryButton } from '@/components/tools/_shared/ToolButtons'
+import {
+  ClearButton,
+  PrimaryButton
+} from '@/components/tools/_shared/ToolButtons'
 import {
   toolEmptyHintClass,
   toolErrorBoxClass,
@@ -87,10 +90,7 @@ function mergeShapes(a: Shape, b: Shape): Shape {
   if (a.kind === 'primitive' && b.kind === 'primitive') {
     if (a.ts === b.ts) return a
     const parts = [
-      ...new Set([
-        ...primitiveTypeParts(a.ts),
-        ...primitiveTypeParts(b.ts)
-      ])
+      ...new Set([...primitiveTypeParts(a.ts), ...primitiveTypeParts(b.ts)])
     ].sort()
     return { kind: 'primitive', ts: parts.join(' | ') }
   }
@@ -199,7 +199,7 @@ const EXPORT_MODE_OPTIONS: {
   {
     value: 'compact',
     label: 'Compact',
-    hint: 'Single export type with nested objects inlined as { … } — no extra named declarations.'
+    hint: 'Single export type with nested objects inlined as { … } - no extra named declarations.'
   },
   {
     value: 'type',
@@ -240,7 +240,12 @@ function emitType(
   if (shape.kind === 'array') {
     if (shape.items.length === 0) return 'unknown[]'
     const merged = mergeShapesList(shape.items)
-    const inner = emitType(merged, arrayElementTypeHint(hint, ctx), ctx, objectSyntax)
+    const inner = emitType(
+      merged,
+      arrayElementTypeHint(hint, ctx),
+      ctx,
+      objectSyntax
+    )
     const needsParens =
       inner.includes('|') || (inner.includes('&') && !inner.startsWith('('))
     return needsParens ? `(${inner})[]` : `${inner}[]`
@@ -298,7 +303,9 @@ function generateTypeScript(
   return ctx.decls.join('\n\n')
 }
 
-const JsonToTsGenerator = ({ embedded = false }: { embedded?: boolean } = {}) => {
+const JsonToTsGenerator = ({
+  embedded = false
+}: { embedded?: boolean } = {}) => {
   const [input, setInput] = useState('')
   const [rootName, setRootName] = useState('Root')
   const [exportMode, setExportMode] = useState<TsExportMode>('automatic')
@@ -380,9 +387,7 @@ const JsonToTsGenerator = ({ embedded = false }: { embedded?: boolean } = {}) =>
           ))}
         </div>
         <p className={`${toolHintMetaClass} mb-4`}>
-          {
-            EXPORT_MODE_OPTIONS.find((o) => o.value === exportMode)?.hint
-          }
+          {EXPORT_MODE_OPTIONS.find((o) => o.value === exportMode)?.hint}
         </p>
 
         <TextAreaWithLineNumbers

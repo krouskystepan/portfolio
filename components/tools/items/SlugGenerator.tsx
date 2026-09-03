@@ -40,7 +40,7 @@ const SlugGenerator = () => {
         <TextAreaWithLineNumbers
           value={input}
           setValue={setInput}
-          placeholder="Page title or heading, e.g. Café Müller — 2026 Tour"
+          placeholder="Page title or heading, e.g. Café Müller - 2026 Tour"
         />
         <div className={toolToolbarEndClass}>
           <ClearButton onClick={() => setInput('')}>Clear</ClearButton>
@@ -52,9 +52,7 @@ const SlugGenerator = () => {
           <h2 className={toolSectionTitleClass}>Slug</h2>
         </div>
         <pre className={toolPreOutputClass}>
-          {slug || (
-            <span className="text-neutral-500">Slug appears here.</span>
-          )}
+          {slug || <span className="text-neutral-500">Slug appears here.</span>}
         </pre>
       </div>
     </ToolLayout>

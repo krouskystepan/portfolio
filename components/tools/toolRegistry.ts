@@ -13,6 +13,7 @@ const loaders = {
   'slug-generator': () => import('@/components/tools/items/SlugGenerator'),
   'html-css-js-minifier': () => import('@/components/tools/items/CodeMinifier'),
   'url-encoder-decoder': () => import('@/components/tools/items/UrlEncoderDecoder'),
+  'url-inspector': () => import('@/components/tools/items/UrlInspector'),
   'jwt-decoder': () => import('@/components/tools/items/JwtDecoder'),
   'uuid-generator': () => import('@/components/tools/items/UuidGenerator'),
   'color-converter': () => import('@/components/tools/items/ColorConverter'),

@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import Link from 'next/link'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import { ClearButton } from '@/components/tools/_shared/ToolButtons'
@@ -62,7 +63,14 @@ const UrlEncoderDecoder = () => {
             <strong>Component</strong> for query values and form fields (spaces
             become <code>%20</code>). Use <strong>Full URI</strong> when you
             have a complete URL and want to keep <code>:/?#[]@!$&amp;&apos;()*+,;=</code>{' '}
-            intact.
+            intact. To split an href into origin, path, query, and hash, use the{' '}
+            <Link
+              href="/t/url-inspector"
+              className="text-custom_blue underline-offset-2 hover:underline"
+            >
+              URL inspector
+            </Link>
+            .
           </p>
         }
       >

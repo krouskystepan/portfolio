@@ -91,6 +91,22 @@ export const tools = [
     keywords: ['encodeURIComponent', 'decodeURIComponent', 'percent', 'url']
   },
   {
+    name: 'URL inspector',
+    path: 'url-inspector',
+    description:
+      'Split an href into origin, path, query, and hash. Edit the query table to rebuild the URL.',
+    section: 'web',
+    keywords: [
+      'href',
+      'origin',
+      'pathname',
+      'query',
+      'searchparams',
+      'hash',
+      'parse'
+    ]
+  },
+  {
     name: 'JWT decode (no verification)',
     path: 'jwt-decoder',
     description:

@@ -17,10 +17,7 @@ import {
   ToolCopyButton,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
-import {
-  buildUnicodeVariants,
-  inspectUnicodeChars
-} from '@/utils/unicodeAscii'
+import { buildUnicodeVariants, inspectUnicodeChars } from '@/utils/unicodeAscii'
 
 const UnicodeAsciiConverter = () => {
   const [input, setInput] = useState('')
@@ -54,7 +51,7 @@ const UnicodeAsciiConverter = () => {
         <TextAreaWithLineNumbers
           value={input}
           setValue={setInput}
-          placeholder={'Café — 𝒽𝑒𝓁𝓁𝑜 \\u00E9'}
+          placeholder={'Café - 𝒽𝑒𝓁𝓁𝑜 \\u00E9'}
         />
         <div className={toolToolbarEndClass}>
           <ClearButton onClick={() => setInput('')}>Clear</ClearButton>
