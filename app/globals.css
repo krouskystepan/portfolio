@@ -48,3 +48,28 @@ body [data-pattern='dots'] {
 .text-gradient {
   @apply bg-gradient-to-br from-custom_pink from-10% to-custom_blue to-90% bg-clip-text text-transparent;
 }
+
+@layer components {
+  .tool-color-swatch {
+    -webkit-appearance: none;
+    appearance: none;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .tool-color-swatch::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+
+  .tool-color-swatch::-webkit-color-swatch {
+    border: 0;
+    border-radius: 0.375rem;
+  }
+
+  .tool-color-swatch::-moz-color-swatch {
+    border: 0;
+    border-radius: 0.375rem;
+  }
+}
