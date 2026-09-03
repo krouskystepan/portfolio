@@ -53,7 +53,7 @@ export const TOOL_SECTION_LABELS: Record<TToolSectionId, string> = {
   data: 'Data & serialization',
   text: 'Text & patterns',
   web: 'Web & encoding',
-  utilities: 'IDs, time, color & QR'
+  utilities: 'IDs, time, color & numbers'
 }
 
 export type TTools = {
