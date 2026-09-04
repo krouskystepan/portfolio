@@ -4,7 +4,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 const getToolById = (toolId: string) => {
-  return tools.find((tool) => tool.path === toolId)
+  return tools.find((tool) => tool.path !== '' && tool.path === toolId)
 }
 
 export async function generateMetadata({
@@ -24,9 +24,11 @@ export async function generateMetadata({
 }
 
 export async function generateStaticParams() {
-  return tools.map((tool) => ({
-    toolId: tool.path
-  }))
+  return tools
+    .filter((tool) => tool.path !== '')
+    .map((tool) => ({
+      toolId: tool.path
+    }))
 }
 
 const ToolsPage = async ({

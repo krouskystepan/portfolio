@@ -114,25 +114,88 @@ export const tools = [
     keywords: ['jwt', 'bearer', 'token', 'base64']
   },
   {
+    name: 'Base64 / Hex codec',
+    path: '', // 'base64-hex'
+    description:
+      'Live convert between UTF-8 text, Base64, Base64URL, and hex (spaces, 0x, \\x dumps).',
+    section: 'web',
+    keywords: [
+      'base64',
+      'base64url',
+      'hex',
+      'encode',
+      'decode',
+      'blob',
+      'token',
+      'payload',
+      'dump'
+    ]
+  },
+  {
     name: 'UUID Generator',
     path: 'uuid-generator',
     description: 'Generate random UUIDs (v4) for identifiers or testing.',
-    section: 'utilities',
+    section: 'generators',
     keywords: ['guid', 'v4', 'random id']
+  },
+  {
+    name: 'QR code generator',
+    path: 'qr-code',
+    description:
+      'Encode text or a URL as a QR code in the browser. Download PNG or SVG.',
+    section: 'generators',
+    keywords: ['qr', 'barcode', 'url', 'png', 'svg']
+  },
+  {
+    name: 'Hash generator',
+    path: '', // 'hash-generator'
+    description:
+      'Generate MD5 and SHA checksums for text or files — cache keys, integrity checks, pipeline digests.',
+    section: 'generators',
+    keywords: [
+      'md5',
+      'sha1',
+      'sha256',
+      'sha512',
+      'checksum',
+      'hash',
+      'digest',
+      'integrity',
+      'hashlib',
+      'md5sum'
+    ]
+  },
+  {
+    name: 'Password / secret generator',
+    path: '', // 'password-generator'
+    description:
+      'Generate strong passwords and secrets with length, charset, and entropy — all in the browser.',
+    section: 'generators',
+    keywords: [
+      'password',
+      'secret',
+      'token',
+      'api key',
+      'random',
+      'entropy',
+      'charset',
+      'generator',
+      'csprng'
+    ]
   },
   {
     name: 'Color Converter',
     path: 'color-converter',
     description:
       'Convert colors between HEX, RGB, HSL and more. Live color preview.',
-    section: 'utilities',
+    section: 'converters',
     keywords: ['hex', 'rgb', 'hsl', 'picker']
   },
   {
     name: 'Timestamp Converter',
     path: 'timestamp-converter',
     description: 'Convert Unix timestamps to readable dates and vice versa.',
-    section: 'utilities',
+    section: 'converters',
     keywords: ['unix', 'epoch', 'timezone', 'date']
   },
   {
@@ -140,25 +203,73 @@ export const tools = [
     path: 'number-base-converter',
     description:
       'Convert between binary, octal, decimal, hex, and any base 2-36.',
-    section: 'utilities',
+    section: 'converters',
     keywords: ['binary', 'octal', 'decimal', 'hex', 'radix', 'base', 'base36']
-  },
-  {
-    name: 'QR code generator',
-    path: 'qr-code',
-    description:
-      'Encode text or a URL as a QR code in the browser. Download PNG or SVG.',
-    section: 'utilities',
-    keywords: ['qr', 'barcode', 'url', 'png', 'svg']
   },
   {
     name: 'Unix permission calculator',
     path: 'chmod-calculator',
     description:
       'Toggle rwx for owner, group, and others, or type an octal mode like 755.',
-    section: 'utilities',
+    section: 'network',
     keywords: ['chmod', 'unix', 'permissions', 'octal', 'rwx', '755', '644']
+  },
+  {
+    name: 'CIDR / subnet calculator',
+    path: '', // 'cidr-calculator'
+    description:
+      'Enter an IPv4 address and mask (CIDR or dotted) to get network, broadcast, and host range.',
+    section: 'network',
+    keywords: [
+      'cidr',
+      'subnet',
+      'ip',
+      'ipv4',
+      'mask',
+      'network',
+      'broadcast',
+      'hosts',
+      'prefix',
+      'netmask'
+    ]
+  },
+  {
+    name: 'Cron expression builder',
+    path: '', // 'cron-builder'
+    description:
+      'Build a 5-field cron schedule visually, read a plain-English explanation, and preview the next runs.',
+    section: 'network',
+    keywords: [
+      'cron',
+      'crontab',
+      'schedule',
+      'celery',
+      'github actions',
+      'quartz',
+      'timer',
+      'interval',
+      'croner'
+    ]
+  },
+  {
+    name: 'Escape / unescape toolbox',
+    path: '', // 'escape-unescape'
+    description:
+      'Escape or unescape strings for C, Python, and shell — turn log escapes into text and text into pasteable literals.',
+    section: 'network',
+    keywords: [
+      'escape',
+      'unescape',
+      'backslash',
+      'string literal',
+      'c',
+      'python',
+      'shell',
+      'bash',
+      'quoting',
+      'ansi-c'
+    ]
   }
 ] as const satisfies readonly TTools[]
 
-export type ToolPath = (typeof tools)[number]['path']
+export type ToolPath = Exclude<(typeof tools)[number]['path'], ''>
