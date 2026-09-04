@@ -77,8 +77,7 @@ export const tools = [
   {
     name: 'HTML / CSS / JS / Python Minifier',
     path: 'html-css-js-minifier',
-    description:
-      'Minify or beautify HTML, CSS, JavaScript, or Python.',
+    description: 'Minify or beautify HTML, CSS, JavaScript, or Python.',
     section: 'web',
     keywords: ['minify', 'beautify', 'prettier', 'bundle', 'python']
   },
@@ -142,15 +141,7 @@ export const tools = [
     description:
       'Convert between binary, octal, decimal, hex, and any base 2-36.',
     section: 'utilities',
-    keywords: [
-      'binary',
-      'octal',
-      'decimal',
-      'hex',
-      'radix',
-      'base',
-      'base36'
-    ]
+    keywords: ['binary', 'octal', 'decimal', 'hex', 'radix', 'base', 'base36']
   },
   {
     name: 'QR code generator',
@@ -159,6 +150,14 @@ export const tools = [
       'Encode text or a URL as a QR code in the browser. Download PNG or SVG.',
     section: 'utilities',
     keywords: ['qr', 'barcode', 'url', 'png', 'svg']
+  },
+  {
+    name: 'Unix permission calculator',
+    path: 'chmod-calculator',
+    description:
+      'Toggle rwx for owner, group, and others, or type an octal mode like 755.',
+    section: 'utilities',
+    keywords: ['chmod', 'unix', 'permissions', 'octal', 'rwx', '755', '644']
   }
 ] as const satisfies readonly TTools[]
 
