@@ -55,7 +55,9 @@ function OptionPills<T extends string | number>({
   return (
     <div
       className={`${toolSegmentBarClass} grid h-9 w-fit shrink-0 items-stretch gap-0.5 p-0.5`}
-      style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}
+      style={{
+        gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))`
+      }}
       role="group"
       aria-label={ariaLabel}
     >
@@ -271,7 +273,7 @@ const QrCodeGenerator = () => {
 
         {poorContrast ? (
           <p className={`${toolHintMetaClass} mt-3 text-amber-300/90`}>
-            Low contrast — scanners may fail. Prefer a dark foreground on a
+            Low contrast - scanners may fail. Prefer a dark foreground on a
             light background.
           </p>
         ) : null}

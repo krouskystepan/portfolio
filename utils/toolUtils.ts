@@ -27,7 +27,7 @@ export function matchesToolQuery(tool: TTools, query: string): boolean {
   return tokens.every((token) => haystacks.some((h) => h.includes(token)))
 }
 
-export function groupToolsBySection(list: TTools[]) {
+export function groupToolsBySection<T extends TTools>(list: readonly T[]) {
   return TOOL_SECTION_ORDER.map((section) => ({
     section,
     label: TOOL_SECTION_LABELS[section],

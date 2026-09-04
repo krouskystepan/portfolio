@@ -52,7 +52,7 @@ export function parseInteger(input: string, radix: number): ParseIntegerResult {
     return { ok: false, error: 'Enter a number.' }
   }
 
-  let value = 0n
+  let value = BigInt(0)
   const bigRadix = BigInt(radix)
 
   for (let i = 0; i < digits.length; i++) {
@@ -80,7 +80,7 @@ export function formatInteger(
   if (!isValidBase(radix)) {
     throw new RangeError(`Base must be ${MIN_BASE}-${MAX_BASE}.`)
   }
-  if (value < 0n) {
+  if (value < BigInt(0)) {
     throw new RangeError('Negative numbers are not supported.')
   }
 
