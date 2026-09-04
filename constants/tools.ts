@@ -139,6 +139,24 @@ export const tools = [
     keywords: ['guid', 'v4', 'random id']
   },
   {
+    name: 'Password / secret generator',
+    path: '', // 'password-generator'
+    description:
+      'Generate strong passwords and secrets with length, charset, and entropy — all in the browser.',
+    section: 'generators',
+    keywords: [
+      'password',
+      'secret',
+      'token',
+      'api key',
+      'random',
+      'entropy',
+      'charset',
+      'generator',
+      'csprng'
+    ]
+  },
+  {
     name: 'QR code generator',
     path: 'qr-code',
     description:
@@ -163,24 +181,6 @@ export const tools = [
       'integrity',
       'hashlib',
       'md5sum'
-    ]
-  },
-  {
-    name: 'Password / secret generator',
-    path: '', // 'password-generator'
-    description:
-      'Generate strong passwords and secrets with length, charset, and entropy — all in the browser.',
-    section: 'generators',
-    keywords: [
-      'password',
-      'secret',
-      'token',
-      'api key',
-      'random',
-      'entropy',
-      'charset',
-      'generator',
-      'csprng'
     ]
   },
   {
