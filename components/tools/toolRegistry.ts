@@ -18,6 +18,8 @@ const loaders = {
   'uuid-generator': () => import('@/components/tools/items/UuidGenerator'),
   'color-converter': () => import('@/components/tools/items/ColorConverter'),
   'timestamp-converter': () => import('@/components/tools/items/TimestampConverter'),
+  'number-base-converter': () =>
+    import('@/components/tools/items/NumberBaseConverter'),
   'qr-code': () => import('@/components/tools/items/QrCodeGenerator')
 } as const satisfies Record<ToolPath, ToolLoader>
 

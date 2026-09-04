@@ -137,6 +137,22 @@ export const tools = [
     keywords: ['unix', 'epoch', 'timezone', 'date']
   },
   {
+    name: 'Number base converter',
+    path: 'number-base-converter',
+    description:
+      'Convert between binary, octal, decimal, hex, and any base 2-36.',
+    section: 'utilities',
+    keywords: [
+      'binary',
+      'octal',
+      'decimal',
+      'hex',
+      'radix',
+      'base',
+      'base36'
+    ]
+  },
+  {
     name: 'QR code generator',
     path: 'qr-code',
     description:

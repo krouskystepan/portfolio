@@ -27,7 +27,7 @@ export const toolInputClass =
   'ring-custom_blue/40 w-full rounded-lg border border-white/10 bg-neutral-900/80 px-3 py-3 text-sm text-neutral-100 outline-none placeholder:text-neutral-500 focus:ring-2'
 
 export const toolNumberInputClass =
-  'ring-custom_blue/40 h-10 w-full max-w-[7rem] rounded-lg border border-white/10 bg-neutral-900/80 px-3 text-sm text-neutral-100 outline-none focus:ring-2'
+  'ring-custom_blue/40 h-10 w-full max-w-[7rem] rounded-lg border border-white/10 bg-neutral-900/80 px-3 text-sm text-neutral-100 outline-none focus:ring-2 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none'
 
 export const toolLabelClass = 'mb-2 block text-sm font-medium text-neutral-300'
 
