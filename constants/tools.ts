@@ -216,7 +216,7 @@ export const tools = [
   },
   {
     name: 'CIDR / subnet calculator',
-    path: '', // 'cidr-calculator'
+    path: 'cidr-calculator',
     description:
       'Enter an IPv4 address and mask (CIDR or dotted) to get network, broadcast, and host range.',
     section: 'network',
