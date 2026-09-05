@@ -16,6 +16,8 @@ const loaders = {
   'url-inspector': () => import('@/components/tools/items/UrlInspector'),
   'jwt-decoder': () => import('@/components/tools/items/JwtDecoder'),
   'uuid-generator': () => import('@/components/tools/items/UuidGenerator'),
+  'password-generator': () =>
+    import('@/components/tools/items/PasswordGenerator'),
   'color-converter': () => import('@/components/tools/items/ColorConverter'),
   'timestamp-converter': () => import('@/components/tools/items/TimestampConverter'),
   'number-base-converter': () =>
