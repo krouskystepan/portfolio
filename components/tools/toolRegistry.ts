@@ -23,7 +23,8 @@ const loaders = {
   'number-base-converter': () =>
     import('@/components/tools/items/NumberBaseConverter'),
   'qr-code': () => import('@/components/tools/items/QrCodeGenerator'),
-  'chmod-calculator': () => import('@/components/tools/items/ChmodCalculator')
+  'chmod-calculator': () => import('@/components/tools/items/ChmodCalculator'),
+  'cidr-calculator': () => import('@/components/tools/items/CidrCalculator')
 } as const satisfies Record<ToolPath, ToolLoader>
 
 export type { ToolPath }
