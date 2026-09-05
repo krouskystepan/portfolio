@@ -140,7 +140,7 @@ export const tools = [
   },
   {
     name: 'Password / secret generator',
-    path: '', // 'password-generator'
+    path: 'password-generator',
     description:
       'Generate strong passwords and secrets with length, charset, and entropy — all in the browser.',
     section: 'generators',
