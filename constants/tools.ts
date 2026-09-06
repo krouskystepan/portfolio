@@ -184,12 +184,12 @@ export const tools = [
     ]
   },
   {
-    name: 'Color Converter',
+    name: 'Color picker & converter',
     path: 'color-converter',
     description:
-      'Convert colors between HEX, RGB, HSL and more. Live color preview.',
+      'Pick a color visually or convert between HEX, RGB, HSL, LAB, LCH, and more.',
     section: 'converters',
-    keywords: ['hex', 'rgb', 'hsl', 'picker']
+    keywords: ['hex', 'rgb', 'hsl', 'picker', 'opacity', 'lab', 'lch']
   },
   {
     name: 'Timestamp Converter',

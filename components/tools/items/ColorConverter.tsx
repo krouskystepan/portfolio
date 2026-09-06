@@ -3,6 +3,7 @@
 import { useAchievementContext } from '@/context/AchievementContext'
 import { ColorFormats, parseColor } from '@/utils/colorUtils'
 import { useState } from 'react'
+import { HexAlphaColorPicker } from 'react-colorful'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import { ClearButton, PrimaryButton } from '@/components/tools/_shared/ToolButtons'
 import {
@@ -16,6 +17,48 @@ import {
   ToolCopyButton,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
+
+/** Keep overrides light so the 2D spectrum stays a square, not a thin bar. */
+const pickerShellClass =
+  'rounded-xl border border-white/10 bg-neutral-900/40 p-4 ' +
+  '[&_.react-colorful]:!h-[220px] [&_.react-colorful]:!w-full ' +
+  '[&_.react-colorful__saturation]:!mb-3 [&_.react-colorful__saturation]:!rounded-lg [&_.react-colorful__saturation]:!border-b-0 ' +
+  '[&_.react-colorful__hue]:!h-3 [&_.react-colorful__hue]:!rounded-lg ' +
+  '[&_.react-colorful__alpha]:!mt-3 [&_.react-colorful__alpha]:!h-3 [&_.react-colorful__alpha]:!rounded-lg ' +
+  '[&_.react-colorful__pointer]:!h-4 [&_.react-colorful__pointer]:!w-4 ' +
+  '[&_.react-colorful__hue-pointer]:!h-3.5 [&_.react-colorful__hue-pointer]:!w-3.5 ' +
+  '[&_.react-colorful__alpha-pointer]:!h-3.5 [&_.react-colorful__alpha-pointer]:!w-3.5'
+
+const previewCheckerClass =
+  'h-14 w-full overflow-hidden rounded-xl ' +
+  'bg-[length:12px_12px] ' +
+  'bg-[position:0_0,0_6px,6px_-6px,-6px_0] ' +
+  'bg-[linear-gradient(45deg,#2a2a2a_25%,transparent_25%),linear-gradient(-45deg,#2a2a2a_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#2a2a2a_75%),linear-gradient(-45deg,transparent_75%,#2a2a2a_75%)] ' +
+  'bg-neutral-800'
+
+const toHexAlpha = (converted: ColorFormats) => {
+  const hex = (converted.HEX ?? '#000000').toLowerCase()
+  const alpha =
+    converted.Alpha != null ? Number.parseFloat(converted.Alpha) : 1
+  const aa = Math.round(Math.min(1, Math.max(0, alpha)) * 255)
+    .toString(16)
+    .padStart(2, '0')
+  return `${hex}${aa}`
+}
+
+const normalizePickerValue = (value: string) => {
+  if (/^#[0-9a-f]{8}$/i.test(value)) {
+    const r = Number.parseInt(value.slice(1, 3), 16)
+    const g = Number.parseInt(value.slice(3, 5), 16)
+    const b = Number.parseInt(value.slice(5, 7), 16)
+    const a =
+      Math.round((Number.parseInt(value.slice(7, 9), 16) / 255) * 1000) / 1000
+    // Fully opaque → plain hex (no alpha in formats)
+    if (a >= 1) return value.slice(0, 7)
+    return `rgba(${r}, ${g}, ${b}, ${a})`
+  }
+  return value
+}
 
 const ColorConverter = () => {
   const [input, setInput] = useState('')
@@ -43,6 +86,16 @@ const ColorConverter = () => {
     setError(null)
   }
 
+  const handlePickerChange = (value: string) => {
+    const normalized = normalizePickerValue(value)
+    setInput(normalized)
+    const result = parseColor(normalized)
+    if (result) {
+      setConverted(result)
+      setError(null)
+    }
+  }
+
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text)
     unlockAchievement('clipboard-master')
@@ -53,12 +106,17 @@ const ColorConverter = () => {
     }, 1500)
   }
 
+  const showPicker = Object.keys(converted).length > 0
+  const previewColor =
+    converted.RGBA ?? converted.RGB ?? converted.HEX ?? 'transparent'
+
   return (
-    <ToolLayout title="Color Converter">
+    <ToolLayout title="Color picker & converter">
       <ToolInputPanel
         intro={
           <p className={toolIntroTextClass}>
-            Enter any color (HEX, RGB, RGBA, HSL, HSLA, HWB, LAB, LCH, or name)
+            Pick a color below, or enter HEX, RGB, RGBA, HSL, HSLA, HWB, LAB,
+            LCH, or a name
           </p>
         }
       >
@@ -85,19 +143,21 @@ const ColorConverter = () => {
           <div className={toolErrorBoxClass}>
             <strong>Error:</strong> {error}
           </div>
-        ) : Object.keys(converted).length > 0 ? (
+        ) : showPicker ? (
           <div className="space-y-3 text-sm">
-            <div
-              className="h-20 w-full rounded-xl border border-white/20 shadow-inner"
-              style={{
-                backgroundColor:
-                  converted.RGBA ??
-                  converted.RGB ??
-                  converted.HEX ??
-                  converted.HSL ??
-                  'transparent'
-              }}
-            />
+            <div className={pickerShellClass}>
+              <HexAlphaColorPicker
+                color={toHexAlpha(converted)}
+                onChange={handlePickerChange}
+              />
+            </div>
+
+            <div className={previewCheckerClass} title={previewColor}>
+              <div
+                className="h-full w-full"
+                style={{ backgroundColor: previewColor }}
+              />
+            </div>
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {Object.entries(converted).map(([label, val]) => (
