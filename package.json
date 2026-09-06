@@ -11,6 +11,8 @@
   "dependencies": {
     "@babel/generator": "^8.0.0",
     "@babel/parser": "^8.0.4",
+    "croner": "^9.1.0",
+    "cronstrue": "^2.59.0",
     "framer-motion": "^12.38.0",
     "js-yaml": "^4.1.1",
     "lucide-react": "^0.555.0",
