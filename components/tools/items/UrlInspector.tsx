@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
@@ -33,15 +33,20 @@ import {
   type QueryParamDraft,
   type UrlDraft
 } from '@/utils/urlInspect'
+import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
+import { str, useToolUrlState } from '@/hooks/useToolUrlState'
 
 const cellInputClass =
   'ring-custom_blue/40 w-full min-w-[6rem] rounded-md border border-white/10 bg-neutral-900/80 px-2 py-1.5 font-mono text-[13px] text-neutral-100 outline-none placeholder:text-neutral-600 focus:ring-2'
 
-const UrlInspector = () => {
-  const [input, setInput] = useState('')
+function UrlInspectorInner() {
+  const [url, setUrl] = useToolUrlState({
+    url: str('', { text: true })
+  })
+  const input = url.url
   const [draft, setDraft] = useState<UrlDraft | null>(null)
   const [parseError, setParseError] = useState<string | null>(null)
-  const [copied, setCopied] = useState<string | null>(null)
+  const { copied, flash, clear } = useCopyFeedback()
   const lastBuiltHrefRef = useRef<string | null>(null)
   const { unlockAchievement } = useAchievementContext()
 
@@ -68,7 +73,7 @@ const UrlInspector = () => {
     const href = buildHref(next)
     lastBuiltHrefRef.current = href
     setDraft(next)
-    setInput(href)
+    setUrl({ url: href })
     setParseError(null)
   }
 
@@ -119,8 +124,7 @@ const UrlInspector = () => {
     if (!value) return
     await navigator.clipboard.writeText(value)
     unlockAchievement('clipboard-master')
-    setCopied(key)
-    setTimeout(() => setCopied(null), 1500)
+    flash(key)
   }
 
   const parts = draft ? partsFromDraft(draft) : []
@@ -156,7 +160,12 @@ const UrlInspector = () => {
       >
         <TextAreaWithLineNumbers
           value={input}
-          setValue={setInput}
+          setValue={(v) =>
+            setUrl((s) => ({
+              ...s,
+              url: typeof v === 'function' ? v(s.url) : v
+            }))
+          }
           placeholder="https://user:pass@example.com:8443/app/users?id=1&id=2&q=hello+world#section"
         />
         <div className={toolToolbarBetweenClass}>
@@ -174,10 +183,10 @@ const UrlInspector = () => {
             <ClearButton
               onClick={() => {
                 lastBuiltHrefRef.current = null
-                setInput('')
+                setUrl({ url: '' })
                 setDraft(null)
                 setParseError(null)
-                setCopied(null)
+                clear()
               }}
             >
               Clear
@@ -328,4 +337,16 @@ const UrlInspector = () => {
   )
 }
 
-export default UrlInspector
+export default function UrlInspector() {
+  return (
+    <Suspense
+      fallback={
+        <ToolLayout title="URL inspector">
+          <p className="text-center text-sm text-neutral-400">Loading…</p>
+        </ToolLayout>
+      }
+    >
+      <UrlInspectorInner />
+    </Suspense>
+  )
+}

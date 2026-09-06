@@ -24,6 +24,8 @@ import {
   ToolCopyButton,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
+import { enumParam, str, useToolUrlState } from '@/hooks/useToolUrlState'
+import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
 
 type PrimitiveShape = { kind: 'primitive'; ts: string }
 type ArrayShape = { kind: 'array'; items: Shape[] }
@@ -306,14 +308,29 @@ function generateTypeScript(
 const JsonToTsGenerator = ({
   embedded = false
 }: { embedded?: boolean } = {}) => {
-  const [input, setInput] = useState('')
-  const [rootName, setRootName] = useState('Root')
-  const [exportMode, setExportMode] = useState<TsExportMode>('automatic')
+  const [url, setUrl] = useToolUrlState({
+    ts: str('', { text: true }),
+    root: str('Root'),
+    export: enumParam<TsExportMode>('automatic', [
+      'automatic',
+      'compact',
+      'type'
+    ] as const)
+  })
+  const input = url.ts
+  const rootName = url.root
+  const exportMode = url.export
   const [output, setOutput] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [copied, setCopied] = useState(false)
+  const { copied, flash } = useCopyFeedback()
 
   const { unlockAchievement } = useAchievementContext()
+
+  const setInput = (v: React.SetStateAction<string>) =>
+    setUrl((s) => ({
+      ...s,
+      ts: typeof v === 'function' ? v(s.ts) : v
+    }))
 
   const handleGenerate = () => {
     if (!input.trim()) return
@@ -342,7 +359,7 @@ const JsonToTsGenerator = ({
   }, [exportMode, rootName])
 
   const handleClear = () => {
-    setInput('')
+    setUrl((s) => ({ ...s, ts: '' }))
     setOutput('')
     setError(null)
   }
@@ -350,8 +367,7 @@ const JsonToTsGenerator = ({
   const handleCopy = () => {
     navigator.clipboard.writeText(output)
     unlockAchievement('clipboard-master')
-    setCopied(true)
-    setTimeout(() => setCopied(false), 1500)
+    flash()
   }
 
   return (
@@ -364,7 +380,7 @@ const JsonToTsGenerator = ({
           id="json-ts-root-name"
           type="text"
           value={rootName}
-          onChange={(e) => setRootName(e.target.value)}
+          onChange={(e) => setUrl((s) => ({ ...s, root: e.target.value }))}
           placeholder="Root"
           className={`${toolInputClass} mb-4 font-mono`}
         />
@@ -375,7 +391,7 @@ const JsonToTsGenerator = ({
             <ToolChipButton
               key={opt.value}
               active={exportMode === opt.value}
-              onClick={() => setExportMode(opt.value)}
+              onClick={() => setUrl((s) => ({ ...s, export: opt.value }))}
             >
               {opt.label}
             </ToolChipButton>
@@ -404,7 +420,7 @@ const JsonToTsGenerator = ({
           <h2 className={toolSectionTitleClass}>TypeScript</h2>
 
           {output ? (
-            <ToolCopyButton copied={copied} onClick={handleCopy} />
+            <ToolCopyButton copied={copied === true} onClick={handleCopy} />
           ) : null}
         </div>
 

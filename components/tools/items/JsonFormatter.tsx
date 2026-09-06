@@ -19,36 +19,64 @@ import {
   ToolCopyButton,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
+import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
+import { str, useToolUrlState } from '@/hooks/useToolUrlState'
+
+type ParseIssue = {
+  message: string
+  singleQuotes: boolean
+  unquotedKeys: boolean
+  trailingComma: boolean
+} | null
+
+function detectParseIssue(message: string): NonNullable<ParseIssue> {
+  const singleQuotes =
+    /Unexpected token ''?'|is not valid JSON|token ' in JSON|Unexpected token '|'|invalid character '|‘|’/i.test(
+      message
+    )
+
+  const unquotedKeys =
+    /Expected (property name|double-quoted property name)|in JSON at position|in JSON at line/i.test(
+      message
+    )
+
+  const trailingComma =
+    /Unexpected token }|Unexpected token ]|Trailing comma|Unexpected end of JSON input/i.test(
+      message
+    )
+
+  return { message, singleQuotes, unquotedKeys, trailingComma }
+}
 
 const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
-  const [input, setInput] = useState('')
+  const [url, setUrl] = useToolUrlState({
+    json: str('', { text: true })
+  })
+  const input = url.json
   const [formatted, setFormatted] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [quoteError, setQuoteError] = useState(false)
-  const [unquotedKeyError, setUnquotedKeyError] = useState(false)
-  const [trailingCommaError, setTrailingCommaError] = useState(false)
-  const [copied, setCopied] = useState(false)
+  const [issue, setIssue] = useState<ParseIssue>(null)
+  const { copied, flash } = useCopyFeedback()
 
   const { unlockAchievement } = useAchievementContext()
 
-  const resetErrors = () => {
-    setQuoteError(false)
-    setUnquotedKeyError(false)
-    setTrailingCommaError(false)
-  }
+  const setInput = (v: React.SetStateAction<string>) =>
+    setUrl((s) => ({
+      ...s,
+      json: typeof v === 'function' ? v(s.json) : v
+    }))
+
+  const hasFixableIssue = Boolean(
+    issue && (issue.singleQuotes || issue.unquotedKeys || issue.trailingComma)
+  )
 
   const handleFormat = () => {
     if (!input.trim()) return
     try {
       const parsed = JSON.parse(input)
-      const pretty = JSON.stringify(parsed, null, 2)
-      setFormatted(pretty)
-      setError(null)
-      resetErrors()
+      setFormatted(JSON.stringify(parsed, null, 2))
+      setIssue(null)
     } catch (err) {
-      const message = (err as Error).message
-      setError(message)
-      detectErrorType(message)
+      setIssue(detectParseIssue((err as Error).message))
       setFormatted('')
     }
   }
@@ -57,46 +85,18 @@ const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
     if (!input.trim()) return
     try {
       const parsed = JSON.parse(input)
-      const minified = JSON.stringify(parsed)
-      setFormatted(minified)
-      setError(null)
-      resetErrors()
+      setFormatted(JSON.stringify(parsed))
+      setIssue(null)
     } catch (err) {
-      const message = (err as Error).message
-      setError(message)
-      detectErrorType(message)
+      setIssue(detectParseIssue((err as Error).message))
       setFormatted('')
     }
-  }
-
-  const detectErrorType = (message: string) => {
-    resetErrors()
-
-    const singleQuoteError =
-      /Unexpected token ''?'|is not valid JSON|token ' in JSON|Unexpected token '|'|invalid character '|‘|’/i.test(
-        message
-      )
-
-    const unquotedKeyErrorPattern =
-      /Expected (property name|double-quoted property name)|in JSON at position|in JSON at line/i.test(
-        message
-      )
-
-    const trailingCommaPattern =
-      /Unexpected token }|Unexpected token ]|Trailing comma|Unexpected end of JSON input/i.test(
-        message
-      )
-
-    if (singleQuoteError) setQuoteError(true)
-    if (unquotedKeyErrorPattern) setUnquotedKeyError(true)
-    if (trailingCommaPattern) setTrailingCommaError(true)
   }
 
   const handleClear = () => {
     setInput('')
     setFormatted('')
-    setError(null)
-    resetErrors()
+    setIssue(null)
   }
 
   const handleFixIssues = () => {
@@ -115,15 +115,13 @@ const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
     }
 
     setInput(fixed)
-    resetErrors()
-    setError(null)
+    setIssue(null)
   }
 
   const handleCopy = () => {
     navigator.clipboard.writeText(formatted)
     unlockAchievement('clipboard-master')
-    setCopied(true)
-    setTimeout(() => setCopied(false), 1500)
+    flash()
   }
 
   const highlightJson = (json: string): string => {
@@ -169,15 +167,11 @@ const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
         />
 
         <div className={toolToolbarBetweenClass}>
-          {(quoteError || unquotedKeyError || trailingCommaError) && (
-            <ToolChipButton
-              active
-              tone="accent"
-              onClick={handleFixIssues}
-            >
+          {hasFixableIssue ? (
+            <ToolChipButton active tone="accent" onClick={handleFixIssues}>
               Fix Common Issues
             </ToolChipButton>
-          )}
+          ) : null}
 
           <div className={toolFlexEndButtonsClass}>
             <PrimaryButton onClick={handleFormat} disabled={!input.trim()}>
@@ -198,33 +192,33 @@ const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
           <h2 className={toolSectionTitleClass}>Result</h2>
 
           {formatted ? (
-            <ToolCopyButton copied={copied} onClick={handleCopy} />
+            <ToolCopyButton copied={copied === true} onClick={handleCopy} />
           ) : null}
         </div>
 
-        {error ? (
+        {issue ? (
           <div className={toolErrorBoxClass}>
-            <strong>Error:</strong> {error}
+            <strong>Error:</strong> {issue.message}
             <div className="mt-2 text-amber-400">
-              {quoteError && (
+              {issue.singleQuotes && (
                 <div>
                   It looks like your JSON uses <b>single quotes</b> instead of
                   double quotes.
                 </div>
               )}
-              {unquotedKeyError && (
+              {issue.unquotedKeys && (
                 <div>
                   Your JSON contains <b>unquoted keys</b>. All keys must be in
                   double quotes.
                 </div>
               )}
-              {trailingCommaError && (
+              {issue.trailingComma && (
                 <div>
                   Your JSON has a <b>trailing comma</b>. Remove it before
                   parsing.
                 </div>
               )}
-              {(quoteError || unquotedKeyError || trailingCommaError) && (
+              {hasFixableIssue && (
                 <div className="mt-2">
                   Click <b>“Fix Common Issues”</b> to auto-correct it.
                 </div>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useAchievementContext } from '@/context/AchievementContext'
-import { useMemo, useState } from 'react'
+import { Suspense, useMemo } from 'react'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import { ClearButton } from '@/components/tools/_shared/ToolButtons'
@@ -18,10 +18,15 @@ import {
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
 import { buildUnicodeVariants, inspectUnicodeChars } from '@/utils/unicodeAscii'
+import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
+import { str, useToolUrlState } from '@/hooks/useToolUrlState'
 
-const UnicodeAsciiConverter = () => {
-  const [input, setInput] = useState('')
-  const [copiedKey, setCopiedKey] = useState<string | null>(null)
+function UnicodeAsciiConverterInner() {
+  const [url, setUrl] = useToolUrlState({
+    t: str('', { text: true })
+  })
+  const input = url.t
+  const { copied, flash } = useCopyFeedback()
 
   const { unlockAchievement } = useAchievementContext()
 
@@ -33,8 +38,7 @@ const UnicodeAsciiConverter = () => {
     if (!text) return
     navigator.clipboard.writeText(text)
     unlockAchievement('clipboard-master')
-    setCopiedKey(label)
-    setTimeout(() => setCopiedKey(null), 1500)
+    flash(label)
   }
 
   return (
@@ -50,11 +54,16 @@ const UnicodeAsciiConverter = () => {
       >
         <TextAreaWithLineNumbers
           value={input}
-          setValue={setInput}
+          setValue={(v) =>
+            setUrl((s) => ({
+              ...s,
+              t: typeof v === 'function' ? v(s.t) : v
+            }))
+          }
           placeholder="Hello  or  72 101 108 108 111"
         />
         <div className={toolToolbarEndClass}>
-          <ClearButton onClick={() => setInput('')}>Clear</ClearButton>
+          <ClearButton onClick={() => setUrl({ t: '' })}>Clear</ClearButton>
         </div>
       </ToolInputPanel>
 
@@ -74,7 +83,7 @@ const UnicodeAsciiConverter = () => {
                     {label}
                   </span>
                   <ToolCopyButton
-                    copied={copiedKey === label}
+                    copied={copied === label}
                     onClick={() => copyValue(label, value)}
                     disabled={!value}
                   />
@@ -135,4 +144,16 @@ const UnicodeAsciiConverter = () => {
   )
 }
 
-export default UnicodeAsciiConverter
+export default function UnicodeAsciiConverter() {
+  return (
+    <Suspense
+      fallback={
+        <ToolLayout title="Unicode / ASCII converter">
+          <p className="text-center text-sm text-neutral-400">Loading…</p>
+        </ToolLayout>
+      }
+    >
+      <UnicodeAsciiConverterInner />
+    </Suspense>
+  )
+}

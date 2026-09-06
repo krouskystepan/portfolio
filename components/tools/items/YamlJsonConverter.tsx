@@ -17,15 +17,25 @@ import {
   ToolCopyButton,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
+import { str, useToolUrlState } from '@/hooks/useToolUrlState'
+import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
 
 const YamlJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) => {
-  const [input, setInput] = useState('')
+  const [url, setUrl] = useToolUrlState({
+    yaml: str('', { text: true })
+  })
+  const input = url.yaml
   const [output, setOutput] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [copied, setCopied] = useState(false)
+  const { copied, flash } = useCopyFeedback()
 
   const { unlockAchievement } = useAchievementContext()
 
+  const setInput = (v: React.SetStateAction<string>) =>
+    setUrl((s) => ({
+      ...s,
+      yaml: typeof v === 'function' ? v(s.yaml) : v
+    }))
   const handleYamlToJson = () => {
     if (!input.trim()) return
     try {
@@ -59,8 +69,7 @@ const YamlJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) =>
   const handleCopy = () => {
     navigator.clipboard.writeText(output)
     unlockAchievement('clipboard-master')
-    setCopied(true)
-    setTimeout(() => setCopied(false), 1500)
+    flash()
   }
 
   return (
@@ -88,7 +97,7 @@ const YamlJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) =>
           <h2 className={toolSectionTitleClass}>Result</h2>
 
           {output ? (
-            <ToolCopyButton copied={copied} onClick={handleCopy} />
+            <ToolCopyButton copied={copied === true} onClick={handleCopy} />
           ) : null}
         </div>
 

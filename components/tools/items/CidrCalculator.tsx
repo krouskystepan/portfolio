@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense } from 'react'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import { ClearButton } from '@/components/tools/_shared/ToolButtons'
 import {
+  toolEmptyHintClass,
   toolErrorBoxClass,
   toolHintMetaClass,
   toolInputClass,
@@ -19,18 +20,8 @@ import {
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
 import { useAchievementContext } from '@/context/AchievementContext'
-import {
-  CIDR_PRESETS,
-  DEFAULT_INPUT,
-  type SubnetInput,
-  calculateSubnet,
-  formatCidr,
-  formatIpv4,
-  maskToPrefix,
-  parseCidr,
-  parseIpv4,
-  prefixToMask
-} from '@/utils/cidrSubnet'
+import { CIDR_PRESETS } from '@/utils/cidrSubnet'
+import { useCidrCalculator } from '@/hooks/tools/useCidrCalculator'
 
 type CopyKey =
   | 'network'
@@ -43,140 +34,34 @@ type CopyKey =
   | 'cidr'
   | 'ipDecimal'
 
-const CidrCalculator = () => {
-  const [input, setInput] = useState<SubnetInput>(DEFAULT_INPUT)
-  const [cidrText, setCidrText] = useState(() => formatCidr(DEFAULT_INPUT))
-  const [ipText, setIpText] = useState(() => formatIpv4(DEFAULT_INPUT.ip))
-  const [maskText, setMaskText] = useState(() =>
-    formatIpv4(prefixToMask(DEFAULT_INPUT.prefix))
-  )
-  const [cidrError, setCidrError] = useState<string | null>(null)
-  const [ipError, setIpError] = useState<string | null>(null)
-  const [maskError, setMaskError] = useState<string | null>(null)
-  const [copied, setCopied] = useState<CopyKey | null>(null)
+function CidrCalculatorInner() {
+  const {
+    state,
+    info,
+    copied,
+    flash,
+    setCidrText,
+    blurCidr,
+    setIpText,
+    blurIp,
+    setPrefix,
+    setMaskText,
+    blurMask,
+    applyPreset,
+    reset
+  } = useCidrCalculator()
+
+  const { input, cidrText, ipText, maskText, cidrError, ipError, maskError } =
+    state
 
   const { unlockAchievement } = useAchievementContext()
 
-  const applyInput = (next: SubnetInput) => {
-    const prefix = Math.min(32, Math.max(0, Math.trunc(next.prefix)))
-    const normalized: SubnetInput = { ip: next.ip >>> 0, prefix }
-    setInput(normalized)
-    setCidrText(formatCidr(normalized))
-    setIpText(formatIpv4(normalized.ip))
-    setMaskText(formatIpv4(prefixToMask(normalized.prefix)))
-    setCidrError(null)
-    setIpError(null)
-    setMaskError(null)
-  }
-
-  const handleCidrChange = (text: string) => {
-    setCidrText(text)
-    if (!text.trim()) {
-      setCidrError(null)
-      return
-    }
-    const result = parseCidr(text)
-    if (result.ok) {
-      const prefix = Math.min(32, Math.max(0, Math.trunc(result.input.prefix)))
-      const normalized: SubnetInput = {
-        ip: result.input.ip >>> 0,
-        prefix
-      }
-      setInput(normalized)
-      setIpText(formatIpv4(normalized.ip))
-      setMaskText(formatIpv4(prefixToMask(normalized.prefix)))
-      setCidrError(null)
-      setIpError(null)
-      setMaskError(null)
-      return
-    }
-    setCidrError(result.error)
-  }
-
-  const handleCidrBlur = () => {
-    setCidrText(formatCidr(input))
-    setCidrError(null)
-  }
-
-  const handleIpChange = (text: string) => {
-    setIpText(text)
-    if (!text.trim()) {
-      setIpError(null)
-      return
-    }
-    const result = parseIpv4(text)
-    if (result.ok) {
-      const normalized: SubnetInput = {
-        ip: result.value,
-        prefix: input.prefix
-      }
-      setInput(normalized)
-      setCidrText(formatCidr(normalized))
-      setIpError(null)
-      setCidrError(null)
-      return
-    }
-    setIpError(result.error)
-  }
-
-  const handleIpBlur = () => {
-    setIpText(formatIpv4(input.ip))
-    setIpError(null)
-  }
-
-  const handlePrefixChange = (raw: string) => {
-    if (raw.trim() === '') return
-    const n = Number.parseInt(raw, 10)
-    if (!Number.isFinite(n)) return
-    applyInput({ ip: input.ip, prefix: Math.min(32, Math.max(0, n)) })
-  }
-
-  const handleMaskChange = (text: string) => {
-    setMaskText(text)
-    if (!text.trim()) {
-      setMaskError(null)
-      return
-    }
-    const ipResult = parseIpv4(text)
-    if (!ipResult.ok) {
-      setMaskError(ipResult.error)
-      return
-    }
-    const prefixResult = maskToPrefix(ipResult.value)
-    if (!prefixResult.ok) {
-      setMaskError(prefixResult.error)
-      return
-    }
-    const normalized: SubnetInput = {
-      ip: input.ip,
-      prefix: prefixResult.prefix
-    }
-    setInput(normalized)
-    setCidrText(formatCidr(normalized))
-    setMaskError(null)
-    setCidrError(null)
-  }
-
-  const handleMaskBlur = () => {
-    setMaskText(formatIpv4(prefixToMask(input.prefix)))
-    setMaskError(null)
-  }
-
-  const applyPreset = (cidr: string) => {
-    const result = parseCidr(cidr)
-    if (result.ok) applyInput(result.input)
-  }
-
-  const handleReset = () => applyInput(DEFAULT_INPUT)
-
-  const info = calculateSubnet(input)
   const hostEdge = info.prefix >= 31
 
   const handleCopy = async (key: CopyKey, text: string) => {
     await navigator.clipboard.writeText(text)
     unlockAchievement('clipboard-master')
-    setCopied(key)
-    setTimeout(() => setCopied(null), 1500)
+    flash(key)
   }
 
   const resultRows: { key: CopyKey; label: string; value: string }[] = [
@@ -233,8 +118,8 @@ const CidrCalculator = () => {
           <input
             id="cidr-string"
             value={cidrText}
-            onChange={(e) => handleCidrChange(e.target.value)}
-            onBlur={handleCidrBlur}
+            onChange={(e) => setCidrText(e.target.value)}
+            onBlur={blurCidr}
             placeholder="192.168.1.10/24"
             spellCheck={false}
             autoComplete="off"
@@ -255,8 +140,8 @@ const CidrCalculator = () => {
             <input
               id="cidr-ip"
               value={ipText}
-              onChange={(e) => handleIpChange(e.target.value)}
-              onBlur={handleIpBlur}
+              onChange={(e) => setIpText(e.target.value)}
+              onBlur={blurIp}
               placeholder="192.168.1.10"
               spellCheck={false}
               autoComplete="off"
@@ -286,7 +171,7 @@ const CidrCalculator = () => {
                 min={0}
                 max={32}
                 value={input.prefix}
-                onChange={(e) => handlePrefixChange(e.target.value)}
+                onChange={(e) => setPrefix(e.target.value)}
                 className={`${toolInputClass} pl-7 font-mono [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
               />
             </div>
@@ -300,8 +185,8 @@ const CidrCalculator = () => {
           <input
             id="cidr-mask"
             value={maskText}
-            onChange={(e) => handleMaskChange(e.target.value)}
-            onBlur={handleMaskBlur}
+            onChange={(e) => setMaskText(e.target.value)}
+            onBlur={blurMask}
             placeholder="255.255.255.0"
             spellCheck={false}
             autoComplete="off"
@@ -336,7 +221,7 @@ const CidrCalculator = () => {
             Only contiguous masks are accepted (e.g. <code>255.255.255.0</code>
             ).
           </p>
-          <ClearButton onClick={handleReset}>Reset</ClearButton>
+          <ClearButton onClick={reset}>Reset</ClearButton>
         </div>
       </ToolInputPanel>
 
@@ -370,4 +255,16 @@ const CidrCalculator = () => {
   )
 }
 
-export default CidrCalculator
+export default function CidrCalculator() {
+  return (
+    <Suspense
+      fallback={
+        <ToolLayout title="CIDR / subnet calculator">
+          <p className={toolEmptyHintClass}>Loading…</p>
+        </ToolLayout>
+      }
+    >
+      <CidrCalculatorInner />
+    </Suspense>
+  )
+}

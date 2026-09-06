@@ -1,14 +1,12 @@
 'use client'
 
-import { Suspense, useEffect, useRef, useState } from 'react'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 import { AnimatePresence, Reorder } from 'framer-motion'
 import { HexColorPicker } from 'react-colorful'
 import { Lock, Plus, Unlock, X } from 'lucide-react'
 import { useAchievementContext } from '@/context/AchievementContext'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import {
-  ClearButton,
   PrimaryButton,
   SecondaryButton
 } from '@/components/tools/_shared/ToolButtons'
@@ -29,32 +27,17 @@ import {
 } from '@/components/tools/_shared/toolUi'
 import {
   BLINDNESS_MODES,
-  DEFAULT_PALETTE_COUNT,
   HARMONY_MODES,
-  MAX_PALETTE,
-  MIN_PALETTE,
   contrastingText,
   contrastRatio,
-  createPlaceholderPalette,
   exportPalette,
-  generatePalette,
-  insertMidpointBetween,
-  makePaletteColor,
-  parseShareParam,
-  regenerateUnlocked,
-  removeColorAt,
   shadeRamp,
   simulateBlindness,
-  toShareParam,
   wcagLevel,
-  type BlindnessMode,
-  type ExportFormat,
-  type HarmonyMode,
-  type PaletteColor
+  type ExportFormat
 } from '@/utils/paletteGenerator'
 import { hexToRgb, rgbToHex } from '@/utils/colorUtils'
-
-const HISTORY_CAP = 50
+import { useColorPalette } from '@/hooks/tools/useColorPalette'
 
 const SWATCH_TRANSITION = {
   layout: { type: 'spring' as const, stiffness: 520, damping: 40, mass: 0.4 },
@@ -71,171 +54,52 @@ const EXPORT_FORMATS: { id: ExportFormat; label: string }[] = [
 ]
 
 const pickerShellClass =
-  'rounded-xl border border-white/10 bg-neutral-900/90 p-3 shadow-xl ' +
+  // Clip handles to the rounded shell; padding keeps them fully visible inside.
+  'overflow-hidden rounded-xl border border-white/10 bg-neutral-900/90 p-4 shadow-xl ' +
   '[&_.react-colorful]:!h-[160px] [&_.react-colorful]:!w-full ' +
   '[&_.react-colorful__saturation]:!mb-2 [&_.react-colorful__saturation]:!rounded-lg [&_.react-colorful__saturation]:!border-b-0 ' +
   '[&_.react-colorful__hue]:!h-3 [&_.react-colorful__hue]:!rounded-lg ' +
   '[&_.react-colorful__pointer]:!h-3.5 [&_.react-colorful__pointer]:!w-3.5 ' +
   '[&_.react-colorful__hue-pointer]:!h-3 [&_.react-colorful__hue-pointer]:!w-3'
 
-function clonePalette(colors: PaletteColor[]): PaletteColor[] {
-  return colors.map((c) => ({ ...c }))
-}
-
-function colorsEqual(a: PaletteColor[], b: PaletteColor[]) {
-  if (a.length !== b.length) return false
-  return a.every(
-    (c, i) =>
-      c.id === b[i].id && c.hex === b[i].hex && c.locked === b[i].locked
-  )
-}
-
 function ColorPaletteInner() {
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
   const { unlockAchievement } = useAchievementContext()
+  const {
+    state,
+    dispatch,
+    editPanelRef,
+    colorsRef,
+    dragSnapshotRef,
+    copied,
+    flash,
+    commitColors,
+    setSwatchHex,
+    handleReorder,
+    clonePalette,
+    insertMidpointBetween,
+    removeColorAt,
+    generatePalette,
+    MIN_PALETTE,
+    MAX_PALETTE
+  } = useColorPalette()
 
-  const [mode, setMode] = useState<HarmonyMode>('random')
-  const [count, setCount] = useState(DEFAULT_PALETTE_COUNT)
-  // Stable SSR + first client paint — randomize only after mount (avoids hydration mismatch).
-  const [colors, setColors] = useState<PaletteColor[]>(() =>
-    createPlaceholderPalette(DEFAULT_PALETTE_COUNT)
-  )
-  const [selectedIndex, setSelectedIndex] = useState(0)
-  const [hexFocusIndex, setHexFocusIndex] = useState<number | null>(null)
-  const [pickerIndex, setPickerIndex] = useState<number | null>(null)
-  const [editDraft, setEditDraft] = useState('')
-  const [blindness, setBlindness] = useState<BlindnessMode>('none')
-  const [exportFormat, setExportFormat] = useState<ExportFormat>('css')
-  const [copiedKey, setCopiedKey] = useState<string | null>(null)
-  const [past, setPast] = useState<PaletteColor[][]>([])
-  const [future, setFuture] = useState<PaletteColor[][]>([])
-  const [hydrated, setHydrated] = useState(false)
-  const [draggingId, setDraggingId] = useState<string | null>(null)
-  /** Skip enter/layout motion until after first paint + URL hydrate. */
-  const [motionReady, setMotionReady] = useState(false)
-
-  const editPanelRef = useRef<HTMLDivElement>(null)
-  const skipUrlWrite = useRef(false)
-  const colorsRef = useRef(colors)
-  const modeRef = useRef(mode)
-  const selectedIndexRef = useRef(selectedIndex)
-  const hexFocusIndexRef = useRef(hexFocusIndex)
-  const dragSnapshotRef = useRef<PaletteColor[] | null>(null)
-  colorsRef.current = colors
-  modeRef.current = mode
-  selectedIndexRef.current = selectedIndex
-  hexFocusIndexRef.current = hexFocusIndex
-
-  const commitColors = (next: PaletteColor[], recordHistory = true) => {
-    if (recordHistory && !colorsEqual(colorsRef.current, next)) {
-      setPast((p) => [...p, clonePalette(colorsRef.current)].slice(-HISTORY_CAP))
-      setFuture([])
-    }
-    setColors(next)
-    setSelectedIndex((i) => Math.min(i, next.length - 1))
-  }
-
-  // Client-only: restore ?c= or generate a random palette (never in useState init).
-  useEffect(() => {
-    const param = searchParams.get('c')
-    if (param) {
-      const parsed = parseShareParam(param)
-      if (parsed) {
-        skipUrlWrite.current = true
-        setColors(parsed.map((hex) => makePaletteColor(hex)))
-        setCount(parsed.length)
-        setSelectedIndex(0)
-        setHydrated(true)
-        return
-      }
-    }
-    setColors(generatePalette({ count: DEFAULT_PALETTE_COUNT, mode: 'random' }))
-    setHydrated(true)
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- once on mount
-  }, [])
-
-  // Enable strip motion only after first paint (no load / hydrate flash)
-  useEffect(() => {
-    if (!hydrated) return
-    let raf2 = 0
-    const raf1 = requestAnimationFrame(() => {
-      raf2 = requestAnimationFrame(() => setMotionReady(true))
-    })
-    return () => {
-      cancelAnimationFrame(raf1)
-      cancelAnimationFrame(raf2)
-    }
-  }, [hydrated])
-
-  // Sync share URL when palette changes
-  useEffect(() => {
-    if (!hydrated) return
-    if (skipUrlWrite.current) {
-      skipUrlWrite.current = false
-      return
-    }
-    const share = toShareParam(colors.map((c) => c.hex))
-    const qs = new URLSearchParams(
-      typeof window !== 'undefined' ? window.location.search : ''
-    )
-    if (qs.get('c') === share) return
-    qs.set('c', share)
-    router.replace(`${pathname}?${qs.toString()}`, { scroll: false })
-  }, [colors, hydrated, pathname, router])
-
-  // Space regenerates unlocked; L toggles lock on selected
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement | null
-      const tag = target?.tagName
-      if (
-        tag === 'INPUT' ||
-        tag === 'TEXTAREA' ||
-        tag === 'SELECT' ||
-        target?.isContentEditable
-      ) {
-        return
-      }
-      if (e.code === 'Space') {
-        e.preventDefault()
-        commitColors(
-          regenerateUnlocked(colorsRef.current, modeRef.current)
-        )
-      }
-      if (e.key === 'l' || e.key === 'L') {
-        e.preventDefault()
-        const idx = selectedIndexRef.current
-        commitColors(
-          colorsRef.current.map((c, i) =>
-            i === idx ? { ...c, locked: !c.locked } : c
-          )
-        )
-      }
-    }
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  }, [])
-
-  // Close color picker on outside click
-  useEffect(() => {
-    if (pickerIndex === null) return
-    const onPointer = (e: MouseEvent) => {
-      if (
-        editPanelRef.current &&
-        !editPanelRef.current.contains(e.target as Node)
-      ) {
-        setPickerIndex(null)
-      }
-    }
-    document.addEventListener('mousedown', onPointer)
-    return () => document.removeEventListener('mousedown', onPointer)
-  }, [pickerIndex])
+  const {
+    mode,
+    count,
+    colors,
+    blindness,
+    exportFormat,
+    past,
+    future,
+    selectedIndex,
+    hexFocusIndex,
+    pickerIndex,
+    editDraft,
+    draggingId,
+    motionReady
+  } = state
 
   const handleGenerate = () => {
-    // Fresh random seed every click so complementary/analogous/etc. actually change.
-    // Locked colors are preserved through `existing`.
     commitColors(
       generatePalette({
         count,
@@ -245,105 +109,31 @@ function ColorPaletteInner() {
     )
   }
 
-  const handleCountChange = (nextCount: number) => {
-    const n = Math.min(MAX_PALETTE, Math.max(MIN_PALETTE, nextCount))
-    setCount(n)
-    commitColors(
-      generatePalette({
-        count: n,
-        mode,
-        existing: colors
-      })
-    )
-  }
-
-  const handleUndo = () => {
-    if (past.length === 0) return
-    const prev = past[past.length - 1]
-    setPast((p) => p.slice(0, -1))
-    setFuture((f) => [clonePalette(colors), ...f].slice(0, HISTORY_CAP))
-    setColors(clonePalette(prev))
-    setCount(prev.length)
-  }
-
-  const handleRedo = () => {
-    if (future.length === 0) return
-    const next = future[0]
-    setFuture((f) => f.slice(1))
-    setPast((p) => [...p, clonePalette(colors)].slice(-HISTORY_CAP))
-    setColors(clonePalette(next))
-    setCount(next.length)
-  }
-
-  const handleClearLocks = () => {
-    commitColors(colors.map((c) => ({ ...c, locked: false })))
-  }
-
   const handleInsertBetween = (afterIndex: number) => {
     const next = insertMidpointBetween(colorsRef.current, afterIndex)
     if (!next) return
-    commitColors(next)
-    setCount(next.length)
-    setSelectedIndex(afterIndex + 1)
-    setHexFocusIndex(null)
-    setPickerIndex(null)
+    commitColors(next, {
+      selectedIndex: afterIndex + 1,
+      clearEditUi: true
+    })
   }
 
   const handleRemoveColor = (index: number) => {
     const next = removeColorAt(colorsRef.current, index)
     if (!next) return
-    commitColors(next)
-    setCount(next.length)
-    setSelectedIndex((i) => Math.min(i, next.length - 1))
-    setHexFocusIndex(null)
-    setPickerIndex(null)
-  }
-
-  const handleReorder = (next: PaletteColor[]) => {
-    const selectedId = colorsRef.current[selectedIndexRef.current]?.id
-    const focusId =
-      hexFocusIndexRef.current !== null
-        ? colorsRef.current[hexFocusIndexRef.current]?.id
-        : null
-    setColors(next)
-    if (selectedId) {
-      const idx = next.findIndex((c) => c.id === selectedId)
-      if (idx >= 0) setSelectedIndex(idx)
-    }
-    if (focusId) {
-      const idx = next.findIndex((c) => c.id === focusId)
-      setHexFocusIndex(idx >= 0 ? idx : null)
-    }
+    commitColors(next, { clearEditUi: true })
   }
 
   const finishReorder = () => {
     const snapshot = dragSnapshotRef.current
     dragSnapshotRef.current = null
-    setDraggingId(null)
-    if (!snapshot) return
-    if (!colorsEqual(snapshot, colorsRef.current)) {
-      setPast((p) => [...p, clonePalette(snapshot)].slice(-HISTORY_CAP))
-      setFuture([])
-    }
+    dispatch({ type: 'finishReorder', snapshot })
   }
 
   const handleCopy = (text: string, key: string) => {
     navigator.clipboard.writeText(text)
-    setCopiedKey(key)
+    flash(key)
     unlockAchievement('clipboard-master')
-    window.setTimeout(() => setCopiedKey(null), 1500)
-  }
-
-  const setSwatchHex = (index: number, raw: string, recordHistory = false) => {
-    let value = raw.trim()
-    if (!value.startsWith('#')) value = `#${value}`
-    const rgb = hexToRgb(value)
-    if (!rgb) return
-    const hex = rgbToHex(rgb.r, rgb.g, rgb.b)
-    commitColors(
-      colorsRef.current.map((c, i) => (i === index ? { ...c, hex } : c)),
-      recordHistory
-    )
   }
 
   const hexes = colors.map((c) => c.hex)
@@ -389,7 +179,7 @@ function ColorPaletteInner() {
                   <ToolChipButton
                     key={m.id}
                     active={mode === m.id}
-                    onClick={() => setMode(m.id)}
+                    onClick={() => dispatch({ type: 'setMode', mode: m.id })}
                   >
                     {m.label}
                   </ToolChipButton>
@@ -406,9 +196,11 @@ function ColorPaletteInner() {
                 max={MAX_PALETTE}
                 value={count}
                 onChange={(e) =>
-                  handleCountChange(
-                    Number.parseInt(e.target.value, 10) || MIN_PALETTE
-                  )
+                  dispatch({
+                    type: 'setCountAndGenerate',
+                    count:
+                      Number.parseInt(e.target.value, 10) || MIN_PALETTE
+                  })
                 }
                 className={toolNumberInputClass}
                 aria-label={`Colors ${MIN_PALETTE} to ${MAX_PALETTE}`}
@@ -422,13 +214,23 @@ function ColorPaletteInner() {
               selected · drag to reorder
             </p>
             <div className="flex flex-wrap justify-end gap-2">
-              <SecondaryButton onClick={handleUndo} disabled={past.length === 0}>
+              <SecondaryButton
+                onClick={() => dispatch({ type: 'undo' })}
+                disabled={past.length === 0}
+              >
                 Undo
               </SecondaryButton>
-              <SecondaryButton onClick={handleRedo} disabled={future.length === 0}>
+              <SecondaryButton
+                onClick={() => dispatch({ type: 'redo' })}
+                disabled={future.length === 0}
+              >
                 Redo
               </SecondaryButton>
-              <SecondaryButton onClick={handleClearLocks}>
+              <SecondaryButton
+                onClick={() =>
+                  commitColors(colors.map((c) => ({ ...c, locked: false })))
+                }
+              >
                 Clear locks
               </SecondaryButton>
               <PrimaryButton onClick={handleGenerate}>Generate</PrimaryButton>
@@ -437,13 +239,14 @@ function ColorPaletteInner() {
         </div>
       </ToolInputPanel>
 
-      <div className="overflow-hidden rounded-2xl border border-dashed border-white/15">
+      {/* overflow-visible so the floating HexColorPicker isn’t clipped at the strip edge */}
+      <div className="rounded-2xl border border-dashed border-white/15">
         <Reorder.Group
           axis="x"
           values={colors}
           onReorder={handleReorder}
           as="div"
-          className="relative flex min-h-[220px] w-full rounded-2xl sm:min-h-[280px]"
+          className="relative flex min-h-[220px] w-full overflow-visible rounded-2xl sm:min-h-[280px]"
         >
           <AnimatePresence initial={false}>
             {colors.map((color, index) => {
@@ -480,16 +283,22 @@ function ColorPaletteInner() {
                   whileDrag={{ zIndex: 30 }}
                   onDragStart={() => {
                     dragSnapshotRef.current = clonePalette(colorsRef.current)
-                    setDraggingId(color.id)
-                    setHexFocusIndex(null)
-                    setPickerIndex(null)
+                    dispatch({ type: 'setDragging', id: color.id })
+                    dispatch({ type: 'endHexEdit' })
+                    dispatch({ type: 'setPickerIndex', index: null })
                   }}
                   onDragEnd={finishReorder}
-                  className={`relative flex min-w-0 flex-1 cursor-grab flex-col justify-between p-3 active:cursor-grabbing ${
+                  className={`relative flex min-w-0 flex-1 cursor-grab flex-col justify-between overflow-visible p-3 active:cursor-grabbing ${
+                    index === 0 ? 'rounded-l-2xl' : ''
+                  } ${
+                    index === colors.length - 1 ? 'rounded-r-2xl' : ''
+                  } ${
                     isSelected ? 'ring-2 ring-inset ring-white/40' : ''
-                  } ${isDragging ? 'z-30 shadow-2xl' : ''}`}
+                  } ${isDragging ? 'z-30 shadow-2xl' : ''} ${
+                    isPickerOpen ? 'z-40' : ''
+                  }`}
                   style={{ backgroundColor: shown }}
-                  onClick={() => setSelectedIndex(index)}
+                  onClick={() => dispatch({ type: 'select', index })}
                 >
                   {canInsertAfter && (
                     <div
@@ -566,20 +375,16 @@ function ColorPaletteInner() {
                       style={{ color: text, caretColor: text }}
                       onPointerDown={(e) => e.stopPropagation()}
                       onFocus={(e) => {
-                        setSelectedIndex(index)
-                        setPast((p) =>
-                          [...p, clonePalette(colorsRef.current)].slice(
-                            -HISTORY_CAP
-                          )
-                        )
-                        setFuture([])
-                        setEditDraft(color.hex)
-                        setHexFocusIndex(index)
+                        dispatch({
+                          type: 'beginHexEdit',
+                          index,
+                          draft: color.hex
+                        })
                         e.target.select()
                       }}
                       onChange={(e) => {
                         const v = e.target.value
-                        setEditDraft(v)
+                        dispatch({ type: 'setEditDraft', draft: v })
                         setSwatchHex(index, v, false)
                       }}
                       onBlur={() => {
@@ -594,7 +399,7 @@ function ColorPaletteInner() {
                             false
                           )
                         }
-                        setHexFocusIndex(null)
+                        dispatch({ type: 'endHexEdit' })
                       }}
                       onKeyDown={(e) => {
                         e.stopPropagation()
@@ -602,16 +407,18 @@ function ColorPaletteInner() {
                           e.currentTarget.blur()
                         }
                         if (e.key === 'Escape') {
-                          setEditDraft(color.hex)
-                          setHexFocusIndex(null)
+                          dispatch({ type: 'setEditDraft', draft: color.hex })
+                          dispatch({ type: 'endHexEdit' })
                           e.currentTarget.blur()
                         }
                       }}
                       onDoubleClick={(e) => {
                         e.stopPropagation()
-                        setSelectedIndex(index)
-                        setEditDraft(color.hex)
-                        setPickerIndex(index)
+                        dispatch({
+                          type: 'openPicker',
+                          index,
+                          draft: color.hex
+                        })
                       }}
                     />
                     <button
@@ -624,7 +431,7 @@ function ColorPaletteInner() {
                         handleCopy(color.hex, `swatch-${index}`)
                       }}
                     >
-                      {copiedKey === `swatch-${index}` ? 'Copied' : 'Copy'}
+                      {copied === `swatch-${index}` ? 'Copied' : 'Copy'}
                     </button>
 
                     {isPickerOpen && (
@@ -637,7 +444,10 @@ function ColorPaletteInner() {
                         <HexColorPicker
                           color={color.hex}
                           onChange={(hex) => {
-                            setEditDraft(hex.toUpperCase())
+                            dispatch({
+                              type: 'setEditDraft',
+                              draft: hex.toUpperCase()
+                            })
                             setSwatchHex(index, hex, false)
                           }}
                         />
@@ -683,7 +493,9 @@ function ColorPaletteInner() {
               <ToolChipButton
                 key={m.id}
                 active={blindness === m.id}
-                onClick={() => setBlindness(m.id)}
+                onClick={() =>
+                  dispatch({ type: 'setBlindness', blindness: m.id })
+                }
               >
                 {m.label}
               </ToolChipButton>
@@ -747,7 +559,7 @@ function ColorPaletteInner() {
         <div className={toolResultHeaderRowClass}>
           <h3 className={toolSectionTitleClass}>Export</h3>
           <ToolCopyButton
-            copied={copiedKey === 'export'}
+            copied={copied === 'export'}
             onClick={() => handleCopy(exportText, 'export')}
           />
         </div>
@@ -756,24 +568,15 @@ function ColorPaletteInner() {
             <ToolChipButton
               key={f.id}
               active={exportFormat === f.id}
-              onClick={() => setExportFormat(f.id)}
+              onClick={() =>
+                dispatch({ type: 'setExportFormat', format: f.id })
+              }
             >
               {f.label}
             </ToolChipButton>
           ))}
         </ToolChipRow>
         <pre className={toolPreOutputClass}>{exportText}</pre>
-        <div className="mt-3 flex justify-end">
-          <ClearButton
-            onClick={() =>
-              commitColors(
-                generatePalette({ count, mode: 'random' })
-              )
-            }
-          >
-            Reset palette
-          </ClearButton>
-        </div>
       </div>
     </ToolLayout>
   )

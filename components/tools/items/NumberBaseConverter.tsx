@@ -1,12 +1,13 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { Suspense, useMemo, useState } from 'react'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import {
   ClearButton,
   SecondaryButton
 } from '@/components/tools/_shared/ToolButtons'
 import {
+  toolEmptyHintClass,
   toolErrorBoxClass,
   toolInputClass,
   toolIntroTextClass,
@@ -24,6 +25,8 @@ import {
   isValidBase,
   parseInteger
 } from '@/utils/numberBase'
+import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
+import { csv, str, useToolUrlState } from '@/hooks/useToolUrlState'
 
 type FixedId = 'bin' | 'oct' | 'dec' | 'hex'
 type FieldId = FixedId | string
@@ -39,6 +42,8 @@ const FIXED_FIELDS: {
   { id: 'dec', base: 10, label: 'Decimal', placeholder: '170' },
   { id: 'hex', base: 16, label: 'Hex', placeholder: 'aa' }
 ]
+
+const FIXED_ID_SET = new Set<string>(FIXED_FIELDS.map((f) => f.id))
 
 type ExtraRow = { id: string; base: number }
 
@@ -62,22 +67,93 @@ function suggestBase(extras: ExtraRow[]): number {
   return 36
 }
 
-const NumberBaseConverter = () => {
-  const [activeId, setActiveId] = useState<FieldId>('dec')
-  const [activeText, setActiveText] = useState('')
-  const [lastGood, setLastGood] = useState<bigint | null>(null)
-  const [extras, setExtras] = useState<ExtraRow[]>([])
-  const [copiedId, setCopiedId] = useState<FieldId | null>(null)
+function parseExtraBases(raw: string[]): ExtraRow[] {
+  return raw
+    .map((s) => Number.parseInt(s, 10))
+    .filter((n) => Number.isFinite(n))
+    .map((base) => ({ id: nextExtraId(), base }))
+}
+
+function resolveActiveId(id: string, extras: ExtraRow[]): FieldId {
+  if (FIXED_ID_SET.has(id)) return id as FixedId
+  const base = Number.parseInt(id, 10)
+  if (Number.isFinite(base)) {
+    const match = extras.find((e) => e.base === base)
+    if (match) return match.id
+  }
+  return 'dec'
+}
+
+/** Sync key for URL: fixed field id, or base number when an extra is active. */
+function syncActiveId(id: FieldId, extras: ExtraRow[]): string {
+  if (FIXED_ID_SET.has(id)) return id
+  const row = extras.find((r) => r.id === id)
+  return row ? String(row.base) : 'dec'
+}
+
+function extrasToCsv(extras: ExtraRow[]): string[] {
+  return extras.map((r) => String(r.base))
+}
+
+function resolveBaseFrom(id: FieldId, extras: ExtraRow[]): number {
+  const fixed = FIXED_FIELDS.find((f) => f.id === id)
+  if (fixed) return fixed.base
+  return extras.find((r) => r.id === id)?.base ?? 10
+}
+
+function hydrateNumberBase(url: {
+  v: string
+  id: string
+  extra: string[]
+}): {
+  extras: ExtraRow[]
+  activeId: FieldId
+  activeText: string
+  lastGood: bigint | null
+} {
+  const extras = parseExtraBases(url.extra)
+  const activeId = resolveActiveId(url.id, extras)
+  const base = resolveBaseFrom(activeId, extras)
+  let lastGood: bigint | null = null
+  if (url.v.trim() && isValidBase(base)) {
+    const result = parseInteger(url.v, base)
+    if (result.ok) lastGood = result.value
+  }
+  return { extras, activeId, activeText: url.v, lastGood }
+}
+
+function NumberBaseConverterInner() {
+  const [url, setUrl] = useToolUrlState({
+    v: str('', { text: true }),
+    id: str('dec'),
+    extra: csv([])
+  })
+
+  const [boot] = useState(() => hydrateNumberBase(url))
+  const [extras, setExtras] = useState<ExtraRow[]>(boot.extras)
+  const [activeId, setActiveId] = useState<FieldId>(boot.activeId)
+  const [activeText, setActiveText] = useState(boot.activeText)
+  const [lastGood, setLastGood] = useState<bigint | null>(boot.lastGood)
+  const { copied, flash } = useCopyFeedback()
 
   const { unlockAchievement } = useAchievementContext()
 
-  const resolveBase = (id: FieldId): number => {
-    const fixed = FIXED_FIELDS.find((f) => f.id === id)
-    if (fixed) return fixed.base
-    return extras.find((r) => r.id === id)?.base ?? 10
-  }
+  const resolveBase = (id: FieldId): number => resolveBaseFrom(id, extras)
 
   const activeBase = resolveBase(activeId)
+
+  const syncUrl = (
+    next: Partial<{ v: string; id: FieldId; extras: ExtraRow[] }>
+  ) => {
+    const nextExtras = next.extras ?? extras
+    const nextId = next.id ?? activeId
+    const nextV = next.v ?? activeText
+    setUrl({
+      v: nextV,
+      id: syncActiveId(nextId, nextExtras),
+      extra: extrasToCsv(nextExtras)
+    })
+  }
 
   const parsed = useMemo(() => {
     if (!activeText.trim()) return null
@@ -104,6 +180,7 @@ const NumberBaseConverter = () => {
   const applyInput = (id: FieldId, base: number, text: string) => {
     setActiveId(id)
     setActiveText(text)
+    syncUrl({ id, v: text })
 
     if (!text.trim()) {
       setLastGood(null)
@@ -118,9 +195,12 @@ const NumberBaseConverter = () => {
   const setExtraBase = (id: string, raw: string) => {
     const next = Number.parseInt(raw, 10)
     const base = Number.isFinite(next) ? next : 0
-    setExtras((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, base } : r))
-    )
+    const nextExtras = extras.map((r) => (r.id === id ? { ...r, base } : r))
+    setExtras(nextExtras)
+    syncUrl({
+      extras: nextExtras,
+      id: activeId === id ? id : activeId
+    })
 
     if (activeId !== id || !activeText.trim()) return
     if (!isValidBase(base)) return
@@ -130,18 +210,30 @@ const NumberBaseConverter = () => {
   }
 
   const addBase = () => {
-    setExtras((prev) => [...prev, { id: nextExtraId(), base: suggestBase(prev) }])
+    const nextExtras = [
+      ...extras,
+      { id: nextExtraId(), base: suggestBase(extras) }
+    ]
+    setExtras(nextExtras)
+    syncUrl({ extras: nextExtras })
   }
 
   const removeExtra = (id: string) => {
-    setExtras((prev) => prev.filter((r) => r.id !== id))
-    if (activeId !== id) return
+    const nextExtras = extras.filter((r) => r.id !== id)
+    setExtras(nextExtras)
+    if (activeId !== id) {
+      syncUrl({ extras: nextExtras })
+      return
+    }
 
     setActiveId('dec')
     if (lastGood !== null) {
-      setActiveText(formatInteger(lastGood, 10))
+      const text = formatInteger(lastGood, 10)
+      setActiveText(text)
+      syncUrl({ extras: nextExtras, id: 'dec', v: text })
     } else {
       setActiveText('')
+      syncUrl({ extras: nextExtras, id: 'dec', v: '' })
     }
   }
 
@@ -150,7 +242,7 @@ const NumberBaseConverter = () => {
     setActiveText('')
     setLastGood(null)
     setExtras([])
-    setCopiedId(null)
+    setUrl({ v: '', id: 'dec', extra: [] })
   }
 
   const copyRaw = (id: FieldId, base: number) => {
@@ -166,8 +258,7 @@ const NumberBaseConverter = () => {
     if (!raw) return
     await navigator.clipboard.writeText(raw)
     unlockAchievement('clipboard-master')
-    setCopiedId(id)
-    setTimeout(() => setCopiedId(null), 1500)
+    flash(id)
   }
 
   const canCopy = (id: FieldId, base: number) => {
@@ -189,7 +280,7 @@ const NumberBaseConverter = () => {
           <span className="font-normal text-neutral-500">(base {base})</span>
         </label>
         <ToolCopyButton
-          copied={copiedId === id}
+          copied={copied === id}
           onClick={() => handleCopy(id, base)}
           disabled={!canCopy(id, base)}
         />
@@ -232,7 +323,7 @@ const NumberBaseConverter = () => {
           </label>
           <div className="flex items-center gap-2">
             <ToolCopyButton
-              copied={copiedId === row.id}
+              copied={copied === row.id}
               onClick={() => handleCopy(row.id, row.base)}
               disabled={!canCopy(row.id, row.base)}
             />
@@ -295,4 +386,16 @@ const NumberBaseConverter = () => {
   )
 }
 
-export default NumberBaseConverter
+export default function NumberBaseConverter() {
+  return (
+    <Suspense
+      fallback={
+        <ToolLayout title="Number base converter">
+          <p className={toolEmptyHintClass}>Loading…</p>
+        </ToolLayout>
+      }
+    >
+      <NumberBaseConverterInner />
+    </Suspense>
+  )
+}

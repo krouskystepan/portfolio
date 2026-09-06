@@ -19,6 +19,7 @@ import {
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
 import { useAchievementContext } from '@/context/AchievementContext'
+import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
 
 function decodeBase64Url(part: string): string {
   let base64 = part.replace(/-/g, '+').replace(/_/g, '/')
@@ -29,48 +30,60 @@ function decodeBase64Url(part: string): string {
   return new TextDecoder('utf-8').decode(bytes)
 }
 
-const JwtDecoder = () => {
+function decodeJwt(rawInput: string): {
+  header: string
+  payload: string
+  error: string | null
+} {
+  const raw = rawInput.trim()
+  if (!raw) {
+    return { header: '', payload: '', error: null }
+  }
+  const parts = raw.split('.')
+  if (parts.length < 2) {
+    return {
+      header: '',
+      payload: '',
+      error: 'Expected a JWT with at least header and payload segments.'
+    }
+  }
+  try {
+    const h = JSON.parse(decodeBase64Url(parts[0]))
+    const p = JSON.parse(decodeBase64Url(parts[1]))
+    return {
+      header: JSON.stringify(h, null, 2),
+      payload: JSON.stringify(p, null, 2),
+      error: null
+    }
+  } catch {
+    return {
+      header: '',
+      payload: '',
+      error: 'Could not decode header or payload. Check the token shape.'
+    }
+  }
+}
+
+export default function JwtDecoder() {
   const [input, setInput] = useState('')
   const [header, setHeader] = useState('')
   const [payload, setPayload] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [copied, setCopied] = useState<'header' | 'payload' | null>(null)
+  const { copied, flash } = useCopyFeedback()
   const { unlockAchievement } = useAchievementContext()
 
   const decode = () => {
-    const raw = input.trim()
-    if (!raw) {
-      setHeader('')
-      setPayload('')
-      setError(null)
-      return
-    }
-    const parts = raw.split('.')
-    if (parts.length < 2) {
-      setError('Expected a JWT with at least header and payload segments.')
-      setHeader('')
-      setPayload('')
-      return
-    }
-    try {
-      const h = JSON.parse(decodeBase64Url(parts[0]))
-      const p = JSON.parse(decodeBase64Url(parts[1]))
-      setHeader(JSON.stringify(h, null, 2))
-      setPayload(JSON.stringify(p, null, 2))
-      setError(null)
-    } catch {
-      setError('Could not decode header or payload. Check the token shape.')
-      setHeader('')
-      setPayload('')
-    }
+    const next = decodeJwt(input)
+    setHeader(next.header)
+    setPayload(next.payload)
+    setError(next.error)
   }
 
   const handleCopy = async (key: 'header' | 'payload', text: string) => {
     if (!text) return
     await navigator.clipboard.writeText(text)
     unlockAchievement('clipboard-master')
-    setCopied(key)
-    setTimeout(() => setCopied(null), 1500)
+    flash(key)
   }
 
   return (
@@ -148,5 +161,3 @@ const JwtDecoder = () => {
     </ToolLayout>
   )
 }
-
-export default JwtDecoder
