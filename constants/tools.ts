@@ -165,6 +165,25 @@ export const tools = [
     keywords: ['qr', 'barcode', 'url', 'png', 'svg']
   },
   {
+    name: 'Color palette generator',
+    path: 'color-palette',
+    description:
+      'Generate and lock color palettes with harmonies, contrast checks, color-blindness preview, and CSS/Tailwind export.',
+    section: 'generators',
+    keywords: [
+      'palette',
+      'harmony',
+      'complementary',
+      'analogous',
+      'triadic',
+      'shades',
+      'contrast',
+      'wcag',
+      'tailwind',
+      'css variables'
+    ]
+  },
+  {
     name: 'Hash generator',
     path: '', // 'hash-generator'
     description:
