@@ -9,11 +9,12 @@ import {
   toolEmptyHintClass,
   toolErrorBoxClass,
   toolInputClass,
-  toolPanelClass,
+  toolIntroTextClass,
   toolResultPanelClass,
   toolSectionTitleClass,
   toolValueRowClass,
-  ToolCopyButton
+  ToolCopyButton,
+  ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
 
 const ColorConverter = () => {
@@ -54,11 +55,13 @@ const ColorConverter = () => {
 
   return (
     <ToolLayout title="Color Converter">
-      <div className={toolPanelClass}>
-        <h2 className={`mb-3 text-base leading-snug sm:text-lg ${toolSectionTitleClass}`}>
-          Enter any color (HEX, RGB, RGBA, HSL, HSLA, HWB, LAB, LCH, or name)
-        </h2>
-
+      <ToolInputPanel
+        intro={
+          <p className={toolIntroTextClass}>
+            Enter any color (HEX, RGB, RGBA, HSL, HSLA, HWB, LAB, LCH, or name)
+          </p>
+        }
+      >
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -66,14 +69,14 @@ const ColorConverter = () => {
           className={toolInputClass}
         />
 
-        <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-end">
+        <div className="mt-4 flex flex-col gap-1.5 sm:flex-row sm:flex-wrap sm:justify-end">
           <PrimaryButton onClick={handleConvert} disabled={!input.trim()}>
             Convert
           </PrimaryButton>
 
           <ClearButton onClick={handleClear}>Clear</ClearButton>
         </div>
-      </div>
+      </ToolInputPanel>
 
       <div className={toolResultPanelClass}>
         <h2 className={`mb-3 ${toolSectionTitleClass}`}>Result</h2>

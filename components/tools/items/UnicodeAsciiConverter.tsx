@@ -107,7 +107,7 @@ const UnicodeAsciiConverter = () => {
                   key={`${row.codePoint}-${index}`}
                   className={`${toolListItemClass} flex flex-wrap items-center justify-between gap-x-4 gap-y-1`}
                 >
-                  <span className="min-w-[2rem] text-center text-base">
+                  <span className="min-w-8 text-center text-base">
                     {row.char}
                   </span>
                   <span className="text-custom_blue">{row.codePoint}</span>

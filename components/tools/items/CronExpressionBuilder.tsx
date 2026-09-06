@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
+import { ClearButton } from '@/components/tools/_shared/ToolButtons'
 import {
   toolEmptyHintClass,
   toolErrorBoxClass,
@@ -13,6 +14,8 @@ import {
   toolResultHeaderRowClass,
   toolResultPanelClass,
   toolSectionTitleClass,
+  ToolChipButton,
+  ToolChipRow,
   ToolCopyButton,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
@@ -101,49 +104,6 @@ function modeDefault(
   }
 }
 
-/** One chip size for presets, fields, modes, and value picks. */
-const chipClass = (active: boolean, tone: 'default' | 'accent' = 'default') => {
-  if (active && tone === 'accent') {
-    return 'inline-flex h-8 items-center justify-center rounded-md bg-amber-600/90 px-2.5 text-xs font-medium text-white transition hover:bg-amber-500'
-  }
-  return `inline-flex h-8 items-center justify-center rounded-md px-2.5 text-xs font-medium transition ${
-    active
-      ? 'bg-custom_blue text-white'
-      : 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700 hover:text-white'
-  }`
-}
-
-function ChipButton({
-  active,
-  onClick,
-  children,
-  title,
-  className = '',
-  tone = 'default'
-}: {
-  active: boolean
-  onClick: () => void
-  children: ReactNode
-  title?: string
-  className?: string
-  tone?: 'default' | 'accent'
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      title={title}
-      className={`${chipClass(active, tone)} ${className}`}
-    >
-      {children}
-    </button>
-  )
-}
-
-function ChipRow({ children }: { children: ReactNode }) {
-  return <div className="flex flex-wrap gap-1.5">{children}</div>
-}
-
 function AddCustomValue({
   min,
   max,
@@ -179,11 +139,11 @@ function AddCustomValue({
         }}
         placeholder="+"
         aria-label={`Add number ${min} to ${max}`}
-        className="h-8 w-9 rounded-md bg-neutral-800 px-1 text-center font-mono text-xs text-neutral-100 outline-none ring-custom_blue/40 placeholder:text-neutral-500 focus:ring-1"
+        className="ring-custom_blue/40 h-8 w-9 rounded-md bg-neutral-800 px-1 text-center font-mono text-xs text-neutral-100 outline-none placeholder:text-neutral-500 focus:ring-1"
       />
-      <ChipButton active={false} onClick={onAdd} title={`Add (${min}–${max})`}>
+      <ToolChipButton active={false} onClick={onAdd} title={`Add (${min}–${max})`}>
         +
-      </ChipButton>
+      </ToolChipButton>
     </div>
   )
 }
@@ -235,18 +195,18 @@ function FieldControls({
 
   return (
     <div className="space-y-2">
-      <ChipRow>
+      <ToolChipRow>
         {FIELD_MODES.map(({ id, label, hint }) => (
-          <ChipButton
+          <ToolChipButton
             key={id}
             active={mode === id}
             onClick={() => setMode(id)}
             title={hint}
           >
             {label}
-          </ChipButton>
+          </ToolChipButton>
         ))}
-      </ChipRow>
+      </ToolChipRow>
 
       {mode === 'every' ? (
         <p className={`${toolHintMetaClass} m-0`}>
@@ -317,30 +277,30 @@ function FieldControls({
       ) : null}
 
       {mode === 'specific' && fieldKey === 'minute' ? (
-        <ChipRow>
+        <ToolChipRow>
           {MINUTE_QUICK_VALUES.map((m) => (
-            <ChipButton
+            <ToolChipButton
               key={m}
               active={isSpecificActive(m)}
               onClick={() => toggleSpecific(m)}
               className="font-mono"
             >
               :{String(m).padStart(2, '0')}
-            </ChipButton>
+            </ToolChipButton>
           ))}
           {specific
             .filter(
               (v) => !MINUTE_QUICK_VALUES.some((m) => String(m) === v)
             )
             .map((v) => (
-              <ChipButton
+              <ToolChipButton
                 key={v}
                 active
                 onClick={() => toggleSpecific(v)}
                 className="font-mono"
               >
                 :{String(v).padStart(2, '0')}
-              </ChipButton>
+              </ToolChipButton>
             ))}
           <AddCustomValue
             min={0}
@@ -349,47 +309,47 @@ function FieldControls({
             onChange={setCustomValue}
             onAdd={() => addCustomNumber(0, 59)}
           />
-        </ChipRow>
+        </ToolChipRow>
       ) : null}
 
       {mode === 'specific' && fieldKey === 'hour' ? (
-        <ChipRow>
+        <ToolChipRow>
           {HOUR_VALUES.map((h) => (
-            <ChipButton
+            <ToolChipButton
               key={h}
               active={isSpecificActive(h)}
               onClick={() => toggleSpecific(h)}
               className="min-w-9 font-mono"
             >
               {String(h).padStart(2, '0')}
-            </ChipButton>
+            </ToolChipButton>
           ))}
-        </ChipRow>
+        </ToolChipRow>
       ) : null}
 
       {mode === 'specific' && fieldKey === 'dayOfMonth' ? (
-        <ChipRow>
+        <ToolChipRow>
           {DOM_QUICK.map((d) => (
-            <ChipButton
+            <ToolChipButton
               key={d}
               active={isSpecificActive(d)}
               onClick={() => toggleSpecific(d)}
               className="font-mono"
             >
               {d}
-            </ChipButton>
+            </ToolChipButton>
           ))}
           {specific
             .filter((v) => !DOM_QUICK.some((d) => String(d) === v))
             .map((v) => (
-              <ChipButton
+              <ToolChipButton
                 key={v}
                 active
                 onClick={() => toggleSpecific(v)}
                 className="font-mono"
               >
                 {v}
-              </ChipButton>
+              </ToolChipButton>
             ))}
           <AddCustomValue
             min={1}
@@ -398,37 +358,37 @@ function FieldControls({
             onChange={setCustomValue}
             onAdd={() => addCustomNumber(1, 31)}
           />
-        </ChipRow>
+        </ToolChipRow>
       ) : null}
 
       {mode === 'specific' && fieldKey === 'month' ? (
-        <ChipRow>
+        <ToolChipRow>
           {MONTH_NAMES.map((m) => (
-            <ChipButton
+            <ToolChipButton
               key={m}
               active={isSpecificActive(m)}
               onClick={() => toggleSpecific(m)}
               className="font-mono"
             >
               {m}
-            </ChipButton>
+            </ToolChipButton>
           ))}
-        </ChipRow>
+        </ToolChipRow>
       ) : null}
 
       {mode === 'specific' && fieldKey === 'dayOfWeek' ? (
-        <ChipRow>
+        <ToolChipRow>
           {DOW_NAMES.map((d) => (
-            <ChipButton
+            <ToolChipButton
               key={d}
               active={isSpecificActive(d)}
               onClick={() => toggleSpecific(d)}
               className="font-mono"
             >
               {d}
-            </ChipButton>
+            </ToolChipButton>
           ))}
-        </ChipRow>
+        </ToolChipRow>
       ) : null}
     </div>
   )
@@ -578,13 +538,7 @@ const CronExpressionBuilder = () => {
                 copied={copied === 'expression'}
                 onClick={() => handleCopy('expression', expression)}
               />
-              <button
-                type="button"
-                onClick={handleClear}
-                className="shrink-0 rounded-lg bg-red-800 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-red-700 active:scale-95"
-              >
-                Reset
-              </button>
+              <ClearButton onClick={handleClear}>Reset</ClearButton>
             </div>
           </div>
 
@@ -626,9 +580,9 @@ const CronExpressionBuilder = () => {
         {/* Presets */}
         <div className="mt-4">
           <p className={`${toolLabelClass} mb-2`}>Presets</p>
-          <ChipRow>
+          <ToolChipRow>
             {CRON_PRESETS.map((preset) => (
-              <ChipButton
+              <ToolChipButton
                 key={preset.expression}
                 active={activePreset?.expression === preset.expression}
                 onClick={() => applyPreset(preset.expression)}
@@ -636,17 +590,17 @@ const CronExpressionBuilder = () => {
                 tone="accent"
               >
                 {preset.label}
-              </ChipButton>
+              </ToolChipButton>
             ))}
-          </ChipRow>
+          </ToolChipRow>
         </div>
 
         {/* Fields */}
         <div className="mt-4">
           <p className={`${toolLabelClass} mb-2`}>Fields</p>
-          <ChipRow>
+          <ToolChipRow>
             {FIELD_KEYS.map((key) => (
-              <ChipButton
+              <ToolChipButton
                 key={key}
                 active={activeField === key}
                 onClick={() => focusField(key)}
@@ -654,9 +608,9 @@ const CronExpressionBuilder = () => {
                 title={FIELD_LABELS[key]}
               >
                 {FIELD_SHORT[key]} {fields[key]}
-              </ChipButton>
+              </ToolChipButton>
             ))}
-          </ChipRow>
+          </ToolChipRow>
 
           <div className="mt-3 space-y-2">
             <p className="text-xs text-neutral-500">
@@ -678,22 +632,22 @@ const CronExpressionBuilder = () => {
       <div className={toolResultPanelClass}>
           <div className={toolResultHeaderRowClass}>
             <h2 className={toolSectionTitleClass}>Next 10 runs</h2>
-            <ChipRow>
+            <ToolChipRow>
               {(
                 [
                   ['local', 'Local'],
                   ['UTC', 'UTC']
                 ] as const
               ).map(([id, label]) => (
-                <ChipButton
+                <ToolChipButton
                   key={id}
                   active={timezone === id}
                   onClick={() => setTimezone(id)}
                 >
                   {label}
-                </ChipButton>
+                </ToolChipButton>
               ))}
-            </ChipRow>
+            </ToolChipRow>
           </div>
 
         {!ready ? (

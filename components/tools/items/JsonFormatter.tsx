@@ -7,17 +7,17 @@ import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLine
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import { ClearButton, PrimaryButton, SecondaryButton } from '@/components/tools/_shared/ToolButtons'
 import {
-  toolAccentButtonClass,
   toolEmptyHintClass,
   toolErrorBoxClass,
-  toolPanelClass,
   toolPreOutputClass,
   toolResultHeaderRowClass,
   toolResultPanelClass,
   toolSectionTitleClass,
   toolToolbarBetweenClass,
   toolFlexEndButtonsClass,
-  ToolCopyButton
+  ToolChipButton,
+  ToolCopyButton,
+  ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
 
 const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
@@ -161,7 +161,7 @@ const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
 
   return (
     <ToolLayout title="JSON Formatter & Validator" embedded={embedded}>
-      <div className={toolPanelClass}>
+      <ToolInputPanel>
         <TextAreaWithLineNumbers
           value={input}
           setValue={setInput}
@@ -170,13 +170,13 @@ const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
 
         <div className={toolToolbarBetweenClass}>
           {(quoteError || unquotedKeyError || trailingCommaError) && (
-            <button
-              type="button"
+            <ToolChipButton
+              active
+              tone="accent"
               onClick={handleFixIssues}
-              className={toolAccentButtonClass}
             >
               Fix Common Issues
-            </button>
+            </ToolChipButton>
           )}
 
           <div className={toolFlexEndButtonsClass}>
@@ -191,7 +191,7 @@ const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
             <ClearButton onClick={handleClear}>Clear</ClearButton>
           </div>
         </div>
-      </div>
+      </ToolInputPanel>
 
       <div className={toolResultPanelClass}>
         <div className={toolResultHeaderRowClass}>

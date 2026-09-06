@@ -15,8 +15,10 @@ import {
   toolSectionTitleClass,
   toolToolbarEndClass,
   toolWarningIntroClass,
+  ToolCopyButton,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
+import { useAchievementContext } from '@/context/AchievementContext'
 
 function decodeBase64Url(part: string): string {
   let base64 = part.replace(/-/g, '+').replace(/_/g, '/')
@@ -32,6 +34,8 @@ const JwtDecoder = () => {
   const [header, setHeader] = useState('')
   const [payload, setPayload] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [copied, setCopied] = useState<'header' | 'payload' | null>(null)
+  const { unlockAchievement } = useAchievementContext()
 
   const decode = () => {
     const raw = input.trim()
@@ -59,6 +63,14 @@ const JwtDecoder = () => {
       setHeader('')
       setPayload('')
     }
+  }
+
+  const handleCopy = async (key: 'header' | 'payload', text: string) => {
+    if (!text) return
+    await navigator.clipboard.writeText(text)
+    unlockAchievement('clipboard-master')
+    setCopied(key)
+    setTimeout(() => setCopied(null), 1500)
   }
 
   return (
@@ -103,6 +115,12 @@ const JwtDecoder = () => {
         <div className={toolResultPanelClass}>
           <div className={toolResultHeaderRowClass}>
             <h2 className={toolSectionTitleClass}>Header</h2>
+            {header ? (
+              <ToolCopyButton
+                copied={copied === 'header'}
+                onClick={() => handleCopy('header', header)}
+              />
+            ) : null}
           </div>
           <pre className={`${toolPreOutputClass} max-h-80 text-xs sm:text-sm`}>
             {header || (
@@ -113,6 +131,12 @@ const JwtDecoder = () => {
         <div className={toolResultPanelClass}>
           <div className={toolResultHeaderRowClass}>
             <h2 className={toolSectionTitleClass}>Payload</h2>
+            {payload ? (
+              <ToolCopyButton
+                copied={copied === 'payload'}
+                onClick={() => handleCopy('payload', payload)}
+              />
+            ) : null}
           </div>
           <pre className={`${toolPreOutputClass} max-h-80 text-xs sm:text-sm`}>
             {payload || (

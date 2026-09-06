@@ -8,11 +8,11 @@ import { ClearButton } from '@/components/tools/_shared/ToolButtons'
 import {
   toolEmptyHintClass,
   toolMediumCardClass,
-  toolPanelClass,
   toolResultPanelClass,
   toolSectionTitleClass,
   toolToolbarEndClass,
-  ToolCopyButton
+  ToolCopyButton,
+  ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
 
 type CaseVariant = {
@@ -139,7 +139,7 @@ const TextCaseConverter = () => {
 
   return (
     <ToolLayout title="Text Case Converter">
-      <div className={toolPanelClass}>
+      <ToolInputPanel>
         <TextAreaWithLineNumbers
           value={input}
           setValue={setInput}
@@ -149,7 +149,7 @@ const TextCaseConverter = () => {
         <div className={toolToolbarEndClass}>
           <ClearButton onClick={clearAll}>Clear</ClearButton>
         </div>
-      </div>
+      </ToolInputPanel>
 
       <div className={toolResultPanelClass}>
         <h2 className={`mb-3 ${toolSectionTitleClass}`}>Results</h2>
