@@ -5,17 +5,18 @@ import { useState } from 'react'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import { ClearButton, PrimaryButton } from '@/components/tools/_shared/ToolButtons'
 import {
-  toolAccentButtonClass,
   toolEmptyHintClass,
   toolErrorBoxClass,
   toolInputClass,
-  toolPanelClass,
+  toolIntroTextClass,
   toolResultPanelClass,
   toolSectionTitleClass,
-  toolSoftButtonClass,
   toolToolbarBetweenClass,
   toolValueRowClass,
-  ToolCopyButton
+  ToolChipButton,
+  ToolChipRow,
+  ToolCopyButton,
+  ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
 
 type TimestampResult = {
@@ -130,11 +131,13 @@ const TimestampConverter = () => {
 
   return (
     <ToolLayout title="Timestamp Converter">
-      <div className={toolPanelClass}>
-        <h2 className={`mb-3 ${toolSectionTitleClass}`}>
-          Enter a Unix timestamp or a date string
-        </h2>
-
+      <ToolInputPanel
+        intro={
+          <p className={toolIntroTextClass}>
+            Enter a Unix timestamp or a date string and convert between them.
+          </p>
+        }
+      >
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -143,44 +146,43 @@ const TimestampConverter = () => {
         />
 
         <div className={toolToolbarBetweenClass}>
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
+          <ToolChipRow>
+            <ToolChipButton
+              active
+              tone="accent"
               onClick={() => {
                 const now = Math.floor(Date.now() / 1000)
                 setInput(String(now))
               }}
-              className={toolSoftButtonClass}
             >
               Now
-            </button>
-            <button
-              type="button"
-              onClick={() => handleAddTime(60 * 60)}
+            </ToolChipButton>
+            <ToolChipButton
+              active
+              tone="accent"
               disabled={!input.trim()}
-              className={toolAccentButtonClass}
+              onClick={() => handleAddTime(60 * 60)}
             >
               +1 hour
-            </button>
-            <button
-              type="button"
-              onClick={() => handleAddTime(60 * 60 * 24)}
+            </ToolChipButton>
+            <ToolChipButton
+              active
+              tone="accent"
               disabled={!input.trim()}
-              className={toolAccentButtonClass}
+              onClick={() => handleAddTime(60 * 60 * 24)}
             >
               +1 day
-            </button>
-          </div>
+            </ToolChipButton>
+          </ToolChipRow>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-1.5">
             <PrimaryButton onClick={handleConvert} disabled={!input.trim()}>
               Convert
             </PrimaryButton>
-
             <ClearButton onClick={handleClear}>Clear</ClearButton>
           </div>
         </div>
-      </div>
+      </ToolInputPanel>
 
       <div className={toolResultPanelClass}>
         <h2 className={`mb-3 ${toolSectionTitleClass}`}>Result</h2>

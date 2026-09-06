@@ -8,13 +8,13 @@ import { ClearButton, PrimaryButton } from '@/components/tools/_shared/ToolButto
 import {
   toolCheckboxLabelClass,
   toolEmptyHintClass,
-  toolPanelClass,
   toolPreOutputClass,
   toolResultHeaderRowClass,
   toolResultPanelClass,
   toolSectionTitleClass,
   toolToolbarBetweenClass,
-  ToolCopyButton
+  ToolCopyButton,
+  ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
 
 type SortOptions = { addSpacing: boolean }
@@ -87,7 +87,7 @@ const AlphabetSorter = () => {
 
   return (
     <ToolLayout title="Alphabet Sorter">
-      <div className={toolPanelClass}>
+      <ToolInputPanel>
         <TextAreaWithLineNumbers
           value={input}
           setValue={setInput}
@@ -105,7 +105,7 @@ const AlphabetSorter = () => {
             Add blank line between groups
           </label>
 
-          <div className="flex gap-2">
+          <div className="flex gap-1.5">
             <PrimaryButton onClick={sortLines} disabled={isDisabled}>
               Sort
             </PrimaryButton>
@@ -113,7 +113,7 @@ const AlphabetSorter = () => {
             <ClearButton onClick={clearAll}>Clear</ClearButton>
           </div>
         </div>
-      </div>
+      </ToolInputPanel>
 
       <div className={toolResultPanelClass}>
         <div className={toolResultHeaderRowClass}>

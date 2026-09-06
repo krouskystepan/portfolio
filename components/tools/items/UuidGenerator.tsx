@@ -11,13 +11,13 @@ import {
   toolCheckboxLabelClass,
   toolEmptyHintClass,
   toolNumberInputClass,
-  toolPanelClass,
   toolResultHeaderRowClass,
   toolResultPanelClass,
   toolSectionTitleClass,
   toolToolbarEndClass,
   toolValueRowClass,
-  ToolCopyButton
+  ToolCopyButton,
+  ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
 
 type UUIDOptions = {
@@ -104,7 +104,7 @@ const UuidGenerator = () => {
 
   return (
     <ToolLayout title="UUID Generator">
-      <div className={toolPanelClass}>
+      <ToolInputPanel>
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
           <div className="flex w-fit max-w-full flex-col gap-1 self-start sm:self-end">
             <label htmlFor="count" className={toolCheckboxLabelClass}>
@@ -157,7 +157,7 @@ const UuidGenerator = () => {
             </div>
           </div>
         </div>
-      </div>
+      </ToolInputPanel>
 
       <div className={toolResultPanelClass}>
         <div className={toolResultHeaderRowClass}>

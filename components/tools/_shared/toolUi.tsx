@@ -26,8 +26,12 @@ export const toolWarningIntroClass =
 export const toolInputClass =
   'ring-custom_blue/40 w-full rounded-lg border border-white/10 bg-neutral-900/80 px-3 py-3 text-sm text-neutral-100 outline-none placeholder:text-neutral-500 focus:ring-2'
 
+/** Compact input matching chip height (h-8) */
+export const toolCompactInputClass =
+  'ring-custom_blue/40 h-8 w-full rounded-md border border-white/10 bg-neutral-900/80 px-2.5 text-xs text-neutral-100 outline-none placeholder:text-neutral-500 focus:ring-1'
+
 export const toolNumberInputClass =
-  'ring-custom_blue/40 h-10 w-full max-w-[7rem] rounded-lg border border-white/10 bg-neutral-900/80 px-3 text-sm text-neutral-100 outline-none focus:ring-2 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none'
+  'ring-custom_blue/40 h-8 w-full max-w-[7rem] rounded-md border border-white/10 bg-neutral-900/80 px-2.5 text-xs text-neutral-100 outline-none focus:ring-1 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none'
 
 export const toolLabelClass = 'mb-2 block text-sm font-medium text-neutral-300'
 
@@ -53,25 +57,37 @@ export const toolFlexEndButtonsClass = 'flex flex-1 flex-wrap justify-end gap-3'
 export const toolCheckboxLabelClass =
   'flex cursor-pointer items-center gap-2 text-sm text-neutral-300'
 
-/** Segmented control pill (language / workbench tabs) */
-export function toolSegmentTabClass(active: boolean) {
-  return `rounded-lg px-3 py-2 text-center text-xs font-medium transition sm:text-sm ${
+export type ToolChipTone = 'default' | 'accent'
+
+/** Canonical chip style — amber for presets, blue for modes/toggles */
+export function toolChipClass(
+  active: boolean,
+  tone: ToolChipTone = 'default'
+) {
+  if (active && tone === 'accent') {
+    return 'inline-flex h-8 items-center justify-center rounded-md bg-amber-600/90 px-2.5 text-xs font-medium text-white transition hover:bg-amber-500 disabled:cursor-not-allowed disabled:opacity-60'
+  }
+  return `inline-flex h-8 items-center justify-center rounded-md px-2.5 text-xs font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
     active
-      ? 'bg-custom_blue text-white shadow-sm'
-      : 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
+      ? 'bg-custom_blue text-white'
+      : 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700 hover:text-white'
   }`
 }
 
-export const toolSegmentBarClass =
-  'flex flex-wrap gap-2 rounded-xl border border-white/10 bg-neutral-900/50 p-1'
+/** @deprecated Prefer ToolChipButton / ToolChipRow for modes and presets */
+export function toolSegmentTabClass(active: boolean) {
+  return toolChipClass(active)
+}
 
-/** Neutral secondary action (e.g. “Now”) */
-export const toolSoftButtonClass =
-  'rounded-lg bg-neutral-800 px-4 py-2 text-sm font-medium text-neutral-100 transition hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-60'
+/** @deprecated Prefer ToolChipRow */
+export const toolSegmentBarClass = 'flex flex-wrap gap-1.5'
 
-/** Amber helper action (+1 hour, fix JSON) */
+/** @deprecated Prefer ToolChipButton tone="default" (idle) */
+export const toolSoftButtonClass = toolChipClass(false)
+
+/** @deprecated Prefer ToolChipButton tone="accent" when active */
 export const toolAccentButtonClass =
-  'rounded-lg bg-amber-600/90 px-4 py-2 text-sm font-medium text-white transition hover:bg-amber-500 disabled:cursor-not-allowed disabled:opacity-60'
+  'inline-flex h-8 items-center justify-center rounded-md bg-amber-600/90 px-2.5 text-xs font-medium text-white transition hover:bg-amber-500 disabled:cursor-not-allowed disabled:opacity-60'
 
 /** Row with label + value + optional copy (UUID list, timestamp, color) */
 export const toolValueRowClass =
@@ -86,8 +102,53 @@ export const toolListItemClass =
   'rounded-lg border border-white/10 bg-neutral-900/50 px-3 py-2 font-mono text-sm text-neutral-200'
 
 /** Muted hint under controls */
-export const toolHintMetaClass =
-  'text-xs leading-relaxed text-neutral-500'
+export const toolHintMetaClass = 'text-xs leading-relaxed text-neutral-500'
+
+type ToolChipButtonProps = {
+  active: boolean
+  onClick: () => void
+  children: ReactNode
+  title?: string
+  className?: string
+  tone?: ToolChipTone
+  disabled?: boolean
+  type?: 'button' | 'submit'
+}
+
+export function ToolChipButton({
+  active,
+  onClick,
+  children,
+  title,
+  className = '',
+  tone = 'default',
+  disabled,
+  type = 'button'
+}: ToolChipButtonProps) {
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      title={title}
+      disabled={disabled}
+      className={`${toolChipClass(active, tone)} ${className}`}
+    >
+      {children}
+    </button>
+  )
+}
+
+export function ToolChipRow({
+  children,
+  className = ''
+}: {
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <div className={`flex flex-wrap gap-1.5 ${className}`}>{children}</div>
+  )
+}
 
 type ToolCopyButtonProps = {
   copied: boolean
@@ -110,7 +171,7 @@ export function ToolCopyButton({
       type="button"
       onClick={onClick}
       disabled={isDisabled}
-      className={`shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium transition active:scale-95 ${
+      className={`inline-flex h-8 shrink-0 items-center rounded-md px-3 text-xs font-medium transition active:scale-95 ${
         copied
           ? 'cursor-default bg-neutral-900 text-custom_blue'
           : 'bg-neutral-800 text-neutral-100 hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-50'

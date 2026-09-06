@@ -10,12 +10,12 @@ import {
   toolEmptyHintClass,
   toolIntroTextClass,
   toolLabelClass,
-  toolPanelClass,
   toolResultHeaderRowClass,
   toolResultPanelClass,
   toolSectionTitleClass,
-  toolSegmentBarClass,
-  toolSegmentTabClass
+  ToolChipButton,
+  ToolChipRow,
+  ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
 
 /** Matches portfolio tool surfaces (neutral-950, dashed cards, emerald / red accents) */
@@ -111,16 +111,18 @@ const TextDifference = () => {
 
   return (
     <ToolLayout title="Text Compare / Diff Tool">
-      <div className={toolPanelClass}>
-        <p className={toolIntroTextClass}>
-          Paste or edit two versions side by side. The preview uses a line-by-line
-          diff: use <strong className="font-medium text-neutral-200">Split</strong>{' '}
-          for two columns or{' '}
-          <strong className="font-medium text-neutral-200">Unified</strong> for one.
-          Enable <strong className="font-medium text-neutral-200">Word highlight</strong>{' '}
-          when you need changes inside a line.
-        </p>
-
+      <ToolInputPanel
+        intro={
+          <p className={toolIntroTextClass}>
+            Paste or edit two versions side by side. The preview uses a line-by-line
+            diff: use <strong className="font-medium text-neutral-200">Split</strong>{' '}
+            for two columns or{' '}
+            <strong className="font-medium text-neutral-200">Unified</strong> for one.
+            Enable <strong className="font-medium text-neutral-200">Word highlight</strong>{' '}
+            when you need changes inside a line.
+          </p>
+        }
+      >
         <div className="grid min-h-64 grid-cols-1 gap-5 md:h-96 md:grid-cols-2">
           <div className="flex max-h-96 min-h-64 min-w-0 flex-col md:h-full md:max-h-none">
             <div className={toolLabelClass}>Original</div>
@@ -145,7 +147,7 @@ const TextDifference = () => {
             </div>
           </div>
         </div>
-      </div>
+      </ToolInputPanel>
 
       <div className={`${toolResultPanelClass} z-10`}>
         <div className={toolResultHeaderRowClass}>
@@ -153,29 +155,21 @@ const TextDifference = () => {
         </div>
 
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-          <div
-            className={toolSegmentBarClass}
-            role="tablist"
-            aria-label="Diff layout"
-          >
-            <button
-              type="button"
-              role="tab"
-              aria-selected={splitView}
-              className={toolSegmentTabClass(splitView)}
-              onClick={() => setSplitView(true)}
-            >
-              Split
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={!splitView}
-              className={toolSegmentTabClass(!splitView)}
-              onClick={() => setSplitView(false)}
-            >
-              Unified
-            </button>
+          <div role="tablist" aria-label="Diff layout">
+            <ToolChipRow>
+              <ToolChipButton
+                active={splitView}
+                onClick={() => setSplitView(true)}
+              >
+                Split
+              </ToolChipButton>
+              <ToolChipButton
+                active={!splitView}
+                onClick={() => setSplitView(false)}
+              >
+                Unified
+              </ToolChipButton>
+            </ToolChipRow>
           </div>
 
           <div className="flex flex-wrap items-center gap-4">

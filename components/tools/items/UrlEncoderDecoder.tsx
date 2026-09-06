@@ -13,9 +13,9 @@ import {
   toolResultHeaderRowClass,
   toolResultPanelClass,
   toolSectionTitleClass,
-  toolSegmentBarClass,
-  toolSegmentTabClass,
   toolToolbarBetweenClass,
+  ToolChipButton,
+  ToolChipRow,
   ToolCopyButton,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
@@ -81,23 +81,22 @@ const UrlEncoderDecoder = () => {
         />
 
         <div className={toolToolbarBetweenClass}>
-          <div className={`${toolSegmentBarClass} w-full sm:w-auto`}>
+          <ToolChipRow>
             {(
               [
                 ['component', 'Component'],
                 ['uri', 'Full URI']
               ] as const
             ).map(([id, label]) => (
-              <button
+              <ToolChipButton
                 key={id}
-                type="button"
+                active={mode === id}
                 onClick={() => setMode(id)}
-                className={toolSegmentTabClass(mode === id)}
               >
                 {label}
-              </button>
+              </ToolChipButton>
             ))}
-          </div>
+          </ToolChipRow>
           <ClearButton
             onClick={() => {
               setInput('')

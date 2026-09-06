@@ -12,12 +12,12 @@ import {
   toolEmptyHintClass,
   toolHintMetaClass,
   toolNumberInputClass,
-  toolPanelClass,
   toolResultHeaderRowClass,
   toolResultPanelClass,
   toolSectionTitleClass,
   toolValueRowClass,
-  ToolCopyButton
+  ToolCopyButton,
+  ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
 import {
   DEFAULT_CHARSET,
@@ -146,7 +146,7 @@ const PasswordGenerator = () => {
 
   return (
     <ToolLayout title="Password / secret generator">
-      <div className={toolPanelClass}>
+      <ToolInputPanel>
         <div className="flex flex-col gap-5 sm:flex-row sm:flex-wrap sm:items-end sm:gap-8">
           <div className="flex flex-wrap gap-4">
             <div className="flex w-fit max-w-full flex-col gap-1">
@@ -229,7 +229,7 @@ const PasswordGenerator = () => {
                   `Length must be ${MIN_LENGTH}-${MAX_LENGTH}.`
                 )}
               </p>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-1.5">
                 <PrimaryButton
                   onClick={handleGenerate}
                   disabled={isGenerateDisabled}
@@ -241,7 +241,7 @@ const PasswordGenerator = () => {
             </div>
           </div>
         </div>
-      </div>
+      </ToolInputPanel>
 
       <div className={toolResultPanelClass}>
         <div className={toolResultHeaderRowClass}>

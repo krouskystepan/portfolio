@@ -9,15 +9,16 @@ import {
   toolEmptyHintClass,
   toolErrorBoxClass,
   toolHintMetaClass,
-  toolPanelClass,
+  toolIntroTextClass,
   toolPreOutputClass,
   toolResultHeaderRowClass,
   toolResultPanelClass,
   toolSectionTitleClass,
-  toolSegmentBarClass,
-  toolSegmentTabClass,
   toolToolbarBetweenClass,
-  ToolCopyButton
+  ToolChipButton,
+  ToolChipRow,
+  ToolCopyButton,
+  ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
 import {
   beautifyCode,
@@ -75,7 +76,13 @@ const CodeMinifier = () => {
 
   return (
     <ToolLayout title="HTML / CSS / JS / Python Minifier">
-      <div className={toolPanelClass}>
+      <ToolInputPanel
+        intro={
+          <p className={toolIntroTextClass}>
+            Beautify or minify HTML, CSS, JavaScript, or Python in the browser.
+          </p>
+        }
+      >
         <TextAreaWithLineNumbers
           value={input}
           setValue={setInput}
@@ -83,20 +90,19 @@ const CodeMinifier = () => {
         />
 
         <div className={toolToolbarBetweenClass}>
-          <div className={`${toolSegmentBarClass} w-full sm:w-auto`}>
+          <ToolChipRow>
             {LANGUAGE_TABS.map((tab) => (
-              <button
+              <ToolChipButton
                 key={tab.id}
-                type="button"
+                active={codeType === tab.id}
                 onClick={() => setCodeType(tab.id)}
-                className={toolSegmentTabClass(codeType === tab.id)}
               >
                 {tab.label}
-              </button>
+              </ToolChipButton>
             ))}
-          </div>
+          </ToolChipRow>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-1.5">
             <PrimaryButton
               onClick={() => void run('beautify')}
               disabled={!input.trim() || busy}
@@ -121,7 +127,7 @@ const CodeMinifier = () => {
               ? 'Python minify strips # comments and blank lines but keeps indentation. Beautify trims trailing space and extra blank lines.'
               : 'Minify removes comments and extra whitespace. Beautify reformats with Prettier.'}
         </p>
-      </div>
+      </ToolInputPanel>
 
       <div className={toolResultPanelClass}>
         <div className={toolResultHeaderRowClass}>

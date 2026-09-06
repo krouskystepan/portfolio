@@ -8,13 +8,13 @@ import { ClearButton, PrimaryButton, SecondaryButton } from '@/components/tools/
 import {
   toolEmptyHintClass,
   toolErrorBoxClass,
-  toolPanelClass,
   toolPreOutputClass,
   toolResultHeaderRowClass,
   toolResultPanelClass,
   toolSectionTitleClass,
   toolToolbarEndClass,
-  ToolCopyButton
+  ToolCopyButton,
+  ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
 
 /** Header row + data rows → objects; validates column count per row. */
@@ -182,7 +182,7 @@ const CsvJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) => 
 
   return (
     <ToolLayout title="CSV & JSON Converter" embedded={embedded}>
-      <div className={toolPanelClass}>
+      <ToolInputPanel>
         <TextAreaWithLineNumbers
           value={input}
           setValue={setInput}
@@ -204,7 +204,7 @@ const CsvJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) => 
 
           <ClearButton onClick={handleClear}>Clear</ClearButton>
         </div>
-      </div>
+      </ToolInputPanel>
 
       <div className={toolResultPanelClass}>
         <div className={toolResultHeaderRowClass}>

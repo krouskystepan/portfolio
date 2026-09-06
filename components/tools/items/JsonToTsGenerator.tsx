@@ -12,17 +12,17 @@ import {
   toolEmptyHintClass,
   toolErrorBoxClass,
   toolHintMetaClass,
+  toolInputClass,
   toolLabelClass,
-  toolPanelClass,
   toolPreOutputClass,
   toolResultHeaderRowClass,
   toolResultPanelClass,
   toolSectionTitleClass,
-  toolSegmentBarClass,
-  toolSegmentTabClass,
   toolToolbarEndClass,
-  toolInputClass,
-  ToolCopyButton
+  ToolChipButton,
+  ToolChipRow,
+  ToolCopyButton,
+  ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
 
 type PrimitiveShape = { kind: 'primitive'; ts: string }
@@ -356,7 +356,7 @@ const JsonToTsGenerator = ({
 
   return (
     <ToolLayout title="JSON to TS Type Generator" embedded={embedded}>
-      <div className={toolPanelClass}>
+      <ToolInputPanel>
         <label className={toolLabelClass} htmlFor="json-ts-root-name">
           Root type name
         </label>
@@ -370,22 +370,17 @@ const JsonToTsGenerator = ({
         />
 
         <p className={toolLabelClass}>Output style</p>
-        <div
-          className={`${toolSegmentBarClass} mb-2 flex flex-wrap`}
-          role="group"
-          aria-label="TypeScript output style"
-        >
+        <ToolChipRow className="mb-2">
           {EXPORT_MODE_OPTIONS.map((opt) => (
-            <button
+            <ToolChipButton
               key={opt.value}
-              type="button"
+              active={exportMode === opt.value}
               onClick={() => setExportMode(opt.value)}
-              className={`flex-1 ${toolSegmentTabClass(exportMode === opt.value)}`}
             >
               {opt.label}
-            </button>
+            </ToolChipButton>
           ))}
-        </div>
+        </ToolChipRow>
         <p className={`${toolHintMetaClass} mb-4`}>
           {EXPORT_MODE_OPTIONS.find((o) => o.value === exportMode)?.hint}
         </p>
@@ -402,7 +397,7 @@ const JsonToTsGenerator = ({
           </PrimaryButton>
           <ClearButton onClick={handleClear}>Clear</ClearButton>
         </div>
-      </div>
+      </ToolInputPanel>
 
       <div className={toolResultPanelClass}>
         <div className={toolResultHeaderRowClass}>

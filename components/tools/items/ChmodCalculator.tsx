@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import {
-  toolAccentButtonClass,
   toolCheckboxLabelClass,
   toolErrorBoxClass,
   toolInputClass,
@@ -11,8 +10,9 @@ import {
   toolLabelClass,
   toolResultPanelClass,
   toolSectionTitleClass,
-  toolSoftButtonClass,
   toolValueRowClass,
+  ToolChipButton,
+  ToolChipRow,
   ToolCopyButton,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
@@ -234,21 +234,20 @@ const ChmodCalculator = () => {
           ) : null}
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-2">
-          {PRESETS.map((preset) => (
-            <button
-              key={preset}
-              type="button"
-              onClick={() => applyPreset(preset)}
-              className={
-                octal === preset && modeText.trim()
-                  ? toolAccentButtonClass
-                  : toolSoftButtonClass
-              }
-            >
-              {preset}
-            </button>
-          ))}
+        <div className="mt-4">
+          <p className={`${toolLabelClass} mb-2`}>Presets</p>
+          <ToolChipRow>
+            {PRESETS.map((preset) => (
+              <ToolChipButton
+                key={preset}
+                active={octal === preset && Boolean(modeText.trim())}
+                tone="accent"
+                onClick={() => applyPreset(preset)}
+              >
+                {preset}
+              </ToolChipButton>
+            ))}
+          </ToolChipRow>
         </div>
       </ToolInputPanel>
 

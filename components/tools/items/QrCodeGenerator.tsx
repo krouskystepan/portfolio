@@ -16,8 +16,9 @@ import {
   toolResultHeaderRowClass,
   toolResultPanelClass,
   toolSectionTitleClass,
-  toolSegmentBarClass,
   toolToolbarBetweenClass,
+  ToolChipButton,
+  ToolChipRow,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
 
@@ -53,28 +54,18 @@ function OptionPills<T extends string | number>({
   format?: (option: T) => string
 }) {
   return (
-    <div
-      className={`${toolSegmentBarClass} grid h-9 w-fit shrink-0 items-stretch gap-0.5 p-0.5`}
-      style={{
-        gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))`
-      }}
-      role="group"
-      aria-label={ariaLabel}
-    >
-      {options.map((option) => (
-        <button
-          key={String(option)}
-          type="button"
-          onClick={() => onChange(option)}
-          className={`rounded-md px-2.5 text-center text-xs font-medium leading-none transition ${
-            value === option
-              ? 'bg-custom_blue text-white'
-              : 'text-neutral-400 hover:bg-neutral-800 hover:text-white'
-          }`}
-        >
-          {format(option)}
-        </button>
-      ))}
+    <div role="group" aria-label={ariaLabel}>
+      <ToolChipRow>
+        {options.map((option) => (
+          <ToolChipButton
+            key={String(option)}
+            active={value === option}
+            onClick={() => onChange(option)}
+          >
+            {format(option)}
+          </ToolChipButton>
+        ))}
+      </ToolChipRow>
     </div>
   )
 }

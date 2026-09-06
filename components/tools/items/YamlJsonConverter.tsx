@@ -9,13 +9,13 @@ import { ClearButton, PrimaryButton } from '@/components/tools/_shared/ToolButto
 import {
   toolEmptyHintClass,
   toolErrorBoxClass,
-  toolPanelClass,
   toolPreOutputClass,
   toolResultHeaderRowClass,
   toolResultPanelClass,
   toolSectionTitleClass,
   toolToolbarEndClass,
-  ToolCopyButton
+  ToolCopyButton,
+  ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
 
 const YamlJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) => {
@@ -65,7 +65,7 @@ const YamlJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) =>
 
   return (
     <ToolLayout title="YAML ↔ JSON" embedded={embedded}>
-      <div className={toolPanelClass}>
+      <ToolInputPanel>
         <TextAreaWithLineNumbers
           value={input}
           setValue={setInput}
@@ -81,7 +81,7 @@ const YamlJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) =>
           </PrimaryButton>
           <ClearButton onClick={handleClear}>Clear</ClearButton>
         </div>
-      </div>
+      </ToolInputPanel>
 
       <div className={toolResultPanelClass}>
         <div className={toolResultHeaderRowClass}>

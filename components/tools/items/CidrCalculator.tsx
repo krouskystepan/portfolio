@@ -4,7 +4,6 @@ import { useState } from 'react'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import { ClearButton } from '@/components/tools/_shared/ToolButtons'
 import {
-  toolAccentButtonClass,
   toolErrorBoxClass,
   toolHintMetaClass,
   toolInputClass,
@@ -12,9 +11,10 @@ import {
   toolLabelClass,
   toolResultPanelClass,
   toolSectionTitleClass,
-  toolSoftButtonClass,
   toolToolbarBetweenClass,
   toolValueRowClass,
+  ToolChipButton,
+  ToolChipRow,
   ToolCopyButton,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
@@ -276,7 +276,7 @@ const CidrCalculator = () => {
             <div className="relative">
               <span
                 aria-hidden
-                className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 font-mono text-sm text-neutral-500"
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-mono text-sm text-neutral-500"
               >
                 /
               </span>
@@ -287,7 +287,7 @@ const CidrCalculator = () => {
                 max={32}
                 value={input.prefix}
                 onChange={(e) => handlePrefixChange(e.target.value)}
-                className={`${toolInputClass} [appearance:textfield] font-mono pl-7 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
+                className={`${toolInputClass} pl-7 font-mono [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
               />
             </div>
           </div>
@@ -314,21 +314,21 @@ const CidrCalculator = () => {
           ) : null}
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-2">
-          {CIDR_PRESETS.map((preset) => (
-            <button
-              key={preset.cidr}
-              type="button"
-              onClick={() => applyPreset(preset.cidr)}
-              className={
-                info.cidr === preset.cidr
-                  ? toolAccentButtonClass
-                  : toolSoftButtonClass
-              }
-            >
-              {preset.label}
-            </button>
-          ))}
+        <div className="mt-4">
+          <p className={`${toolLabelClass} mb-2`}>Presets</p>
+          <ToolChipRow>
+            {CIDR_PRESETS.map((preset) => (
+              <ToolChipButton
+                key={preset.cidr}
+                active={info.cidr === preset.cidr}
+                tone="accent"
+                onClick={() => applyPreset(preset.cidr)}
+                title={preset.cidr}
+              >
+                {preset.label}
+              </ToolChipButton>
+            ))}
+          </ToolChipRow>
         </div>
 
         <div className={toolToolbarBetweenClass}>

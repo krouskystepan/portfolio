@@ -11,8 +11,10 @@ import {
   toolResultPanelClass,
   toolSectionTitleClass,
   toolToolbarEndClass,
+  ToolCopyButton,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
+import { useAchievementContext } from '@/context/AchievementContext'
 
 function slugify(value: string): string {
   return value
@@ -25,7 +27,17 @@ function slugify(value: string): string {
 
 const SlugGenerator = () => {
   const [input, setInput] = useState('')
+  const [copied, setCopied] = useState(false)
   const slug = useMemo(() => slugify(input), [input])
+  const { unlockAchievement } = useAchievementContext()
+
+  const handleCopy = async () => {
+    if (!slug) return
+    await navigator.clipboard.writeText(slug)
+    unlockAchievement('clipboard-master')
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }
 
   return (
     <ToolLayout title="Slug generator">
@@ -50,6 +62,9 @@ const SlugGenerator = () => {
       <div className={toolResultPanelClass}>
         <div className={toolResultHeaderRowClass}>
           <h2 className={toolSectionTitleClass}>Slug</h2>
+          {slug ? (
+            <ToolCopyButton copied={copied} onClick={handleCopy} />
+          ) : null}
         </div>
         <pre className={toolPreOutputClass}>
           {slug || <span className="text-neutral-500">Slug appears here.</span>}
