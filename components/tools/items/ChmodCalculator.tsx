@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import {
   toolCheckboxLabelClass,
+  toolEmptyHintClass,
   toolErrorBoxClass,
   toolInputClass,
   toolIntroTextClass,
@@ -28,6 +29,8 @@ import {
   parseMode,
   parseOctal
 } from '@/utils/chmodPermissions'
+import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
+import { str, useToolUrlState } from '@/hooks/useToolUrlState'
 
 type TriadKey = 'owner' | 'group' | 'other'
 type BitKey = keyof TriadBits
@@ -61,20 +64,35 @@ const EMPTY_MODE: PermissionMode = {
   special: { setuid: false, setgid: false, sticky: false }
 }
 
-const ChmodCalculator = () => {
-  const [mode, setMode] = useState<PermissionMode>(() =>
-    cloneMode(DEFAULT_MODE)
-  )
-  const [modeText, setModeText] = useState(() => bitsToOctal(DEFAULT_MODE))
+const DEFAULT_OCTAL = bitsToOctal(DEFAULT_MODE)
+
+function hydrateMode(octal: string): PermissionMode {
+  const result = parseOctal(octal)
+  return result.ok ? result.mode : cloneMode(DEFAULT_MODE)
+}
+
+function ChmodCalculatorInner() {
+  const [url, setUrl] = useToolUrlState({
+    m: str(DEFAULT_OCTAL)
+  })
+
+  const [boot] = useState(() => {
+    const next = hydrateMode(url.m)
+    return { mode: next, modeText: bitsToOctal(next) }
+  })
+  const [mode, setMode] = useState<PermissionMode>(boot.mode)
+  const [modeText, setModeText] = useState(boot.modeText)
   const [modeError, setModeError] = useState<string | null>(null)
-  const [copied, setCopied] = useState<CopyKey | null>(null)
+  const { copied, flash } = useCopyFeedback()
 
   const { unlockAchievement } = useAchievementContext()
 
   const applyMode = (next: PermissionMode) => {
     setMode(next)
-    setModeText(bitsToOctal(next))
+    const octal = bitsToOctal(next)
+    setModeText(octal)
     setModeError(null)
+    setUrl({ m: octal })
   }
 
   const toggleBit = (triad: TriadKey, bit: BitKey) => {
@@ -103,6 +121,7 @@ const ChmodCalculator = () => {
     if (!text.trim()) {
       setMode(cloneMode(EMPTY_MODE))
       setModeError(null)
+      setUrl({ m: bitsToOctal(EMPTY_MODE) })
       return
     }
 
@@ -110,6 +129,7 @@ const ChmodCalculator = () => {
     if (result.ok) {
       setMode(result.mode)
       setModeError(null)
+      setUrl({ m: bitsToOctal(result.mode) })
       return
     }
 
@@ -128,12 +148,14 @@ const ChmodCalculator = () => {
       setModeError(null)
       return
     }
+    const octal = bitsToOctal(mode)
     if (modeError) {
-      setModeText(bitsToOctal(mode))
+      setModeText(octal)
       setModeError(null)
     } else {
-      setModeText(bitsToOctal(mode))
+      setModeText(octal)
     }
+    setUrl({ m: octal })
   }
 
   const applyPreset = (preset: string) => {
@@ -148,8 +170,7 @@ const ChmodCalculator = () => {
   const handleCopy = async (key: CopyKey, text: string) => {
     await navigator.clipboard.writeText(text)
     unlockAchievement('clipboard-master')
-    setCopied(key)
-    setTimeout(() => setCopied(null), 1500)
+    flash(key)
   }
 
   return (
@@ -280,4 +301,16 @@ const ChmodCalculator = () => {
   )
 }
 
-export default ChmodCalculator
+export default function ChmodCalculator() {
+  return (
+    <Suspense
+      fallback={
+        <ToolLayout title="Unix permission calculator">
+          <p className={toolEmptyHintClass}>Loading…</p>
+        </ToolLayout>
+      }
+    >
+      <ChmodCalculatorInner />
+    </Suspense>
+  )
+}

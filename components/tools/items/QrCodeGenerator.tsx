@@ -1,6 +1,12 @@
 'use client'
 
-import { Component, type ReactNode, useMemo, useRef, useState } from 'react'
+import {
+  Component,
+  Suspense,
+  type ReactNode,
+  useMemo,
+  useRef
+} from 'react'
 import { QRCodeCanvas, QRCodeSVG } from 'qrcode.react'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import {
@@ -21,11 +27,17 @@ import {
   ToolChipRow,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
+import {
+  enumParam,
+  str,
+  useToolUrlState
+} from '@/hooks/useToolUrlState'
 
 type EccLevel = 'L' | 'M' | 'Q' | 'H'
 
 const ECC_LEVELS: EccLevel[] = ['L', 'M', 'Q', 'H']
 const SIZE_PRESETS = [128, 256, 384, 512] as const
+const SIZE_PARAM_VALUES = ['128', '256', '384', '512'] as const
 type QrSize = (typeof SIZE_PRESETS)[number]
 
 /** Version 40 byte-mode capacity (ISO/IEC 18004). */
@@ -36,7 +48,6 @@ const MAX_BYTES: Record<EccLevel, number> = {
   H: 1273
 }
 
-const DEFAULT_SIZE: QrSize = 256
 const MARGIN_MODULES = 4
 const MIN_CONTRAST = 3
 
@@ -166,12 +177,20 @@ function ColorField({
   )
 }
 
-const QrCodeGenerator = () => {
-  const [input, setInput] = useState('')
-  const [ecc, setEcc] = useState<EccLevel>('M')
-  const [size, setSize] = useState<QrSize>(DEFAULT_SIZE)
-  const [fgColor, setFgColor] = useState('#000000')
-  const [bgColor, setBgColor] = useState('#ffffff')
+function QrCodeGeneratorInner() {
+  const [url, setUrl] = useToolUrlState({
+    t: str('', { text: true }),
+    ecc: enumParam<EccLevel>('M', ECC_LEVELS),
+    size: enumParam('256', SIZE_PARAM_VALUES),
+    fg: str('#000000'),
+    bg: str('#ffffff')
+  })
+
+  const input = url.t
+  const ecc = url.ecc
+  const size = Number(url.size) as QrSize
+  const fgColor = url.fg
+  const bgColor = url.bg
 
   const svgRef = useRef<SVGSVGElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -222,7 +241,12 @@ const QrCodeGenerator = () => {
       >
         <TextAreaWithLineNumbers
           value={input}
-          setValue={setInput}
+          setValue={(next) =>
+            setUrl((s) => ({
+              ...s,
+              t: typeof next === 'function' ? next(s.t) : next
+            }))
+          }
           placeholder="https://example.com or any text…"
         />
 
@@ -231,7 +255,7 @@ const QrCodeGenerator = () => {
             <OptionPills
               value={ecc}
               options={ECC_LEVELS}
-              onChange={setEcc}
+              onChange={(next) => setUrl((s) => ({ ...s, ecc: next }))}
               ariaLabel="Error correction"
             />
 
@@ -240,26 +264,30 @@ const QrCodeGenerator = () => {
                 id="qr-fg"
                 label="Foreground"
                 value={fgColor}
-                onChange={setFgColor}
+                onChange={(next) => setUrl((s) => ({ ...s, fg: next }))}
               />
               <ColorField
                 id="qr-bg"
                 label="Background"
                 value={bgColor}
-                onChange={setBgColor}
+                onChange={(next) => setUrl((s) => ({ ...s, bg: next }))}
               />
             </div>
 
             <OptionPills
               value={size}
               options={SIZE_PRESETS}
-              onChange={setSize}
+              onChange={(next) =>
+                setUrl((s) => ({ ...s, size: String(next) as typeof s.size }))
+              }
               ariaLabel="Size"
               format={(px) => `${px}`}
             />
           </div>
 
-          <ClearButton onClick={() => setInput('')}>Clear</ClearButton>
+          <ClearButton onClick={() => setUrl((s) => ({ ...s, t: '' }))}>
+            Clear
+          </ClearButton>
         </div>
 
         {poorContrast ? (
@@ -337,4 +365,16 @@ const QrCodeGenerator = () => {
   )
 }
 
-export default QrCodeGenerator
+export default function QrCodeGenerator() {
+  return (
+    <Suspense
+      fallback={
+        <ToolLayout title="QR code generator">
+          <p className={toolEmptyHintClass}>Loading…</p>
+        </ToolLayout>
+      }
+    >
+      <QrCodeGeneratorInner />
+    </Suspense>
+  )
+}

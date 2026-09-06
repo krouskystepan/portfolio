@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { Suspense, useMemo } from 'react'
 import { DiffMethod } from 'react-diff-viewer'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ReactDiffViewer from 'react-diff-viewer'
@@ -17,6 +17,7 @@ import {
   ToolChipRow,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
+import { bool, str, useToolUrlState } from '@/hooks/useToolUrlState'
 
 /** Matches portfolio tool surfaces (neutral-950, dashed cards, emerald / red accents) */
 const diffVariables = {
@@ -44,12 +45,21 @@ const diffVariables = {
   highlightGutterBackground: 'rgba(234, 179, 8, 0.1)',
 } as const
 
-const TextDifference = () => {
-  const [textA, setTextA] = useState('')
-  const [textB, setTextB] = useState('')
-  const [splitView, setSplitView] = useState(true)
-  const [showDiffOnly, setShowDiffOnly] = useState(true)
-  const [highlightWords, setHighlightWords] = useState(false)
+function TextDifferenceInner() {
+  const [url, setUrl] = useToolUrlState({
+    a: str('', { text: true }),
+    b: str('', { text: true }),
+    split: bool(true),
+    diffOnly: bool(true),
+    words: bool(false)
+  })
+  const {
+    a: textA,
+    b: textB,
+    split: splitView,
+    diffOnly: showDiffOnly,
+    words: highlightWords
+  } = url
 
   const diffStyles = useMemo(
     () => ({
@@ -130,7 +140,12 @@ const TextDifference = () => {
               <TextAreaWithLineNumbers
                 fillParent
                 value={textA}
-                setValue={setTextA}
+                setValue={(v) =>
+                  setUrl((s) => ({
+                    ...s,
+                    a: typeof v === 'function' ? v(s.a) : v
+                  }))
+                }
                 placeholder="Original text…"
               />
             </div>
@@ -141,7 +156,12 @@ const TextDifference = () => {
               <TextAreaWithLineNumbers
                 fillParent
                 value={textB}
-                setValue={setTextB}
+                setValue={(v) =>
+                  setUrl((s) => ({
+                    ...s,
+                    b: typeof v === 'function' ? v(s.b) : v
+                  }))
+                }
                 placeholder="Modified text…"
               />
             </div>
@@ -159,13 +179,13 @@ const TextDifference = () => {
             <ToolChipRow>
               <ToolChipButton
                 active={splitView}
-                onClick={() => setSplitView(true)}
+                onClick={() => setUrl((s) => ({ ...s, split: true }))}
               >
                 Split
               </ToolChipButton>
               <ToolChipButton
                 active={!splitView}
-                onClick={() => setSplitView(false)}
+                onClick={() => setUrl((s) => ({ ...s, split: false }))}
               >
                 Unified
               </ToolChipButton>
@@ -177,7 +197,9 @@ const TextDifference = () => {
               <input
                 type="checkbox"
                 checked={showDiffOnly}
-                onChange={() => setShowDiffOnly((v) => !v)}
+                onChange={() =>
+                  setUrl((s) => ({ ...s, diffOnly: !s.diffOnly }))
+                }
                 className="size-4 accent-custom_blue"
               />
               Hide unchanged (fold)
@@ -186,7 +208,7 @@ const TextDifference = () => {
               <input
                 type="checkbox"
                 checked={highlightWords}
-                onChange={() => setHighlightWords((v) => !v)}
+                onChange={() => setUrl((s) => ({ ...s, words: !s.words }))}
                 className="size-4 accent-custom_blue"
               />
               Word highlight
@@ -229,4 +251,16 @@ const TextDifference = () => {
   )
 }
 
-export default TextDifference
+export default function TextDifference() {
+  return (
+    <Suspense
+      fallback={
+        <ToolLayout title="Text Compare / Diff Tool">
+          <p className="text-center text-sm text-neutral-400">Loading…</p>
+        </ToolLayout>
+      }
+    >
+      <TextDifferenceInner />
+    </Suspense>
+  )
+}

@@ -1,8 +1,8 @@
 'use client'
 
+import { Suspense, useEffect, useState } from 'react'
 import { useAchievementContext } from '@/context/AchievementContext'
 import { ColorFormats, parseColor } from '@/utils/colorUtils'
-import { useState } from 'react'
 import { HexAlphaColorPicker } from 'react-colorful'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import { ClearButton, PrimaryButton } from '@/components/tools/_shared/ToolButtons'
@@ -17,6 +17,8 @@ import {
   ToolCopyButton,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
+import { str, useToolUrlState } from '@/hooks/useToolUrlState'
+import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
 
 /** Keep overrides light so the 2D spectrum stays a square, not a thin bar. */
 const pickerShellClass =
@@ -60,17 +62,21 @@ const normalizePickerValue = (value: string) => {
   return value
 }
 
-const ColorConverter = () => {
-  const [input, setInput] = useState('')
+function ColorConverterInner() {
+  const [url, setUrl] = useToolUrlState({
+    color: str('', { text: true })
+  })
+
+  const input = url.color
   const [converted, setConverted] = useState<ColorFormats>({})
   const [error, setError] = useState<string | null>(null)
-  const [copiedStates, setCopiedStates] = useState<Record<string, boolean>>({})
+  const { copied, flash } = useCopyFeedback()
 
   const { unlockAchievement } = useAchievementContext()
 
-  const handleConvert = () => {
-    if (!input.trim()) return
-    const result = parseColor(input)
+  const runConvert = (value: string) => {
+    if (!value.trim()) return
+    const result = parseColor(value)
     if (result) {
       setConverted(result)
       setError(null)
@@ -80,15 +86,25 @@ const ColorConverter = () => {
     }
   }
 
+  useEffect(() => {
+    if (input.trim()) runConvert(input)
+    // Hydrate preview once from URL on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleConvert = () => {
+    runConvert(input)
+  }
+
   const handleClear = () => {
-    setInput('')
+    setUrl({ color: '' })
     setConverted({})
     setError(null)
   }
 
   const handlePickerChange = (value: string) => {
     const normalized = normalizePickerValue(value)
-    setInput(normalized)
+    setUrl({ color: normalized })
     const result = parseColor(normalized)
     if (result) {
       setConverted(result)
@@ -99,11 +115,7 @@ const ColorConverter = () => {
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text)
     unlockAchievement('clipboard-master')
-
-    setCopiedStates((prev) => ({ ...prev, [label]: true }))
-    setTimeout(() => {
-      setCopiedStates((prev) => ({ ...prev, [label]: false }))
-    }, 1500)
+    flash(label)
   }
 
   const showPicker = Object.keys(converted).length > 0
@@ -122,7 +134,7 @@ const ColorConverter = () => {
       >
         <input
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => setUrl({ color: e.target.value })}
           placeholder="Enter your color here..."
           className={toolInputClass}
         />
@@ -167,7 +179,7 @@ const ColorConverter = () => {
                     <span className="break-all text-neutral-300">{val}</span>
                   </div>
                   <ToolCopyButton
-                    copied={Boolean(copiedStates[label])}
+                    copied={copied === label}
                     onClick={() => handleCopy(val, label)}
                   />
                 </div>
@@ -184,4 +196,16 @@ const ColorConverter = () => {
   )
 }
 
-export default ColorConverter
+export default function ColorConverter() {
+  return (
+    <Suspense
+      fallback={
+        <ToolLayout title="Color picker & converter">
+          <p className={toolEmptyHintClass}>Loading…</p>
+        </ToolLayout>
+      }
+    >
+      <ColorConverterInner />
+    </Suspense>
+  )
+}

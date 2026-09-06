@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useAchievementContext } from '@/context/AchievementContext'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
@@ -25,6 +25,8 @@ import {
   minifyCode,
   type CodeKind
 } from '@/utils/codeMinify'
+import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
+import { enumParam, str, useToolUrlState } from '@/hooks/useToolUrlState'
 
 const LANGUAGE_TABS: { id: CodeKind; label: string }[] = [
   { id: 'html', label: 'HTML' },
@@ -33,12 +35,18 @@ const LANGUAGE_TABS: { id: CodeKind; label: string }[] = [
   { id: 'python', label: 'Python' }
 ]
 
-const CodeMinifier = () => {
-  const [input, setInput] = useState('')
+const CODE_KINDS = ['html', 'css', 'javascript', 'python'] as const satisfies readonly CodeKind[]
+
+function CodeMinifierInner() {
+  const [url, setUrl] = useToolUrlState({
+    code: str('', { text: true }),
+    lang: enumParam<CodeKind>('javascript', CODE_KINDS)
+  })
+  const input = url.code
+  const codeType = url.lang
   const [output, setOutput] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [codeType, setCodeType] = useState<CodeKind>('javascript')
-  const [copied, setCopied] = useState(false)
+  const { copied, flash } = useCopyFeedback()
   const [busy, setBusy] = useState(false)
 
   const { unlockAchievement } = useAchievementContext()
@@ -62,7 +70,7 @@ const CodeMinifier = () => {
   }
 
   const handleClear = () => {
-    setInput('')
+    setUrl({ code: '', lang: codeType })
     setOutput('')
     setError(null)
   }
@@ -70,8 +78,7 @@ const CodeMinifier = () => {
   const handleCopy = () => {
     navigator.clipboard.writeText(output)
     unlockAchievement('clipboard-master')
-    setCopied(true)
-    setTimeout(() => setCopied(false), 1500)
+    flash()
   }
 
   return (
@@ -85,7 +92,12 @@ const CodeMinifier = () => {
       >
         <TextAreaWithLineNumbers
           value={input}
-          setValue={setInput}
+          setValue={(v) =>
+            setUrl((s) => ({
+              ...s,
+              code: typeof v === 'function' ? v(s.code) : v
+            }))
+          }
           placeholder="Paste your code here..."
         />
 
@@ -95,7 +107,7 @@ const CodeMinifier = () => {
               <ToolChipButton
                 key={tab.id}
                 active={codeType === tab.id}
-                onClick={() => setCodeType(tab.id)}
+                onClick={() => setUrl((s) => ({ ...s, lang: tab.id }))}
               >
                 {tab.label}
               </ToolChipButton>
@@ -134,7 +146,7 @@ const CodeMinifier = () => {
           <h2 className={toolSectionTitleClass}>Result</h2>
 
           {output ? (
-            <ToolCopyButton copied={copied} onClick={handleCopy} />
+            <ToolCopyButton copied={copied === true} onClick={handleCopy} />
           ) : null}
         </div>
 
@@ -154,4 +166,16 @@ const CodeMinifier = () => {
   )
 }
 
-export default CodeMinifier
+export default function CodeMinifier() {
+  return (
+    <Suspense
+      fallback={
+        <ToolLayout title="HTML / CSS / JS / Python Minifier">
+          <p className="text-center text-sm text-neutral-400">Loading…</p>
+        </ToolLayout>
+      }
+    >
+      <CodeMinifierInner />
+    </Suspense>
+  )
+}

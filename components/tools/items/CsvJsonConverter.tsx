@@ -16,6 +16,8 @@ import {
   ToolCopyButton,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
+import { str, useToolUrlState } from '@/hooks/useToolUrlState'
+import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
 
 /** Header row + data rows → objects; validates column count per row. */
 function csvRowsToObjects(rows: string[][]): Record<string, string>[] {
@@ -41,13 +43,21 @@ function csvRowsToObjects(rows: string[][]): Record<string, string>[] {
 }
 
 const CsvJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) => {
-  const [input, setInput] = useState('')
+  const [url, setUrl] = useToolUrlState({
+    csv: str('', { text: true })
+  })
+  const input = url.csv
   const [output, setOutput] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [copied, setCopied] = useState(false)
+  const { copied, flash } = useCopyFeedback()
 
   const { unlockAchievement } = useAchievementContext()
 
+  const setInput = (v: React.SetStateAction<string>) =>
+    setUrl((s) => ({
+      ...s,
+      csv: typeof v === 'function' ? v(s.csv) : v
+    }))
   const parseCSV = (text: string): string[][] => {
     const rows: string[][] = []
     let currentRow: string[] = []
@@ -176,8 +186,7 @@ const CsvJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) => 
   const handleCopy = () => {
     navigator.clipboard.writeText(output)
     unlockAchievement('clipboard-master')
-    setCopied(true)
-    setTimeout(() => setCopied(false), 1500)
+    flash()
   }
 
   return (
@@ -211,7 +220,7 @@ const CsvJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) => 
           <h2 className={toolSectionTitleClass}>Result</h2>
 
           {output ? (
-            <ToolCopyButton copied={copied} onClick={handleCopy} />
+            <ToolCopyButton copied={copied === true} onClick={handleCopy} />
           ) : null}
         </div>
 

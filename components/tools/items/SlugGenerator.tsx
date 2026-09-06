@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { Suspense, useMemo } from 'react'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import { ClearButton } from '@/components/tools/_shared/ToolButtons'
@@ -15,6 +15,8 @@ import {
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
 import { useAchievementContext } from '@/context/AchievementContext'
+import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
+import { str, useToolUrlState } from '@/hooks/useToolUrlState'
 
 function slugify(value: string): string {
   return value
@@ -25,9 +27,12 @@ function slugify(value: string): string {
     .replace(/^-+|-+$/g, '')
 }
 
-const SlugGenerator = () => {
-  const [input, setInput] = useState('')
-  const [copied, setCopied] = useState(false)
+function SlugGeneratorInner() {
+  const [url, setUrl] = useToolUrlState({
+    t: str('', { text: true })
+  })
+  const input = url.t
+  const { copied, flash } = useCopyFeedback()
   const slug = useMemo(() => slugify(input), [input])
   const { unlockAchievement } = useAchievementContext()
 
@@ -35,8 +40,7 @@ const SlugGenerator = () => {
     if (!slug) return
     await navigator.clipboard.writeText(slug)
     unlockAchievement('clipboard-master')
-    setCopied(true)
-    setTimeout(() => setCopied(false), 1500)
+    flash()
   }
 
   return (
@@ -51,11 +55,16 @@ const SlugGenerator = () => {
       >
         <TextAreaWithLineNumbers
           value={input}
-          setValue={setInput}
+          setValue={(v) =>
+            setUrl((s) => ({
+              ...s,
+              t: typeof v === 'function' ? v(s.t) : v
+            }))
+          }
           placeholder="Page title or heading, e.g. Café Müller - 2026 Tour"
         />
         <div className={toolToolbarEndClass}>
-          <ClearButton onClick={() => setInput('')}>Clear</ClearButton>
+          <ClearButton onClick={() => setUrl({ t: '' })}>Clear</ClearButton>
         </div>
       </ToolInputPanel>
 
@@ -63,7 +72,7 @@ const SlugGenerator = () => {
         <div className={toolResultHeaderRowClass}>
           <h2 className={toolSectionTitleClass}>Slug</h2>
           {slug ? (
-            <ToolCopyButton copied={copied} onClick={handleCopy} />
+            <ToolCopyButton copied={copied === true} onClick={handleCopy} />
           ) : null}
         </div>
         <pre className={toolPreOutputClass}>
@@ -74,4 +83,16 @@ const SlugGenerator = () => {
   )
 }
 
-export default SlugGenerator
+export default function SlugGenerator() {
+  return (
+    <Suspense
+      fallback={
+        <ToolLayout title="Slug generator">
+          <p className="text-center text-sm text-neutral-400">Loading…</p>
+        </ToolLayout>
+      }
+    >
+      <SlugGeneratorInner />
+    </Suspense>
+  )
+}

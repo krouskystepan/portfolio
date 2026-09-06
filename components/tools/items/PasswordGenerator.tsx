@@ -1,7 +1,7 @@
 'use client'
 
-import { useAchievementContext } from '@/context/AchievementContext'
 import { useMemo, useState } from 'react'
+import { useAchievementContext } from '@/context/AchievementContext'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import {
   ClearButton,
@@ -35,6 +35,7 @@ import {
   strengthFromEntropy,
   type CharsetOptions
 } from '@/utils/passwordGenerator'
+import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
 
 const CHARSET_TOGGLES: {
   key: keyof Omit<CharsetOptions, 'excludeAmbiguous'>
@@ -46,14 +47,14 @@ const CHARSET_TOGGLES: {
   { key: 'symbols', label: 'Symbols' }
 ]
 
-const PasswordGenerator = () => {
+export default function PasswordGenerator() {
   const [length, setLength] = useState(20)
   const [count, setCount] = useState(1)
   const [readable, setReadable] = useState(false)
   const [charsetOptions, setCharsetOptions] =
     useState<CharsetOptions>(DEFAULT_CHARSET)
   const [passwords, setPasswords] = useState<string[]>([])
-  const [copiedStates, setCopiedStates] = useState<boolean[]>([])
+  const { copied, flash } = useCopyFeedback()
 
   const { unlockAchievement } = useAchievementContext()
 
@@ -91,7 +92,6 @@ const PasswordGenerator = () => {
         charsetOptions
       })
       setPasswords(out)
-      setCopiedStates(new Array(out.length + 1).fill(false))
     } catch {
       // Range / empty charset already blocked by isGenerateDisabled
     }
@@ -99,45 +99,21 @@ const PasswordGenerator = () => {
 
   const handleClear = () => {
     setPasswords([])
-    setCopiedStates([])
   }
 
-  const handleCopy = (text: string) => {
+  const handleCopy = (text: string, key: string) => {
     navigator.clipboard.writeText(text)
     unlockAchievement('clipboard-master')
+    flash(key)
   }
 
   const handleLocalCopy = (index: number, value: string) => {
-    handleCopy(value)
-    setCopiedStates((prev) => {
-      const updated = [...prev]
-      updated[index] = true
-      return updated
-    })
-    setTimeout(() => {
-      setCopiedStates((prev) => {
-        const updated = [...prev]
-        updated[index] = false
-        return updated
-      })
-    }, 1500)
+    handleCopy(value, `pw-${index}`)
   }
 
   const handleCopyAll = () => {
     if (passwords.length === 0) return
-    handleCopy(passwords.join('\n'))
-    setCopiedStates((prev) => {
-      const updated = [...prev]
-      updated[passwords.length] = true
-      return updated
-    })
-    setTimeout(() => {
-      setCopiedStates((prev) => {
-        const updated = [...prev]
-        updated[passwords.length] = false
-        return updated
-      })
-    }, 1500)
+    handleCopy(passwords.join('\n'), 'all')
   }
 
   const toggleCharset = (key: keyof CharsetOptions) => {
@@ -248,7 +224,7 @@ const PasswordGenerator = () => {
           <h2 className={toolSectionTitleClass}>Generated secrets</h2>
           {passwords.length > 0 ? (
             <ToolCopyButton
-              copied={Boolean(copiedStates[passwords.length])}
+              copied={copied === 'all'}
               onClick={handleCopyAll}
               idleLabel="Copy all"
               copiedLabel="Copied all!"
@@ -264,7 +240,7 @@ const PasswordGenerator = () => {
                   {value}
                 </span>
                 <ToolCopyButton
-                  copied={Boolean(copiedStates[index])}
+                  copied={copied === `pw-${index}`}
                   onClick={() => handleLocalCopy(index, value)}
                 />
               </li>
@@ -279,5 +255,3 @@ const PasswordGenerator = () => {
     </ToolLayout>
   )
 }
-
-export default PasswordGenerator
