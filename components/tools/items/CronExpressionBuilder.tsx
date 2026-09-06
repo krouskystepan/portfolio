@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { Suspense, useState } from 'react'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import { ClearButton } from '@/components/tools/_shared/ToolButtons'
 import {
@@ -22,31 +22,24 @@ import {
 import { useAchievementContext } from '@/context/AchievementContext'
 import {
   CRON_PRESETS,
-  DEFAULT_FIELDS,
   DOW_NAMES,
   FIELD_KEYS,
   FIELD_LABELS,
   MINUTE_QUICK_VALUES,
   MONTH_NAMES,
   type CronFieldKey,
-  type CronFields,
-  type CronTimezone,
   type FieldMode,
   buildRange,
   buildSpecific,
   buildStep,
-  cloneFields,
-  describeCron,
   detectFieldMode,
-  fieldsToExpression,
   formatRelativeRun,
   formatRunTime,
-  nextRuns,
-  parseExpression,
   parseRange,
   parseSpecificList,
   parseStep
 } from '@/utils/cronExpression'
+import { useCronBuilder } from '@/hooks/tools/useCronBuilder'
 
 type CopyKey = 'expression' | 'description'
 
@@ -394,35 +387,27 @@ function FieldControls({
   )
 }
 
-const CronExpressionBuilder = () => {
-  const [fields, setFields] = useState<CronFields>(() =>
-    cloneFields(DEFAULT_FIELDS)
-  )
-  const [expressionText, setExpressionText] = useState(() =>
-    fieldsToExpression(DEFAULT_FIELDS)
-  )
-  const [expressionError, setExpressionError] = useState<string | null>(null)
-  const [timezone, setTimezone] = useState<CronTimezone>('local')
-  const [activeField, setActiveField] = useState<CronFieldKey>('minute')
-  const [copied, setCopied] = useState<CopyKey | null>(null)
-  // Next-run times depend on "now" + local TZ — only render after mount.
-  const [ready, setReady] = useState(false)
+function CronExpressionBuilderInner() {
+  const {
+    state,
+    timezone,
+    expression,
+    description,
+    runs,
+    copied,
+    flash,
+    setExpressionText,
+    blurExpression,
+    setField,
+    applyPreset,
+    reset,
+    setActiveField,
+    setTimezone
+  } = useCronBuilder()
+
+  const { fields, expressionText, expressionError, activeField, ready } = state
 
   const { unlockAchievement } = useAchievementContext()
-
-  useEffect(() => {
-    setReady(true)
-  }, [])
-
-  const applyFields = (next: CronFields) => {
-    setFields(next)
-    setExpressionText(fieldsToExpression(next))
-    setExpressionError(null)
-  }
-
-  const setField = (key: CronFieldKey, value: string) => {
-    applyFields({ ...fields, [key]: value.trim() || '*' })
-  }
 
   /** Focusing a calendar field that is still `*` switches it to Pick so the schedule visibly updates. */
   const focusField = (key: CronFieldKey) => {
@@ -434,80 +419,11 @@ const CronExpressionBuilder = () => {
     }
   }
 
-  const handleExpressionChange = (text: string) => {
-    setExpressionText(text)
-    if (!text.trim()) {
-      setExpressionError(null)
-      return
-    }
-    const result = parseExpression(text)
-    if (result.ok) {
-      setFields(result.fields)
-      setExpressionError(null)
-      return
-    }
-    setExpressionError(result.error)
-  }
-
-  const handleExpressionBlur = () => {
-    if (!expressionText.trim()) {
-      setExpressionText(fieldsToExpression(fields))
-      setExpressionError(null)
-      return
-    }
-    setExpressionText(fieldsToExpression(fields))
-    setExpressionError(null)
-  }
-
-  const applyPreset = (expression: string) => {
-    const result = parseExpression(expression)
-    if (result.ok) applyFields(result.fields)
-  }
-
-  const handleClear = () => {
-    applyFields(cloneFields(DEFAULT_FIELDS))
-    setTimezone('local')
-    setActiveField('minute')
-    setCopied(null)
-  }
-
-  const expression = fieldsToExpression(fields)
-
-  const description = useMemo(() => {
-    try {
-      return { value: describeCron(expression), error: null as string | null }
-    } catch (err) {
-      return {
-        value: '',
-        error: err instanceof Error ? err.message : 'Invalid expression.'
-      }
-    }
-  }, [expression])
-
-  const runs = useMemo(() => {
-    if (!ready) {
-      return { value: [] as Date[], error: null as string | null }
-    }
-    try {
-      return {
-        value: nextRuns(expression, 10, timezone),
-        error: null as string | null
-      }
-    } catch (err) {
-      return {
-        value: [] as Date[],
-        error:
-          err instanceof Error ? err.message : 'Could not compute next runs.'
-      }
-    }
-  }, [expression, timezone, ready])
-
   const handleCopy = async (key: CopyKey, text: string) => {
     if (!text) return
     await navigator.clipboard.writeText(text)
     unlockAchievement('clipboard-master')
-    setCopied(key)
-    setTimeout(() => setCopied(null), 1500)
+    flash(key)
   }
 
   const activePreset = CRON_PRESETS.find((p) => p.expression === expression)
@@ -538,15 +454,15 @@ const CronExpressionBuilder = () => {
                 copied={copied === 'expression'}
                 onClick={() => handleCopy('expression', expression)}
               />
-              <ClearButton onClick={handleClear}>Reset</ClearButton>
+              <ClearButton onClick={reset}>Reset</ClearButton>
             </div>
           </div>
 
           <input
             id="cron-expression"
             value={expressionText}
-            onChange={(e) => handleExpressionChange(e.target.value)}
-            onBlur={handleExpressionBlur}
+            onChange={(e) => setExpressionText(e.target.value)}
+            onBlur={blurExpression}
             placeholder="0 9 * * 1-5"
             spellCheck={false}
             autoComplete="off"
@@ -630,25 +546,25 @@ const CronExpressionBuilder = () => {
       </ToolInputPanel>
 
       <div className={toolResultPanelClass}>
-          <div className={toolResultHeaderRowClass}>
-            <h2 className={toolSectionTitleClass}>Next 10 runs</h2>
-            <ToolChipRow>
-              {(
-                [
-                  ['local', 'Local'],
-                  ['UTC', 'UTC']
-                ] as const
-              ).map(([id, label]) => (
-                <ToolChipButton
-                  key={id}
-                  active={timezone === id}
-                  onClick={() => setTimezone(id)}
-                >
-                  {label}
-                </ToolChipButton>
-              ))}
-            </ToolChipRow>
-          </div>
+        <div className={toolResultHeaderRowClass}>
+          <h2 className={toolSectionTitleClass}>Next 10 runs</h2>
+          <ToolChipRow>
+            {(
+              [
+                ['local', 'Local'],
+                ['UTC', 'UTC']
+              ] as const
+            ).map(([id, label]) => (
+              <ToolChipButton
+                key={id}
+                active={timezone === id}
+                onClick={() => setTimezone(id)}
+              >
+                {label}
+              </ToolChipButton>
+            ))}
+          </ToolChipRow>
+        </div>
 
         {!ready ? (
           <p className={toolEmptyHintClass}>Calculating upcoming times…</p>
@@ -692,4 +608,16 @@ const CronExpressionBuilder = () => {
   )
 }
 
-export default CronExpressionBuilder
+export default function CronExpressionBuilder() {
+  return (
+    <Suspense
+      fallback={
+        <ToolLayout title="Cron expression builder">
+          <p className={toolEmptyHintClass}>Loading…</p>
+        </ToolLayout>
+      }
+    >
+      <CronExpressionBuilderInner />
+    </Suspense>
+  )
+}
