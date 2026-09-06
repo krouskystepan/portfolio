@@ -235,7 +235,7 @@ export const tools = [
   },
   {
     name: 'Cron expression builder',
-    path: '', // 'cron-builder'
+    path: 'cron-builder',
     description:
       'Build a 5-field cron schedule visually, read a plain-English explanation, and preview the next runs.',
     section: 'network',

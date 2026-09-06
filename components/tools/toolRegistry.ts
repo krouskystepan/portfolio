@@ -24,7 +24,8 @@ const loaders = {
     import('@/components/tools/items/NumberBaseConverter'),
   'qr-code': () => import('@/components/tools/items/QrCodeGenerator'),
   'chmod-calculator': () => import('@/components/tools/items/ChmodCalculator'),
-  'cidr-calculator': () => import('@/components/tools/items/CidrCalculator')
+  'cidr-calculator': () => import('@/components/tools/items/CidrCalculator'),
+  'cron-builder': () => import('@/components/tools/items/CronExpressionBuilder')
 } as const satisfies Record<ToolPath, ToolLoader>
 
 export type { ToolPath }
