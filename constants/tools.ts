@@ -142,7 +142,7 @@ export const tools = [
     name: 'Password / secret generator',
     path: 'password-generator',
     description:
-      'Generate strong passwords and secrets with length, charset, and entropy — all in the browser.',
+      'Generate strong passwords and secrets with length, charset, and entropy - all in the browser.',
     section: 'generators',
     keywords: [
       'password',
@@ -185,9 +185,9 @@ export const tools = [
   },
   {
     name: 'Hash generator',
-    path: '', // 'hash-generator'
+    path: 'hash-generator',
     description:
-      'Generate MD5 and SHA checksums for text or files — cache keys, integrity checks, pipeline digests.',
+      'Generate MD5 and SHA checksums for text or files - cache keys, integrity checks, pipeline digests.',
     section: 'generators',
     keywords: [
       'md5',
@@ -274,7 +274,7 @@ export const tools = [
     name: 'Escape / unescape toolbox',
     path: '', // 'escape-unescape'
     description:
-      'Escape or unescape strings for C, Python, and shell — turn log escapes into text and text into pasteable literals.',
+      'Escape or unescape strings for C, Python, and shell - turn log escapes into text and text into pasteable literals.',
     section: 'network',
     keywords: [
       'escape',

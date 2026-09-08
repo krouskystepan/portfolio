@@ -26,7 +26,8 @@ const loaders = {
   'color-palette': () => import('@/components/tools/items/ColorPalette'),
   'chmod-calculator': () => import('@/components/tools/items/ChmodCalculator'),
   'cidr-calculator': () => import('@/components/tools/items/CidrCalculator'),
-  'cron-builder': () => import('@/components/tools/items/CronExpressionBuilder')
+  'cron-builder': () => import('@/components/tools/items/CronExpressionBuilder'),
+  'hash-generator': () => import('@/components/tools/items/HashGenerator')
 } as const satisfies Record<ToolPath, ToolLoader>
 
 export type { ToolPath }

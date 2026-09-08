@@ -59,11 +59,8 @@ export const toolCheckboxLabelClass =
 
 export type ToolChipTone = 'default' | 'accent'
 
-/** Canonical chip style — amber for presets, blue for modes/toggles */
-export function toolChipClass(
-  active: boolean,
-  tone: ToolChipTone = 'default'
-) {
+/** Canonical chip style - amber for presets, blue for modes/toggles */
+export function toolChipClass(active: boolean, tone: ToolChipTone = 'default') {
   if (active && tone === 'accent') {
     return 'inline-flex h-8 items-center justify-center rounded-md bg-amber-600/90 px-2.5 text-xs font-medium text-white transition hover:bg-amber-500 disabled:cursor-not-allowed disabled:opacity-60'
   }
@@ -145,9 +142,7 @@ export function ToolChipRow({
   children: ReactNode
   className?: string
 }) {
-  return (
-    <div className={`flex flex-wrap gap-1.5 ${className}`}>{children}</div>
-  )
+  return <div className={`flex flex-wrap gap-1.5 ${className}`}>{children}</div>
 }
 
 type ToolCopyButtonProps = {
