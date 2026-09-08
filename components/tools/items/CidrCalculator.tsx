@@ -230,8 +230,8 @@ function CidrCalculatorInner() {
         {hostEdge ? (
           <p className={`${toolHintMetaClass} mb-3`}>
             {info.prefix === 32
-              ? 'Host route (/32) — no usable host range.'
-              : 'Point-to-point (/31) — no traditional usable host range.'}
+              ? 'Host route (/32) - no usable host range.'
+              : 'Point-to-point (/31) - no traditional usable host range.'}
           </p>
         ) : null}
         <div className="space-y-3 text-sm">

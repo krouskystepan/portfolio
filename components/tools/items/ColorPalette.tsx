@@ -198,8 +198,7 @@ function ColorPaletteInner() {
                 onChange={(e) =>
                   dispatch({
                     type: 'setCountAndGenerate',
-                    count:
-                      Number.parseInt(e.target.value, 10) || MIN_PALETTE
+                    count: Number.parseInt(e.target.value, 10) || MIN_PALETTE
                   })
                 }
                 className={toolNumberInputClass}
@@ -210,8 +209,10 @@ function ColorPaletteInner() {
 
           <div className={toolToolbarBetweenClass}>
             <p className={toolHintMetaClass}>
-              <kbd className="rounded border border-white/10 px-1 font-mono">L</kbd> locks
-              selected · drag to reorder
+              <kbd className="rounded border border-white/10 px-1 font-mono">
+                L
+              </kbd>{' '}
+              locks selected · drag to reorder
             </p>
             <div className="flex flex-wrap justify-end gap-2">
               <SecondaryButton
@@ -268,15 +269,9 @@ function ColorPaletteInner() {
                   layout={
                     motionReady && draggingId === null ? 'position' : undefined
                   }
-                  initial={
-                    motionReady ? { opacity: 0, scaleX: 0.85 } : false
-                  }
+                  initial={motionReady ? { opacity: 0, scaleX: 0.85 } : false}
                   animate={{ opacity: 1, scaleX: 1 }}
-                  exit={
-                    motionReady
-                      ? { opacity: 0, scaleX: 0.85 }
-                      : undefined
-                  }
+                  exit={motionReady ? { opacity: 0, scaleX: 0.85 } : undefined}
                   transition={SWATCH_TRANSITION}
                   dragListener={!isHexFocused && !isPickerOpen}
                   dragElastic={0.08}
@@ -290,9 +285,7 @@ function ColorPaletteInner() {
                   onDragEnd={finishReorder}
                   className={`relative flex min-w-0 flex-1 cursor-grab flex-col justify-between overflow-visible p-3 active:cursor-grabbing ${
                     index === 0 ? 'rounded-l-2xl' : ''
-                  } ${
-                    index === colors.length - 1 ? 'rounded-r-2xl' : ''
-                  } ${
+                  } ${index === colors.length - 1 ? 'rounded-r-2xl' : ''} ${
                     isSelected ? 'ring-2 ring-inset ring-white/40' : ''
                   } ${isDragging ? 'z-30 shadow-2xl' : ''} ${
                     isPickerOpen ? 'z-40' : ''
@@ -368,7 +361,7 @@ function ColorPaletteInner() {
                       type="text"
                       value={isHexFocused ? editDraft : color.hex}
                       aria-label={`Hex for color ${index + 1}`}
-                      title="Edit hex — double-click for color picker"
+                      title="Edit hex - double-click for color picker"
                       spellCheck={false}
                       autoComplete="off"
                       className="w-[7.25rem] cursor-text border-0 bg-transparent p-0 font-mono text-sm font-semibold tracking-wide outline-none ring-0 focus:underline"
@@ -465,9 +458,7 @@ function ColorPaletteInner() {
         <div className={toolResultPanelClass}>
           <div className={toolResultHeaderRowClass}>
             <h3 className={toolSectionTitleClass}>Shade ramp</h3>
-            <span className={toolHintMetaClass}>
-              Selected {selectedHex}
-            </span>
+            <span className={toolHintMetaClass}>Selected {selectedHex}</span>
           </div>
           <div className="flex h-14 overflow-hidden rounded-lg border border-white/10">
             {ramp.map((hex, i) => (
@@ -502,7 +493,7 @@ function ColorPaletteInner() {
             ))}
           </ToolChipRow>
           <p className={`mt-3 ${toolHintMetaClass}`}>
-            Preview only — stored palette hex values stay unchanged.
+            Preview only - stored palette hex values stay unchanged.
           </p>
         </div>
       </div>

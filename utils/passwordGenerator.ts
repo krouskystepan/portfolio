@@ -230,7 +230,7 @@ export function generateReadablePassword(
       for (let i = 0; i < otherLen; i++) extras += pick(otherPool)
     }
   } else if (otherLen > 0) {
-    // digits/symbols requested but pool empty after ambiguous filter — fill with letters
+    // digits/symbols requested but pool empty after ambiguous filter - fill with letters
     for (let i = 0; i < otherLen; i++) {
       const useConsonant = startConsonant
         ? (letterLen + i) % 2 === 0

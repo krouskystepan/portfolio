@@ -44,7 +44,7 @@ export function makePaletteColor(
   return { id, hex, locked }
 }
 
-/** Deterministic SSR/hydration placeholder — never use Math.random() / UUID here. */
+/** Deterministic SSR/hydration placeholder - never use Math.random() / UUID here. */
 export const SSR_PLACEHOLDER_HEXES = [
   '#6B7280',
   '#78716C',
@@ -71,8 +71,7 @@ const clamp = (n: number, min: number, max: number) =>
 
 const wrapHue = (h: number) => ((h % 360) + 360) % 360
 
-const rand = (min: number, max: number) =>
-  min + Math.random() * (max - min)
+const rand = (min: number, max: number) => min + Math.random() * (max - min)
 
 const normalizeHex = (hex: string): string | null => {
   const rgb = hexToRgb(hex)
@@ -151,7 +150,11 @@ function buildHslList(count: number, mode: HarmonyMode, base: HSL): HSL[] {
     colors.push({
       h: wrapHue(base.h + offset + (mode === 'analogous' ? 0 : cycle * 8)),
       s: clamp(base.s + (i % 2 === 0 ? 0 : -8), 30, 90),
-      l: clamp(base.l + (i % 2 === 0 ? lightnessShift : -lightnessShift * 0.6), 22, 78)
+      l: clamp(
+        base.l + (i % 2 === 0 ? lightnessShift : -lightnessShift * 0.6),
+        22,
+        78
+      )
     })
   }
 
@@ -252,7 +255,11 @@ export function contrastingText(hex: string): '#FFFFFF' | '#000000' {
 // Approximate CVD simulation matrices (linear RGB), Machado et al. style.
 const BLINDNESS_MATRICES: Record<
   Exclude<BlindnessMode, 'none'>,
-  readonly [readonly [number, number, number], readonly [number, number, number], readonly [number, number, number]]
+  readonly [
+    readonly [number, number, number],
+    readonly [number, number, number],
+    readonly [number, number, number]
+  ]
 > = {
   protanopia: [
     [0.56667, 0.43333, 0],
@@ -351,10 +358,7 @@ export function exportHexList(colors: string[]): string {
   return colors.map((c) => c.toUpperCase()).join('\n')
 }
 
-export function exportPalette(
-  format: ExportFormat,
-  colors: string[]
-): string {
+export function exportPalette(format: ExportFormat, colors: string[]): string {
   switch (format) {
     case 'css':
       return exportCssVars(colors)
@@ -389,7 +393,7 @@ export function toShareParam(hexes: string[]): string {
   return hexes.map((h) => h.replace(/^#/, '').toLowerCase()).join('-')
 }
 
-/** Shortest-path hue midpoint in HSL — the blend between two swatches. */
+/** Shortest-path hue midpoint in HSL - the blend between two swatches. */
 export function midpointColor(aHex: string, bHex: string): string {
   const aRgb = hexToRgb(aHex)
   const bRgb = hexToRgb(bHex)
@@ -401,11 +405,7 @@ export function midpointColor(aHex: string, bHex: string): string {
   if (dh > 180) dh -= 360
   if (dh < -180) dh += 360
 
-  return hslToHex(
-    wrapHue(a.h + dh / 2),
-    (a.s + b.s) / 2,
-    (a.l + b.l) / 2
-  )
+  return hslToHex(wrapHue(a.h + dh / 2), (a.s + b.s) / 2, (a.l + b.l) / 2)
 }
 
 /**

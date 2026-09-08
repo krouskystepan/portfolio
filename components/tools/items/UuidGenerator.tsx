@@ -46,7 +46,7 @@ export default function UuidGenerator() {
     if (uuids.length > 0) {
       setUuids((prev) => prev.map((u) => formatUuid(u, options)))
     }
-    // Reformat existing list when display options change — not when uuids grow.
+    // Reformat existing list when display options change - not when uuids grow.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [options.uppercase, options.noHyphens])
 

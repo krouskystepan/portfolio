@@ -35,7 +35,7 @@ export const FIELD_LABELS: Record<CronFieldKey, string> = {
   dayOfWeek: 'Day of week'
 }
 
-/** Weekdays at 09:00 — a common default schedule. */
+/** Weekdays at 09:00 - a common default schedule. */
 export const DEFAULT_FIELDS: CronFields = {
   minute: '0',
   hour: '9',
@@ -154,11 +154,9 @@ export function detectFieldMode(value: string): FieldMode {
   const v = value.trim()
   if (v === '*') return 'every'
   if (/^\*\/\d+$/.test(v)) return 'step'
-  if (/^\d+-\d+$/.test(v) || /^[A-Za-z]{3}-[A-Za-z]{3}$/i.test(v)) return 'range'
-  if (
-    /^(\d+)(,\d+)*$/.test(v) ||
-    /^([A-Za-z]{3})(,[A-Za-z]{3})*$/i.test(v)
-  ) {
+  if (/^\d+-\d+$/.test(v) || /^[A-Za-z]{3}-[A-Za-z]{3}$/i.test(v))
+    return 'range'
+  if (/^(\d+)(,\d+)*$/.test(v) || /^([A-Za-z]{3})(,[A-Za-z]{3})*$/i.test(v)) {
     return 'specific'
   }
   return 'raw'
@@ -171,9 +169,7 @@ export function parseStep(value: string): number | null {
   return Number.isFinite(n) && n > 0 ? n : null
 }
 
-export function parseRange(
-  value: string
-): { from: string; to: string } | null {
+export function parseRange(value: string): { from: string; to: string } | null {
   const m = value.trim().match(/^([A-Za-z0-9]+)-([A-Za-z0-9]+)$/)
   if (!m) return null
   return { from: m[1], to: m[2] }
@@ -182,7 +178,10 @@ export function parseRange(
 export function parseSpecificList(value: string): string[] {
   const trimmed = value.trim()
   if (!trimmed || trimmed === '*') return []
-  return trimmed.split(',').map((p) => p.trim()).filter(Boolean)
+  return trimmed
+    .split(',')
+    .map((p) => p.trim())
+    .filter(Boolean)
 }
 
 export function buildStep(n: number): string {
