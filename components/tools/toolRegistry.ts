@@ -24,6 +24,8 @@ const loaders = {
     import('@/components/tools/items/NumberBaseConverter'),
   'qr-code': () => import('@/components/tools/items/QrCodeGenerator'),
   'color-palette': () => import('@/components/tools/items/ColorPalette'),
+  'gradient-generator': () =>
+    import('@/components/tools/items/GradientGenerator'),
   'chmod-calculator': () => import('@/components/tools/items/ChmodCalculator'),
   'cidr-calculator': () => import('@/components/tools/items/CidrCalculator'),
   'cron-builder': () => import('@/components/tools/items/CronExpressionBuilder'),

@@ -5,30 +5,29 @@ import { useAchievementContext } from '@/context/AchievementContext'
 import { ColorFormats, parseColor } from '@/utils/colorUtils'
 import { HexAlphaColorPicker } from 'react-colorful'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
-import { ClearButton, PrimaryButton } from '@/components/tools/_shared/ToolButtons'
+import {
+  ClearButton,
+  PrimaryButton,
+} from '@/components/tools/_shared/ToolButtons'
 import {
   toolEmptyHintClass,
   toolErrorBoxClass,
   toolInputClass,
   toolIntroTextClass,
+  toolPickerShellClass,
   toolResultPanelClass,
   toolSectionTitleClass,
   toolValueRowClass,
   ToolCopyButton,
-  ToolInputPanel
+  ToolInputPanel,
 } from '@/components/tools/_shared/toolUi'
 import { str, useToolUrlState } from '@/hooks/useToolUrlState'
 import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
 
 /** Keep overrides light so the 2D spectrum stays a square, not a thin bar. */
 const pickerShellClass =
-  'rounded-xl border border-white/10 bg-neutral-900/40 p-4 ' +
-  '[&_.react-colorful]:!h-[220px] [&_.react-colorful]:!w-full ' +
-  '[&_.react-colorful__saturation]:!mb-3 [&_.react-colorful__saturation]:!rounded-lg [&_.react-colorful__saturation]:!border-b-0 ' +
-  '[&_.react-colorful__hue]:!h-3 [&_.react-colorful__hue]:!rounded-lg ' +
+  `${toolPickerShellClass} ` +
   '[&_.react-colorful__alpha]:!mt-3 [&_.react-colorful__alpha]:!h-3 [&_.react-colorful__alpha]:!rounded-lg ' +
-  '[&_.react-colorful__pointer]:!h-4 [&_.react-colorful__pointer]:!w-4 ' +
-  '[&_.react-colorful__hue-pointer]:!h-3.5 [&_.react-colorful__hue-pointer]:!w-3.5 ' +
   '[&_.react-colorful__alpha-pointer]:!h-3.5 [&_.react-colorful__alpha-pointer]:!w-3.5'
 
 const previewCheckerClass =
@@ -40,8 +39,7 @@ const previewCheckerClass =
 
 const toHexAlpha = (converted: ColorFormats) => {
   const hex = (converted.HEX ?? '#000000').toLowerCase()
-  const alpha =
-    converted.Alpha != null ? Number.parseFloat(converted.Alpha) : 1
+  const alpha = converted.Alpha != null ? Number.parseFloat(converted.Alpha) : 1
   const aa = Math.round(Math.min(1, Math.max(0, alpha)) * 255)
     .toString(16)
     .padStart(2, '0')
@@ -64,7 +62,7 @@ const normalizePickerValue = (value: string) => {
 
 function ColorConverterInner() {
   const [url, setUrl] = useToolUrlState({
-    color: str('', { text: true })
+    color: str('', { text: true }),
   })
 
   const input = url.color

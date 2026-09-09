@@ -184,6 +184,26 @@ export const tools = [
     ]
   },
   {
+    name: 'Gradient generator',
+    path: 'gradient-generator',
+    description:
+      'Build linear, radial, and conic CSS gradients with repeating variants, position and size controls, editable stops, and CSS/Tailwind export.',
+    section: 'generators',
+    keywords: [
+      'gradient',
+      'linear',
+      'radial',
+      'conic',
+      'repeating',
+      'css',
+      'tailwind',
+      'stops',
+      'background',
+      'angle',
+      'color'
+    ]
+  },
+  {
     name: 'Hash generator',
     path: 'hash-generator',
     description:

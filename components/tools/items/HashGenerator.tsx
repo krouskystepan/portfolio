@@ -53,9 +53,9 @@ export default function HashGenerator() {
   const [format, setFormat] = useState<HashFormat>('hex')
   const [uppercase, setUppercase] = useState(false)
   const [expected, setExpected] = useState('')
-  const [digests, setDigests] = useState<Partial<Record<HashAlgo, ArrayBuffer>>>(
-    {}
-  )
+  const [digests, setDigests] = useState<
+    Partial<Record<HashAlgo, ArrayBuffer>>
+  >({})
   const [error, setError] = useState<string | null>(null)
   const [hashing, setHashing] = useState(false)
   const [dragOver, setDragOver] = useState(false)
@@ -172,7 +172,7 @@ export default function HashGenerator() {
       <ToolInputPanel
         intro={
           <p className={toolIntroTextClass}>
-            Compute UTF-8 text digests or client-side file checksums — nothing
+            Compute UTF-8 text digests or client-side file checksums - nothing
             is uploaded. Useful for cache keys, integrity checks, and matching{' '}
             <code>md5sum</code> / <code>sha256sum</code>. MD5 is for legacy
             checksums only, not security.
