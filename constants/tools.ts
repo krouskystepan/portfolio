@@ -223,6 +223,14 @@ export const tools = [
     ]
   },
   {
+    name: 'Lorem / placeholder text',
+    path: 'lorem-generator',
+    description:
+      'Generate placeholder paragraphs, sentences, or words — classic ipsum or realistic English.',
+    section: 'generators',
+    keywords: ['lorem', 'ipsum', 'placeholder', 'dummy text', 'filler', 'mock']
+  },
+  {
     name: 'Color picker & converter',
     path: 'color-converter',
     description:
