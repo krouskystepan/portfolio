@@ -101,6 +101,15 @@ export const toolListItemClass =
 /** Muted hint under controls */
 export const toolHintMetaClass = 'text-xs leading-relaxed text-neutral-500'
 
+/** react-colorful shell - keep the spectrum a square, not a thin bar. */
+export const toolPickerShellClass =
+  'rounded-xl border border-white/10 bg-neutral-900/40 p-4 ' +
+  '[&_.react-colorful]:!h-[220px] [&_.react-colorful]:!w-full ' +
+  '[&_.react-colorful__saturation]:!mb-3 [&_.react-colorful__saturation]:!rounded-lg [&_.react-colorful__saturation]:!border-b-0 ' +
+  '[&_.react-colorful__hue]:!h-3 [&_.react-colorful__hue]:!rounded-lg ' +
+  '[&_.react-colorful__pointer]:!h-4 [&_.react-colorful__pointer]:!w-4 ' +
+  '[&_.react-colorful__hue-pointer]:!h-3.5 [&_.react-colorful__hue-pointer]:!w-3.5'
+
 type ToolChipButtonProps = {
   active: boolean
   onClick: () => void
