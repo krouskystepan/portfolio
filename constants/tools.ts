@@ -114,6 +114,25 @@ export const tools = [
     keywords: ['jwt', 'bearer', 'token', 'base64']
   },
   {
+    name: 'cURL → fetch / axios / Python',
+    path: 'curl-to-http',
+    description:
+      'Convert pasted curl into ready-to-run fetch, axios, or Python requests.',
+    section: 'web',
+    keywords: [
+      'curl',
+      'fetch',
+      'axios',
+      'python',
+      'requests',
+      'http',
+      'devtools',
+      'request',
+      'headers',
+      'debug'
+    ]
+  },
+  {
     name: 'Base64 / Hex codec',
     path: '', // 'base64-hex'
     description:
