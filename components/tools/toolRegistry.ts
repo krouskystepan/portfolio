@@ -15,6 +15,7 @@ const loaders = {
   'url-encoder-decoder': () => import('@/components/tools/items/UrlEncoderDecoder'),
   'url-inspector': () => import('@/components/tools/items/UrlInspector'),
   'jwt-decoder': () => import('@/components/tools/items/JwtDecoder'),
+  'curl-to-http': () => import('@/components/tools/items/CurlToHttp'),
   'uuid-generator': () => import('@/components/tools/items/UuidGenerator'),
   'password-generator': () =>
     import('@/components/tools/items/PasswordGenerator'),
