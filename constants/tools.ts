@@ -133,6 +133,24 @@ export const tools = [
     ]
   },
   {
+    name: 'Image to Base64 / data URI',
+    path: '', // 'image-base64'
+    description:
+      'Encode an image to raw Base64 or a data URI for CSS and HTML embeds.',
+    section: 'web',
+    keywords: [
+      'image',
+      'base64',
+      'data uri',
+      'data url',
+      'embed',
+      'png',
+      'jpg',
+      'svg',
+      'webp'
+    ]
+  },
+  {
     name: 'Base64 / Hex codec',
     path: '', // 'base64-hex'
     description:
@@ -223,6 +241,43 @@ export const tools = [
     ]
   },
   {
+    name: 'SVG blob / wave generator',
+    path: '', // 'blob-wave'
+    description:
+      'Build organic blob and wave SVG shapes with brand presets, transparent export, and copy or download.',
+    section: 'generators',
+    keywords: [
+      'svg',
+      'blob',
+      'wave',
+      'shape',
+      'path',
+      'overlay',
+      'obs',
+      'background',
+      'clip-path',
+      'hero'
+    ]
+  },
+  {
+    name: 'CSS shadow generator',
+    path: '', // 'shadow-generator'
+    description:
+      'Build box-shadow and text-shadow with layers, inset, and alpha - preview live, export CSS or Tailwind.',
+    section: 'generators',
+    keywords: [
+      'box-shadow',
+      'text-shadow',
+      'inset',
+      'blur',
+      'spread',
+      'css',
+      'tailwind',
+      'glow',
+      'elevation'
+    ]
+  },
+  {
     name: 'Hash generator',
     path: 'hash-generator',
     description:
@@ -245,9 +300,26 @@ export const tools = [
     name: 'Lorem / placeholder text',
     path: 'lorem-generator',
     description:
-      'Generate placeholder paragraphs, sentences, or words — classic ipsum or realistic English.',
+      'Generate placeholder paragraphs, sentences, or words - classic ipsum or realistic English.',
     section: 'generators',
     keywords: ['lorem', 'ipsum', 'placeholder', 'dummy text', 'filler', 'mock']
+  },
+  {
+    name: 'Mock / fake data generator',
+    path: '', // 'mock-data'
+    description:
+      'Generate fake names, emails, phones, and addresses as a JSON array of records for fixtures and QA.',
+    section: 'generators',
+    keywords: [
+      'fake',
+      'faker',
+      'fixture',
+      'seed',
+      'qa',
+      'email',
+      'phone',
+      'address'
+    ]
   },
   {
     name: 'Color picker & converter',
