@@ -10,6 +10,63 @@ type ToolsDirectoryClientProps = {
   tools: readonly TTools[]
 }
 
+function ToolCard({ tool }: { tool: TTools }) {
+  const isComingSoon = tool.path === ''
+
+  const body = (
+    <div className="flex h-full flex-col justify-between gap-3">
+      <div>
+        <div
+          className={`text-base font-semibold sm:text-lg md:text-xl ${
+            isComingSoon ? 'text-neutral-300' : 'text-white'
+          }`}
+        >
+          {tool.name}
+        </div>
+        <p
+          className={`mt-1 line-clamp-2 text-xs leading-relaxed sm:text-sm ${
+            isComingSoon ? 'text-neutral-500' : 'text-neutral-300'
+          }`}
+        >
+          {tool.description}
+        </p>
+      </div>
+
+      <div className="relative text-xs font-medium sm:text-sm">
+        {isComingSoon ? (
+          <span className="rounded-md border border-white/10 bg-white/[0.03] px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-neutral-400 sm:text-xs">
+            Coming soon
+          </span>
+        ) : (
+          <span className="inline-flex items-center text-custom_blue">
+            <span className="relative after:absolute after:-bottom-px after:left-0 after:h-px after:w-0 after:bg-current after:transition-all after:duration-300 group-hover:after:w-full">
+              Open
+            </span>
+            <ArrowRight className="ml-1 size-4 transition-transform delay-[50ms] duration-300 group-hover:translate-x-1" />
+          </span>
+        )}
+      </div>
+    </div>
+  )
+
+  if (isComingSoon) {
+    return (
+      <div className="relative cursor-default overflow-hidden rounded-2xl border border-dashed border-white/10 bg-neutral-950/30 p-6 backdrop-blur-sm">
+        {body}
+      </div>
+    )
+  }
+
+  return (
+    <Link
+      href={`/t/${tool.path}`}
+      className="group relative block overflow-hidden rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm transition-all duration-200 hover:border-custom_blue"
+    >
+      {body}
+    </Link>
+  )
+}
+
 export default function ToolsDirectoryClient({
   tools
 }: ToolsDirectoryClientProps) {
@@ -58,31 +115,10 @@ export default function ToolsDirectoryClient({
               </h3>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {group.map((tool) => (
-                  <Link
-                    key={tool.path}
-                    href={`/t/${tool.path}`}
-                    className="group relative block overflow-hidden rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm transition-all duration-200 hover:border-custom_blue"
-                  >
-                    <div className="flex h-full flex-col justify-between gap-3">
-                      <div>
-                        <div className="text-base font-semibold text-white sm:text-lg md:text-xl">
-                          {tool.name}
-                        </div>
-                        <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-neutral-300 sm:text-sm">
-                          {tool.description}
-                        </p>
-                      </div>
-
-                      <div className="relative text-xs font-medium sm:text-sm">
-                        <span className="inline-flex items-center text-custom_blue">
-                          <span className="relative after:absolute after:-bottom-px after:left-0 after:h-px after:w-0 after:bg-current after:transition-all after:duration-300 group-hover:after:w-full">
-                            Open
-                          </span>
-                          <ArrowRight className="ml-1 size-4 transition-transform delay-[50ms] duration-300 group-hover:translate-x-1" />
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
+                  <ToolCard
+                    key={tool.path || tool.name}
+                    tool={tool}
+                  />
                 ))}
               </div>
             </section>

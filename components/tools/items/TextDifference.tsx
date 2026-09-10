@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { Suspense, useMemo } from 'react'
 import { DiffMethod } from 'react-diff-viewer'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ReactDiffViewer from 'react-diff-viewer'
@@ -10,13 +10,14 @@ import {
   toolEmptyHintClass,
   toolIntroTextClass,
   toolLabelClass,
-  toolPanelClass,
   toolResultHeaderRowClass,
   toolResultPanelClass,
   toolSectionTitleClass,
-  toolSegmentBarClass,
-  toolSegmentTabClass
+  ToolChipButton,
+  ToolChipRow,
+  ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
+import { bool, str, useToolUrlState } from '@/hooks/useToolUrlState'
 
 /** Matches portfolio tool surfaces (neutral-950, dashed cards, emerald / red accents) */
 const diffVariables = {
@@ -44,12 +45,21 @@ const diffVariables = {
   highlightGutterBackground: 'rgba(234, 179, 8, 0.1)',
 } as const
 
-const TextDifference = () => {
-  const [textA, setTextA] = useState('')
-  const [textB, setTextB] = useState('')
-  const [splitView, setSplitView] = useState(true)
-  const [showDiffOnly, setShowDiffOnly] = useState(true)
-  const [highlightWords, setHighlightWords] = useState(false)
+function TextDifferenceInner() {
+  const [url, setUrl] = useToolUrlState({
+    a: str('', { text: true }),
+    b: str('', { text: true }),
+    split: bool(true),
+    diffOnly: bool(true),
+    words: bool(false)
+  })
+  const {
+    a: textA,
+    b: textB,
+    split: splitView,
+    diffOnly: showDiffOnly,
+    words: highlightWords
+  } = url
 
   const diffStyles = useMemo(
     () => ({
@@ -111,16 +121,18 @@ const TextDifference = () => {
 
   return (
     <ToolLayout title="Text Compare / Diff Tool">
-      <div className={toolPanelClass}>
-        <p className={toolIntroTextClass}>
-          Paste or edit two versions side by side. The preview uses a line-by-line
-          diff: use <strong className="font-medium text-neutral-200">Split</strong>{' '}
-          for two columns or{' '}
-          <strong className="font-medium text-neutral-200">Unified</strong> for one.
-          Enable <strong className="font-medium text-neutral-200">Word highlight</strong>{' '}
-          when you need changes inside a line.
-        </p>
-
+      <ToolInputPanel
+        intro={
+          <p className={toolIntroTextClass}>
+            Paste or edit two versions side by side. The preview uses a line-by-line
+            diff: use <strong className="font-medium text-neutral-200">Split</strong>{' '}
+            for two columns or{' '}
+            <strong className="font-medium text-neutral-200">Unified</strong> for one.
+            Enable <strong className="font-medium text-neutral-200">Word highlight</strong>{' '}
+            when you need changes inside a line.
+          </p>
+        }
+      >
         <div className="grid min-h-64 grid-cols-1 gap-5 md:h-96 md:grid-cols-2">
           <div className="flex max-h-96 min-h-64 min-w-0 flex-col md:h-full md:max-h-none">
             <div className={toolLabelClass}>Original</div>
@@ -128,7 +140,12 @@ const TextDifference = () => {
               <TextAreaWithLineNumbers
                 fillParent
                 value={textA}
-                setValue={setTextA}
+                setValue={(v) =>
+                  setUrl((s) => ({
+                    ...s,
+                    a: typeof v === 'function' ? v(s.a) : v
+                  }))
+                }
                 placeholder="Original text…"
               />
             </div>
@@ -139,13 +156,18 @@ const TextDifference = () => {
               <TextAreaWithLineNumbers
                 fillParent
                 value={textB}
-                setValue={setTextB}
+                setValue={(v) =>
+                  setUrl((s) => ({
+                    ...s,
+                    b: typeof v === 'function' ? v(s.b) : v
+                  }))
+                }
                 placeholder="Modified text…"
               />
             </div>
           </div>
         </div>
-      </div>
+      </ToolInputPanel>
 
       <div className={`${toolResultPanelClass} z-10`}>
         <div className={toolResultHeaderRowClass}>
@@ -153,29 +175,21 @@ const TextDifference = () => {
         </div>
 
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-          <div
-            className={toolSegmentBarClass}
-            role="tablist"
-            aria-label="Diff layout"
-          >
-            <button
-              type="button"
-              role="tab"
-              aria-selected={splitView}
-              className={toolSegmentTabClass(splitView)}
-              onClick={() => setSplitView(true)}
-            >
-              Split
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={!splitView}
-              className={toolSegmentTabClass(!splitView)}
-              onClick={() => setSplitView(false)}
-            >
-              Unified
-            </button>
+          <div role="tablist" aria-label="Diff layout">
+            <ToolChipRow>
+              <ToolChipButton
+                active={splitView}
+                onClick={() => setUrl((s) => ({ ...s, split: true }))}
+              >
+                Split
+              </ToolChipButton>
+              <ToolChipButton
+                active={!splitView}
+                onClick={() => setUrl((s) => ({ ...s, split: false }))}
+              >
+                Unified
+              </ToolChipButton>
+            </ToolChipRow>
           </div>
 
           <div className="flex flex-wrap items-center gap-4">
@@ -183,7 +197,9 @@ const TextDifference = () => {
               <input
                 type="checkbox"
                 checked={showDiffOnly}
-                onChange={() => setShowDiffOnly((v) => !v)}
+                onChange={() =>
+                  setUrl((s) => ({ ...s, diffOnly: !s.diffOnly }))
+                }
                 className="size-4 accent-custom_blue"
               />
               Hide unchanged (fold)
@@ -192,7 +208,7 @@ const TextDifference = () => {
               <input
                 type="checkbox"
                 checked={highlightWords}
-                onChange={() => setHighlightWords((v) => !v)}
+                onChange={() => setUrl((s) => ({ ...s, words: !s.words }))}
                 className="size-4 accent-custom_blue"
               />
               Word highlight
@@ -235,4 +251,16 @@ const TextDifference = () => {
   )
 }
 
-export default TextDifference
+export default function TextDifference() {
+  return (
+    <Suspense
+      fallback={
+        <ToolLayout title="Text Compare / Diff Tool">
+          <p className="text-center text-sm text-neutral-400">Loading…</p>
+        </ToolLayout>
+      }
+    >
+      <TextDifferenceInner />
+    </Suspense>
+  )
+}

@@ -1,33 +1,29 @@
 'use client'
 
 import { useAchievementContext } from '@/context/AchievementContext'
-import { useState, useMemo } from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import { ClearButton, PrimaryButton } from '@/components/tools/_shared/ToolButtons'
 import {
   toolCheckboxLabelClass,
   toolEmptyHintClass,
-  toolPanelClass,
   toolPreOutputClass,
   toolResultHeaderRowClass,
   toolResultPanelClass,
   toolSectionTitleClass,
   toolToolbarBetweenClass,
-  ToolCopyButton
+  ToolCopyButton,
+  ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
+import { bool, str, useToolUrlState } from '@/hooks/useToolUrlState'
+import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
 
-type SortOptions = { addSpacing: boolean }
-
-const AlphabetSorter = () => {
-  const [input, setInput] = useState<string>('')
-  const [output, setOutput] = useState<string[]>([])
-  const [options, setOptions] = useState<SortOptions>({ addSpacing: true })
-  const [copied, setCopied] = useState<boolean>(false)
-
-  const { unlockAchievement } = useAchievementContext()
-
-  const isDisabled = useMemo(() => input.trim().length === 0, [input])
+function sortInputLines(input: string, addSpacing: boolean): string[] {
+  const rawLines = input
+    .split('\n')
+    .map((l) => l.trim())
+    .filter((l) => l.length > 0)
 
   const getFirstSegment = (line: string): string => {
     const trimmed = line.trim()
@@ -35,62 +31,79 @@ const AlphabetSorter = () => {
     return dotIndex === -1 ? trimmed : trimmed.slice(0, dotIndex)
   }
 
-  const sortLines = () => {
-    if (isDisabled) return
+  const groups: Record<string, string[]> = {}
 
-    const rawLines = input
-      .split('\n')
-      .map((l) => l.trim())
-      .filter((l) => l.length > 0)
-
-    const groups: Record<string, string[]> = {}
-
-    for (const line of rawLines) {
-      const key = getFirstSegment(line)
-      if (!groups[key]) groups[key] = []
-      groups[key].push(line)
-    }
-
-    const sortedKeys = Object.keys(groups).sort((a, b) => a.localeCompare(b))
-
-    const finalLines: string[] = []
-
-    for (const key of sortedKeys) {
-      const sortedGroup = groups[key].sort((a, b) => a.localeCompare(b))
-      finalLines.push(...sortedGroup)
-      if (options.addSpacing) finalLines.push('')
-    }
-
-    const cleaned = options.addSpacing
-      ? finalLines.join('\n').trim().split('\n')
-      : finalLines
-
-    setOutput(cleaned)
+  for (const line of rawLines) {
+    const key = getFirstSegment(line)
+    if (!groups[key]) groups[key] = []
+    groups[key].push(line)
   }
+
+  const sortedKeys = Object.keys(groups).sort((a, b) => a.localeCompare(b))
+
+  const finalLines: string[] = []
+
+  for (const key of sortedKeys) {
+    const sortedGroup = groups[key].sort((a, b) => a.localeCompare(b))
+    finalLines.push(...sortedGroup)
+    if (addSpacing) finalLines.push('')
+  }
+
+  return addSpacing ? finalLines.join('\n').trim().split('\n') : finalLines
+}
+
+function AlphabetSorterInner() {
+  const [url, setUrl] = useToolUrlState({
+    t: str('', { text: true }),
+    space: bool(true)
+  })
+  const input = url.t
+  const addSpacing = url.space
+  const [output, setOutput] = useState<string[]>([])
+  const { copied, flash } = useCopyFeedback()
+  const didHydrateSort = useRef(false)
+
+  const { unlockAchievement } = useAchievementContext()
+
+  const isDisabled = useMemo(() => input.trim().length === 0, [input])
+
+  const sortLines = () => {
+    if (input.trim().length === 0) return
+    setOutput(sortInputLines(input, addSpacing))
+  }
+
+  useEffect(() => {
+    if (didHydrateSort.current) return
+    didHydrateSort.current = true
+    if (input.trim().length === 0) return
+    setOutput(sortInputLines(input, addSpacing))
+    // One-shot hydrate sort from URL; do not re-run on later edits.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const clearAll = () => {
-    setInput('')
+    setUrl((s) => ({ ...s, t: '' }))
     setOutput([])
   }
-
-  const toggle = (key: keyof SortOptions) =>
-    setOptions((prev) => ({ ...prev, [key]: !prev[key] }))
 
   const copyAll = () => {
     if (output.length === 0) return
     navigator.clipboard.writeText(output.join('\n'))
     unlockAchievement('clipboard-master')
-
-    setCopied(true)
-    setTimeout(() => setCopied(false), 1500)
+    flash()
   }
 
   return (
     <ToolLayout title="Alphabet Sorter">
-      <div className={toolPanelClass}>
+      <ToolInputPanel>
         <TextAreaWithLineNumbers
           value={input}
-          setValue={setInput}
+          setValue={(v) =>
+            setUrl((s) => ({
+              ...s,
+              t: typeof v === 'function' ? v(s.t) : v
+            }))
+          }
           placeholder="Paste your TEXT here..."
         />
 
@@ -98,14 +111,14 @@ const AlphabetSorter = () => {
           <label className={toolCheckboxLabelClass}>
             <input
               type="checkbox"
-              checked={options.addSpacing}
-              onChange={() => toggle('addSpacing')}
+              checked={addSpacing}
+              onChange={() => setUrl((s) => ({ ...s, space: !s.space }))}
               className="size-4 accent-custom_blue"
             />
             Add blank line between groups
           </label>
 
-          <div className="flex gap-2">
+          <div className="flex gap-1.5">
             <PrimaryButton onClick={sortLines} disabled={isDisabled}>
               Sort
             </PrimaryButton>
@@ -113,7 +126,7 @@ const AlphabetSorter = () => {
             <ClearButton onClick={clearAll}>Clear</ClearButton>
           </div>
         </div>
-      </div>
+      </ToolInputPanel>
 
       <div className={toolResultPanelClass}>
         <div className={toolResultHeaderRowClass}>
@@ -121,7 +134,7 @@ const AlphabetSorter = () => {
 
           {output.length > 0 ? (
             <ToolCopyButton
-              copied={copied}
+              copied={copied === true}
               onClick={copyAll}
               idleLabel="Copy all"
               copiedLabel="Copied all!"
@@ -145,4 +158,16 @@ const AlphabetSorter = () => {
   )
 }
 
-export default AlphabetSorter
+export default function AlphabetSorter() {
+  return (
+    <Suspense
+      fallback={
+        <ToolLayout title="Alphabet Sorter">
+          <p className="text-center text-sm text-neutral-400">Loading…</p>
+        </ToolLayout>
+      }
+    >
+      <AlphabetSorterInner />
+    </Suspense>
+  )
+}

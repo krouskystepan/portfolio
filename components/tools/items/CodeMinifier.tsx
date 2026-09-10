@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useAchievementContext } from '@/context/AchievementContext'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
@@ -9,21 +9,24 @@ import {
   toolEmptyHintClass,
   toolErrorBoxClass,
   toolHintMetaClass,
-  toolPanelClass,
+  toolIntroTextClass,
   toolPreOutputClass,
   toolResultHeaderRowClass,
   toolResultPanelClass,
   toolSectionTitleClass,
-  toolSegmentBarClass,
-  toolSegmentTabClass,
   toolToolbarBetweenClass,
-  ToolCopyButton
+  ToolChipButton,
+  ToolChipRow,
+  ToolCopyButton,
+  ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
 import {
   beautifyCode,
   minifyCode,
   type CodeKind
 } from '@/utils/codeMinify'
+import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
+import { enumParam, str, useToolUrlState } from '@/hooks/useToolUrlState'
 
 const LANGUAGE_TABS: { id: CodeKind; label: string }[] = [
   { id: 'html', label: 'HTML' },
@@ -32,12 +35,18 @@ const LANGUAGE_TABS: { id: CodeKind; label: string }[] = [
   { id: 'python', label: 'Python' }
 ]
 
-const CodeMinifier = () => {
-  const [input, setInput] = useState('')
+const CODE_KINDS = ['html', 'css', 'javascript', 'python'] as const satisfies readonly CodeKind[]
+
+function CodeMinifierInner() {
+  const [url, setUrl] = useToolUrlState({
+    code: str('', { text: true }),
+    lang: enumParam<CodeKind>('javascript', CODE_KINDS)
+  })
+  const input = url.code
+  const codeType = url.lang
   const [output, setOutput] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [codeType, setCodeType] = useState<CodeKind>('javascript')
-  const [copied, setCopied] = useState(false)
+  const { copied, flash } = useCopyFeedback()
   const [busy, setBusy] = useState(false)
 
   const { unlockAchievement } = useAchievementContext()
@@ -61,7 +70,7 @@ const CodeMinifier = () => {
   }
 
   const handleClear = () => {
-    setInput('')
+    setUrl({ code: '', lang: codeType })
     setOutput('')
     setError(null)
   }
@@ -69,34 +78,43 @@ const CodeMinifier = () => {
   const handleCopy = () => {
     navigator.clipboard.writeText(output)
     unlockAchievement('clipboard-master')
-    setCopied(true)
-    setTimeout(() => setCopied(false), 1500)
+    flash()
   }
 
   return (
     <ToolLayout title="HTML / CSS / JS / Python Minifier">
-      <div className={toolPanelClass}>
+      <ToolInputPanel
+        intro={
+          <p className={toolIntroTextClass}>
+            Beautify or minify HTML, CSS, JavaScript, or Python in the browser.
+          </p>
+        }
+      >
         <TextAreaWithLineNumbers
           value={input}
-          setValue={setInput}
+          setValue={(v) =>
+            setUrl((s) => ({
+              ...s,
+              code: typeof v === 'function' ? v(s.code) : v
+            }))
+          }
           placeholder="Paste your code here..."
         />
 
         <div className={toolToolbarBetweenClass}>
-          <div className={`${toolSegmentBarClass} w-full sm:w-auto`}>
+          <ToolChipRow>
             {LANGUAGE_TABS.map((tab) => (
-              <button
+              <ToolChipButton
                 key={tab.id}
-                type="button"
-                onClick={() => setCodeType(tab.id)}
-                className={toolSegmentTabClass(codeType === tab.id)}
+                active={codeType === tab.id}
+                onClick={() => setUrl((s) => ({ ...s, lang: tab.id }))}
               >
                 {tab.label}
-              </button>
+              </ToolChipButton>
             ))}
-          </div>
+          </ToolChipRow>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-1.5">
             <PrimaryButton
               onClick={() => void run('beautify')}
               disabled={!input.trim() || busy}
@@ -121,14 +139,14 @@ const CodeMinifier = () => {
               ? 'Python minify strips # comments and blank lines but keeps indentation. Beautify trims trailing space and extra blank lines.'
               : 'Minify removes comments and extra whitespace. Beautify reformats with Prettier.'}
         </p>
-      </div>
+      </ToolInputPanel>
 
       <div className={toolResultPanelClass}>
         <div className={toolResultHeaderRowClass}>
           <h2 className={toolSectionTitleClass}>Result</h2>
 
           {output ? (
-            <ToolCopyButton copied={copied} onClick={handleCopy} />
+            <ToolCopyButton copied={copied === true} onClick={handleCopy} />
           ) : null}
         </div>
 
@@ -148,4 +166,16 @@ const CodeMinifier = () => {
   )
 }
 
-export default CodeMinifier
+export default function CodeMinifier() {
+  return (
+    <Suspense
+      fallback={
+        <ToolLayout title="HTML / CSS / JS / Python Minifier">
+          <p className="text-center text-sm text-neutral-400">Loading…</p>
+        </ToolLayout>
+      }
+    >
+      <CodeMinifierInner />
+    </Suspense>
+  )
+}

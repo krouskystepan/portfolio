@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { Suspense, useMemo } from 'react'
 import Link from 'next/link'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
@@ -13,9 +13,9 @@ import {
   toolResultHeaderRowClass,
   toolResultPanelClass,
   toolSectionTitleClass,
-  toolSegmentBarClass,
-  toolSegmentTabClass,
   toolToolbarBetweenClass,
+  ToolChipButton,
+  ToolChipRow,
   ToolCopyButton,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
@@ -25,11 +25,19 @@ import {
   encodeUrlText,
   type UrlCodecMode
 } from '@/utils/urlCodec'
+import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
+import { enumParam, str, useToolUrlState } from '@/hooks/useToolUrlState'
 
-const UrlEncoderDecoder = () => {
-  const [input, setInput] = useState('')
-  const [mode, setMode] = useState<UrlCodecMode>('component')
-  const [copied, setCopied] = useState<'encoded' | 'decoded' | null>(null)
+const MODE_IDS = ['component', 'uri'] as const satisfies readonly UrlCodecMode[]
+
+function UrlEncoderDecoderInner() {
+  const [url, setUrl] = useToolUrlState({
+    t: str('', { text: true }),
+    mode: enumParam<UrlCodecMode>('component', MODE_IDS)
+  })
+  const input = url.t
+  const mode = url.mode
+  const { copied, flash, clear } = useCopyFeedback()
   const { unlockAchievement } = useAchievementContext()
 
   const encoded = useMemo(() => {
@@ -50,8 +58,7 @@ const UrlEncoderDecoder = () => {
     if (!value) return
     await navigator.clipboard.writeText(value)
     unlockAchievement('clipboard-master')
-    setCopied(which)
-    setTimeout(() => setCopied(null), 1500)
+    flash(which)
   }
 
   return (
@@ -76,32 +83,36 @@ const UrlEncoderDecoder = () => {
       >
         <TextAreaWithLineNumbers
           value={input}
-          setValue={setInput}
+          setValue={(v) =>
+            setUrl((s) => ({
+              ...s,
+              t: typeof v === 'function' ? v(s.t) : v
+            }))
+          }
           placeholder="Paste text, a query value, or an encoded string..."
         />
 
         <div className={toolToolbarBetweenClass}>
-          <div className={`${toolSegmentBarClass} w-full sm:w-auto`}>
+          <ToolChipRow>
             {(
               [
                 ['component', 'Component'],
                 ['uri', 'Full URI']
               ] as const
             ).map(([id, label]) => (
-              <button
+              <ToolChipButton
                 key={id}
-                type="button"
-                onClick={() => setMode(id)}
-                className={toolSegmentTabClass(mode === id)}
+                active={mode === id}
+                onClick={() => setUrl((s) => ({ ...s, mode: id }))}
               >
                 {label}
-              </button>
+              </ToolChipButton>
             ))}
-          </div>
+          </ToolChipRow>
           <ClearButton
             onClick={() => {
-              setInput('')
-              setCopied(null)
+              setUrl((s) => ({ ...s, t: '' }))
+              clear()
             }}
           >
             Clear
@@ -164,4 +175,16 @@ const UrlEncoderDecoder = () => {
   )
 }
 
-export default UrlEncoderDecoder
+export default function UrlEncoderDecoder() {
+  return (
+    <Suspense
+      fallback={
+        <ToolLayout title="URL encoder / decoder">
+          <p className="text-center text-sm text-neutral-400">Loading…</p>
+        </ToolLayout>
+      }
+    >
+      <UrlEncoderDecoderInner />
+    </Suspense>
+  )
+}

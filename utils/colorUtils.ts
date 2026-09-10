@@ -1,5 +1,6 @@
 export type ColorFormats = Record<string, string>
-type RGB = { r: number; g: number; b: number }
+export type RGB = { r: number; g: number; b: number }
+export type HSL = { h: number; s: number; l: number }
 
 export const parseColor = (value: string): ColorFormats | null => {
   value = value.trim().toLowerCase()
@@ -77,14 +78,6 @@ export const parseColor = (value: string): ColorFormats | null => {
 
 // === Core Converters ===
 
-const hexToAll = (hex: string) => {
-  const full = hex.length === 4 ? expandShortHex(hex) : hex
-  const r = parseInt(full.slice(1, 3), 16)
-  const g = parseInt(full.slice(3, 5), 16)
-  const b = parseInt(full.slice(5, 7), 16)
-  return buildAllFormats(r, g, b, 1)
-}
-
 const expandShortHex = (hex: string) =>
   '#' +
   hex
@@ -93,6 +86,25 @@ const expandShortHex = (hex: string) =>
     .map((ch) => ch + ch)
     .join('')
 
+/** Parse `#rgb` / `#rrggbb` (with or without `#`) into 0–255 channels. */
+export const hexToRgb = (hex: string): RGB | null => {
+  let value = hex.trim()
+  if (!value.startsWith('#')) value = `#${value}`
+  if (!/^#([a-f0-9]{3}|[a-f0-9]{6})$/i.test(value)) return null
+  const full = value.length === 4 ? expandShortHex(value) : value
+  return {
+    r: parseInt(full.slice(1, 3), 16),
+    g: parseInt(full.slice(3, 5), 16),
+    b: parseInt(full.slice(5, 7), 16)
+  }
+}
+
+const hexToAll = (hex: string) => {
+  const rgb = hexToRgb(hex)
+  if (!rgb) return { HEX: '#000000', RGB: 'rgb(0, 0, 0)', HSL: 'hsl(0, 0%, 0%)', HWB: 'hwb(0 0% 0%)', LAB: 'lab(0 0 0)', LCH: 'lch(0 0 0)' }
+  return buildAllFormats(rgb.r, rgb.g, rgb.b, 1)
+}
+
 const rgbToAll = (r: number, g: number, b: number, a = 1) =>
   buildAllFormats(r, g, b, a)
 
@@ -100,7 +112,8 @@ const buildAllFormats = (r: number, g: number, b: number, a: number) => {
   const hex = rgbToHex(r, g, b)
   const rgb = `rgb(${r}, ${g}, ${b})`
   const rgba = a < 1 ? `rgba(${r}, ${g}, ${b}, ${a})` : undefined
-  const hsl = rgbToHsl(r, g, b)
+  const hslComponents = rgbToHsl(r, g, b)
+  const hsl = `hsl(${Math.round(hslComponents.h)}, ${Math.round(hslComponents.s)}%, ${Math.round(hslComponents.l)}%)`
   const hsla = a < 1 ? `hsla(${rgbToHue(r, g, b)}, 100%, 50%, ${a})` : undefined
   const hwb = `hwb(${Math.round(rgbToHue(r, g, b))} 0% 0%${a < 1 ? ` / ${a}` : ''})`
   const lab = rgbToLab(r, g, b)
@@ -120,14 +133,15 @@ const buildAllFormats = (r: number, g: number, b: number, a: number) => {
   return result
 }
 
-const rgbToHex = (r: number, g: number, b: number) =>
+export const rgbToHex = (r: number, g: number, b: number) =>
   '#' +
   [r, g, b]
-    .map((x) => Math.max(0, Math.min(255, x)).toString(16).padStart(2, '0'))
+    .map((x) => Math.max(0, Math.min(255, Math.round(x))).toString(16).padStart(2, '0'))
     .join('')
     .toUpperCase()
 
-const rgbToHsl = (r: number, g: number, b: number) => {
+/** HSL components: h in 0–360, s/l in 0–100. */
+export const rgbToHsl = (r: number, g: number, b: number): HSL => {
   r /= 255
   g /= 255
   b /= 255
@@ -154,9 +168,12 @@ const rgbToHsl = (r: number, g: number, b: number) => {
     h /= 6
   }
 
-  return `hsl(${Math.round(h * 360)}, ${Math.round(s * 100)}%, ${Math.round(
-    l * 100
-  )}%)`
+  return { h: h * 360, s: s * 100, l: l * 100 }
+}
+
+export const hslToHex = (h: number, s: number, l: number) => {
+  const { r, g, b } = hslToRgb(h, s, l)
+  return rgbToHex(r, g, b)
 }
 
 const rgbToHue = (r: number, g: number, b: number) => {
@@ -229,7 +246,7 @@ const hslToAll = (h: number, s: number, l: number, a = 1) => {
   return buildAllFormats(rgb.r, rgb.g, rgb.b, a)
 }
 
-const hslToRgb = (h: number, s: number, l: number): RGB => {
+export const hslToRgb = (h: number, s: number, l: number): RGB => {
   s /= 100
   l /= 100
   const c = (1 - Math.abs(2 * l - 1)) * s

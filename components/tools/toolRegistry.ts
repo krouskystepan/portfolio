@@ -16,12 +16,21 @@ const loaders = {
   'url-inspector': () => import('@/components/tools/items/UrlInspector'),
   'jwt-decoder': () => import('@/components/tools/items/JwtDecoder'),
   'uuid-generator': () => import('@/components/tools/items/UuidGenerator'),
+  'password-generator': () =>
+    import('@/components/tools/items/PasswordGenerator'),
   'color-converter': () => import('@/components/tools/items/ColorConverter'),
   'timestamp-converter': () => import('@/components/tools/items/TimestampConverter'),
   'number-base-converter': () =>
     import('@/components/tools/items/NumberBaseConverter'),
   'qr-code': () => import('@/components/tools/items/QrCodeGenerator'),
-  'chmod-calculator': () => import('@/components/tools/items/ChmodCalculator')
+  'color-palette': () => import('@/components/tools/items/ColorPalette'),
+  'gradient-generator': () =>
+    import('@/components/tools/items/GradientGenerator'),
+  'chmod-calculator': () => import('@/components/tools/items/ChmodCalculator'),
+  'cidr-calculator': () => import('@/components/tools/items/CidrCalculator'),
+  'cron-builder': () => import('@/components/tools/items/CronExpressionBuilder'),
+  'hash-generator': () => import('@/components/tools/items/HashGenerator'),
+  'lorem-generator': () => import('@/components/tools/items/LoremGenerator')
 } as const satisfies Record<ToolPath, ToolLoader>
 
 export type { ToolPath }

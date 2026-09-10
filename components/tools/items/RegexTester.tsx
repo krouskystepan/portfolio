@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { Suspense, useMemo } from 'react'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import { ClearButton } from '@/components/tools/_shared/ToolButtons'
@@ -16,11 +16,15 @@ import {
   toolToolbarEndClass,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
+import { str, useToolUrlState } from '@/hooks/useToolUrlState'
 
-const RegexTester = () => {
-  const [pattern, setPattern] = useState('[A-Za-z]+')
-  const [flags, setFlags] = useState('g')
-  const [haystack, setHaystack] = useState('Hello regex world')
+function RegexTesterInner() {
+  const [url, setUrl] = useToolUrlState({
+    p: str('[A-Za-z]+'),
+    f: str('g'),
+    t: str('Hello regex world', { text: true })
+  })
+  const { p: pattern, f: flags, t: haystack } = url
 
   const result = useMemo(() => {
     if (!pattern.trim()) {
@@ -62,7 +66,7 @@ const RegexTester = () => {
             id="regex-pattern"
             type="text"
             value={pattern}
-            onChange={(e) => setPattern(e.target.value)}
+            onChange={(e) => setUrl((s) => ({ ...s, p: e.target.value }))}
             className={`${toolInputClass} mb-4 font-mono`}
             spellCheck={false}
           />
@@ -73,7 +77,7 @@ const RegexTester = () => {
             id="regex-flags"
             type="text"
             value={flags}
-            onChange={(e) => setFlags(e.target.value)}
+            onChange={(e) => setUrl((s) => ({ ...s, f: e.target.value }))}
             className={`${toolInputClass} mb-4 font-mono`}
             spellCheck={false}
           />
@@ -82,15 +86,18 @@ const RegexTester = () => {
           </label>
           <TextAreaWithLineNumbers
             value={haystack}
-            setValue={setHaystack}
+            setValue={(v) =>
+              setUrl((s) => ({
+                ...s,
+                t: typeof v === 'function' ? v(s.t) : v
+              }))
+            }
             placeholder="Text to search..."
           />
           <div className={toolToolbarEndClass}>
             <ClearButton
               onClick={() => {
-                setPattern('')
-                setFlags('g')
-                setHaystack('')
+                setUrl({ p: '', f: 'g', t: '' })
               }}
             >
               Clear all
@@ -123,4 +130,16 @@ const RegexTester = () => {
   )
 }
 
-export default RegexTester
+export default function RegexTester() {
+  return (
+    <Suspense
+      fallback={
+        <ToolLayout title="Regex tester">
+          <p className="text-center text-sm text-neutral-400">Loading…</p>
+        </ToolLayout>
+      }
+    >
+      <RegexTesterInner />
+    </Suspense>
+  )
+}

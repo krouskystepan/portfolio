@@ -1,111 +1,113 @@
 'use client'
 
+import { Suspense, useEffect, useState } from 'react'
 import { useAchievementContext } from '@/context/AchievementContext'
-import { useState } from 'react'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import { ClearButton, PrimaryButton } from '@/components/tools/_shared/ToolButtons'
 import {
-  toolAccentButtonClass,
   toolEmptyHintClass,
   toolErrorBoxClass,
   toolInputClass,
-  toolPanelClass,
+  toolIntroTextClass,
   toolResultPanelClass,
   toolSectionTitleClass,
-  toolSoftButtonClass,
   toolToolbarBetweenClass,
   toolValueRowClass,
-  ToolCopyButton
+  ToolChipButton,
+  ToolChipRow,
+  ToolCopyButton,
+  ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
+import { str, useToolUrlState } from '@/hooks/useToolUrlState'
+import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
 
 type TimestampResult = {
   readable?: string
   timestamp?: number
 }
 
-const TimestampConverter = () => {
-  const [input, setInput] = useState<string>('')
+function convertTimestamp(raw: string): {
+  result: TimestampResult
+  error: string | null
+} {
+  const value = raw.trim()
+
+  if (!value) {
+    return { result: {}, error: 'Input cannot be empty.' }
+  }
+
+  const isNumeric = /^\d+$/.test(value)
+
+  try {
+    if (isNumeric) {
+      const ts = parseInt(value, 10)
+      const date = new Date(ts * 1000)
+
+      if (isNaN(date.getTime())) {
+        return { result: {}, error: 'Invalid timestamp.' }
+      }
+
+      return {
+        result: { readable: date.toISOString(), timestamp: ts },
+        error: null
+      }
+    }
+
+    const date = new Date(value)
+
+    if (isNaN(date.getTime())) {
+      return { result: {}, error: 'Invalid date format.' }
+    }
+
+    const ts = Math.floor(date.getTime() / 1000)
+
+    return {
+      result: { readable: date.toISOString(), timestamp: ts },
+      error: null
+    }
+  } catch {
+    return { result: {}, error: 'Unable to convert this input.' }
+  }
+}
+
+function TimestampConverterInner() {
+  const [url, setUrl] = useToolUrlState({
+    t: str('', { text: true })
+  })
+
+  const input = url.t
   const [result, setResult] = useState<TimestampResult>({})
   const [error, setError] = useState<string | null>(null)
-  const [copiedStates, setCopiedStates] = useState<boolean[]>([])
+  const { copied, flash } = useCopyFeedback()
 
   const { unlockAchievement } = useAchievementContext()
 
+  const applyConvert = (value: string) => {
+    const { result: next, error: nextError } = convertTimestamp(value)
+    setResult(next)
+    setError(nextError)
+  }
+
+  useEffect(() => {
+    if (input.trim()) applyConvert(input)
+    // Hydrate result once from URL on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const handleConvert = () => {
-    setError(null)
-    setResult({})
-    setCopiedStates([])
-
-    const value = input.trim()
-
-    if (!value) {
-      setError('Input cannot be empty.')
-      return
-    }
-
-    const isNumeric = /^\d+$/.test(value)
-
-    try {
-      if (isNumeric) {
-        const ts = parseInt(value, 10)
-        const date = new Date(ts * 1000)
-
-        if (isNaN(date.getTime())) {
-          setError('Invalid timestamp.')
-          return
-        }
-
-        setResult({
-          readable: date.toISOString(),
-          timestamp: ts
-        })
-      } else {
-        const date = new Date(value)
-
-        if (isNaN(date.getTime())) {
-          setError('Invalid date format.')
-          return
-        }
-
-        const ts = Math.floor(date.getTime() / 1000)
-
-        setResult({
-          readable: date.toISOString(),
-          timestamp: ts
-        })
-      }
-
-      // initialize copied states for 2 rows
-      setCopiedStates([false, false])
-    } catch {
-      setError('Unable to convert this input.')
-    }
+    applyConvert(input)
   }
 
   const handleClear = () => {
-    setInput('')
+    setUrl({ t: '' })
     setResult({})
     setError(null)
-    setCopiedStates([])
   }
 
-  const handleCopy = (index: number, text: string) => {
+  const handleCopy = (key: string, text: string) => {
     navigator.clipboard.writeText(text)
     unlockAchievement('clipboard-master')
-
-    setCopiedStates((prev) => {
-      const updated = [...prev]
-      updated[index] = true
-      return updated
-    })
-
-    setTimeout(() => {
-      setCopiedStates((prev) => {
-        const updated = [...prev]
-        updated[index] = false
-        return updated
-      })
-    }, 1500)
+    flash(key)
   }
 
   const handleAddTime = (time: number) => {
@@ -119,68 +121,69 @@ const TimestampConverter = () => {
         const ts = parseInt(value, 10)
         const date = new Date(ts * 1000)
         date.setTime(date.getTime() + time * 1000)
-        setInput(String(Math.floor(date.getTime() / 1000)))
+        setUrl({ t: String(Math.floor(date.getTime() / 1000)) })
       } else {
         const date = new Date(value)
         date.setTime(date.getTime() + time * 1000)
-        setInput(date.toISOString())
+        setUrl({ t: date.toISOString() })
       }
     } catch {}
   }
 
   return (
     <ToolLayout title="Timestamp Converter">
-      <div className={toolPanelClass}>
-        <h2 className={`mb-3 ${toolSectionTitleClass}`}>
-          Enter a Unix timestamp or a date string
-        </h2>
-
+      <ToolInputPanel
+        intro={
+          <p className={toolIntroTextClass}>
+            Enter a Unix timestamp or a date string and convert between them.
+          </p>
+        }
+      >
         <input
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => setUrl({ t: e.target.value })}
           placeholder="e.g. 1700000000 or 2024-01-01T12:00:00"
           className={toolInputClass}
         />
 
         <div className={toolToolbarBetweenClass}>
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
+          <ToolChipRow>
+            <ToolChipButton
+              active
+              tone="accent"
               onClick={() => {
                 const now = Math.floor(Date.now() / 1000)
-                setInput(String(now))
+                setUrl({ t: String(now) })
               }}
-              className={toolSoftButtonClass}
             >
               Now
-            </button>
-            <button
-              type="button"
-              onClick={() => handleAddTime(60 * 60)}
+            </ToolChipButton>
+            <ToolChipButton
+              active
+              tone="accent"
               disabled={!input.trim()}
-              className={toolAccentButtonClass}
+              onClick={() => handleAddTime(60 * 60)}
             >
               +1 hour
-            </button>
-            <button
-              type="button"
-              onClick={() => handleAddTime(60 * 60 * 24)}
+            </ToolChipButton>
+            <ToolChipButton
+              active
+              tone="accent"
               disabled={!input.trim()}
-              className={toolAccentButtonClass}
+              onClick={() => handleAddTime(60 * 60 * 24)}
             >
               +1 day
-            </button>
-          </div>
+            </ToolChipButton>
+          </ToolChipRow>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-1.5">
             <PrimaryButton onClick={handleConvert} disabled={!input.trim()}>
               Convert
             </PrimaryButton>
-
             <ClearButton onClick={handleClear}>Clear</ClearButton>
           </div>
         </div>
-      </div>
+      </ToolInputPanel>
 
       <div className={toolResultPanelClass}>
         <h2 className={`mb-3 ${toolSectionTitleClass}`}>Result</h2>
@@ -193,18 +196,18 @@ const TimestampConverter = () => {
           <div className="space-y-3 text-sm">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <ResultRow
-                index={0}
+                copyKey="readable"
                 label="Readable Date (ISO)"
                 value={result.readable ?? ''}
                 onCopy={handleCopy}
-                copied={copiedStates[0] ?? false}
+                copied={copied === 'readable'}
               />
               <ResultRow
-                index={1}
+                copyKey="timestamp"
                 label="Unix Timestamp"
                 value={String(result.timestamp ?? '')}
                 onCopy={handleCopy}
-                copied={copiedStates[1] ?? false}
+                copied={copied === 'timestamp'}
               />
             </div>
           </div>
@@ -217,21 +220,33 @@ const TimestampConverter = () => {
 }
 
 type ResultRowProps = {
-  index: number
+  copyKey: string
   label: string
   value: string
-  onCopy: (index: number, text: string) => void
+  onCopy: (key: string, text: string) => void
   copied: boolean
 }
 
-const ResultRow = ({ index, label, value, onCopy, copied }: ResultRowProps) => (
+const ResultRow = ({ copyKey, label, value, onCopy, copied }: ResultRowProps) => (
   <div className={toolValueRowClass}>
     <div className="min-w-0 flex-1">
       <span className="font-medium text-white">{label}: </span>
       <span className="break-all text-neutral-300">{value}</span>
     </div>
-    <ToolCopyButton copied={copied} onClick={() => onCopy(index, value)} />
+    <ToolCopyButton copied={copied} onClick={() => onCopy(copyKey, value)} />
   </div>
 )
 
-export default TimestampConverter
+export default function TimestampConverter() {
+  return (
+    <Suspense
+      fallback={
+        <ToolLayout title="Timestamp Converter">
+          <p className={toolEmptyHintClass}>Loading…</p>
+        </ToolLayout>
+      }
+    >
+      <TimestampConverterInner />
+    </Suspense>
+  )
+}

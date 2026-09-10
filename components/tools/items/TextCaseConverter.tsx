@@ -1,19 +1,21 @@
 'use client'
 
 import { useAchievementContext } from '@/context/AchievementContext'
-import { useMemo, useState } from 'react'
+import { Suspense, useMemo } from 'react'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import { ClearButton } from '@/components/tools/_shared/ToolButtons'
 import {
   toolEmptyHintClass,
   toolMediumCardClass,
-  toolPanelClass,
   toolResultPanelClass,
   toolSectionTitleClass,
   toolToolbarEndClass,
-  ToolCopyButton
+  ToolCopyButton,
+  ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
+import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
+import { str, useToolUrlState } from '@/hooks/useToolUrlState'
 
 type CaseVariant = {
   label: string
@@ -115,41 +117,48 @@ const buildVariants = (input: string): CaseVariant[] => {
   ]
 }
 
-const TextCaseConverter = () => {
-  const [input, setInput] = useState('')
-  const [copiedKey, setCopiedKey] = useState<string | null>(null)
+function TextCaseConverterInner() {
+  const [url, setUrl] = useToolUrlState({
+    t: str('', { text: true })
+  })
+  const input = url.t
+  const { copied, flash } = useCopyFeedback()
 
   const { unlockAchievement } = useAchievementContext()
 
   const variants = useMemo(() => buildVariants(input), [input])
 
   const clearAll = () => {
-    setInput('')
+    setUrl({ t: '' })
   }
 
   const copyValue = (label: string, text: string) => {
     if (!text) return
     navigator.clipboard.writeText(text)
     unlockAchievement('clipboard-master')
-    setCopiedKey(label)
-    setTimeout(() => setCopiedKey(null), 1500)
+    flash(label)
   }
 
   const hasAnyOutput = variants.some((v) => v.value.length > 0)
 
   return (
     <ToolLayout title="Text Case Converter">
-      <div className={toolPanelClass}>
+      <ToolInputPanel>
         <TextAreaWithLineNumbers
           value={input}
-          setValue={setInput}
+          setValue={(v) =>
+            setUrl((s) => ({
+              ...s,
+              t: typeof v === 'function' ? v(s.t) : v
+            }))
+          }
           placeholder="Type or paste text here. Each line is converted separately for case styles."
         />
 
         <div className={toolToolbarEndClass}>
           <ClearButton onClick={clearAll}>Clear</ClearButton>
         </div>
-      </div>
+      </ToolInputPanel>
 
       <div className={toolResultPanelClass}>
         <h2 className={`mb-3 ${toolSectionTitleClass}`}>Results</h2>
@@ -167,7 +176,7 @@ const TextCaseConverter = () => {
                     {label}
                   </span>
                   <ToolCopyButton
-                    copied={copiedKey === label}
+                    copied={copied === label}
                     onClick={() => copyValue(label, value)}
                     disabled={!value}
                   />
@@ -184,4 +193,16 @@ const TextCaseConverter = () => {
   )
 }
 
-export default TextCaseConverter
+export default function TextCaseConverter() {
+  return (
+    <Suspense
+      fallback={
+        <ToolLayout title="Text Case Converter">
+          <p className="text-center text-sm text-neutral-400">Loading…</p>
+        </ToolLayout>
+      }
+    >
+      <TextCaseConverterInner />
+    </Suspense>
+  )
+}

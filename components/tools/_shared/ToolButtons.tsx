@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 export const PrimaryButton = ({
   onClick,
   disabled,
@@ -5,13 +7,14 @@ export const PrimaryButton = ({
 }: {
   onClick: () => void
   disabled?: boolean
-  children: React.ReactNode
+  children: ReactNode
 }) => {
   return (
     <button
+      type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
+      className={`inline-flex h-8 items-center rounded-md px-3 text-xs font-medium transition ${
         disabled
           ? 'cursor-not-allowed bg-neutral-800 text-neutral-500 opacity-60'
           : 'bg-custom_blue text-white hover:opacity-90'
@@ -29,13 +32,14 @@ export const SecondaryButton = ({
 }: {
   onClick: () => void
   disabled?: boolean
-  children: React.ReactNode
+  children: ReactNode
 }) => {
   return (
     <button
+      type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
+      className={`inline-flex h-8 items-center rounded-md px-3 text-xs font-medium transition ${
         disabled
           ? 'cursor-not-allowed bg-neutral-800 text-neutral-500 opacity-60'
           : 'bg-neutral-800 text-neutral-100 hover:bg-neutral-700'
@@ -51,12 +55,13 @@ export const ClearButton = ({
   children
 }: {
   onClick: () => void
-  children: React.ReactNode
+  children: ReactNode
 }) => {
   return (
     <button
+      type="button"
       onClick={onClick}
-      className="rounded-lg bg-red-800 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
+      className="inline-flex h-8 items-center rounded-md bg-red-800 px-3 text-xs font-medium text-white transition hover:bg-red-700 active:scale-95"
     >
       {children}
     </button>

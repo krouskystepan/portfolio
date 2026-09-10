@@ -1,7 +1,7 @@
 'use client'
 
+import { useEffect, useMemo, useState } from 'react'
 import { useAchievementContext } from '@/context/AchievementContext'
-import { useState, useMemo, useEffect } from 'react'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import {
   ClearButton,
@@ -11,28 +11,29 @@ import {
   toolCheckboxLabelClass,
   toolEmptyHintClass,
   toolNumberInputClass,
-  toolPanelClass,
   toolResultHeaderRowClass,
   toolResultPanelClass,
   toolSectionTitleClass,
   toolToolbarEndClass,
   toolValueRowClass,
-  ToolCopyButton
+  ToolCopyButton,
+  ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
+import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
 
 type UUIDOptions = {
   uppercase: boolean
   noHyphens: boolean
 }
 
-const UuidGenerator = () => {
-  const [count, setCount] = useState<number>(10)
-  const [uuids, setUuids] = useState<string[]>([])
+export default function UuidGenerator() {
+  const [count, setCount] = useState(10)
   const [options, setOptions] = useState<UUIDOptions>({
     uppercase: false,
     noHyphens: false
   })
-  const [copiedStates, setCopiedStates] = useState<boolean[]>([])
+  const [uuids, setUuids] = useState<string[]>([])
+  const { copied, flash } = useCopyFeedback()
 
   const { unlockAchievement } = useAchievementContext()
 
@@ -45,7 +46,9 @@ const UuidGenerator = () => {
     if (uuids.length > 0) {
       setUuids((prev) => prev.map((u) => formatUuid(u, options)))
     }
-  }, [options, uuids.length])
+    // Reformat existing list when display options change - not when uuids grow.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [options.uppercase, options.noHyphens])
 
   const handleGenerate = () => {
     if (isGenerateDisabled) return
@@ -53,58 +56,30 @@ const UuidGenerator = () => {
       formatUuid(generateUuidV4(), options)
     )
     setUuids(out)
-    setCopiedStates(new Array(out.length + 1).fill(false))
   }
 
   const handleClear = () => {
     setUuids([])
   }
 
-  const handleCopy = (text: string) => {
+  const handleCopy = (text: string, key: string) => {
     navigator.clipboard.writeText(text)
     unlockAchievement('clipboard-master')
+    flash(key)
   }
 
   const handleLocalCopy = (index: number, id: string) => {
-    handleCopy(id)
-    setCopiedStates((prev) => {
-      const updated = [...prev]
-      updated[index] = true
-      return updated
-    })
-    setTimeout(() => {
-      setCopiedStates((prev) => {
-        const updated = [...prev]
-        updated[index] = false
-        return updated
-      })
-    }, 1500)
+    handleCopy(id, `uuid-${index}`)
   }
 
   const handleCopyAll = () => {
     if (uuids.length === 0) return
-    handleCopy(uuids.join('\n'))
-    setCopiedStates((prev) => {
-      const updated = [...prev]
-      updated[uuids.length] = true
-      return updated
-    })
-    setTimeout(() => {
-      setCopiedStates((prev) => {
-        const updated = [...prev]
-        updated[uuids.length] = false
-        return updated
-      })
-    }, 1500)
-  }
-
-  const toggle = (key: keyof UUIDOptions) => {
-    setOptions((prev) => ({ ...prev, [key]: !prev[key] }))
+    handleCopy(uuids.join('\n'), 'all')
   }
 
   return (
     <ToolLayout title="UUID Generator">
-      <div className={toolPanelClass}>
+      <ToolInputPanel>
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
           <div className="flex w-fit max-w-full flex-col gap-1 self-start sm:self-end">
             <label htmlFor="count" className={toolCheckboxLabelClass}>
@@ -127,7 +102,9 @@ const UuidGenerator = () => {
                 <input
                   type="checkbox"
                   checked={options.uppercase}
-                  onChange={() => toggle('uppercase')}
+                  onChange={() =>
+                    setOptions((o) => ({ ...o, uppercase: !o.uppercase }))
+                  }
                   className="size-4 accent-custom_blue"
                 />
                 Uppercase
@@ -136,7 +113,9 @@ const UuidGenerator = () => {
                 <input
                   type="checkbox"
                   checked={options.noHyphens}
-                  onChange={() => toggle('noHyphens')}
+                  onChange={() =>
+                    setOptions((o) => ({ ...o, noHyphens: !o.noHyphens }))
+                  }
                   className="size-4 accent-custom_blue"
                 />
                 No hyphens
@@ -157,14 +136,14 @@ const UuidGenerator = () => {
             </div>
           </div>
         </div>
-      </div>
+      </ToolInputPanel>
 
       <div className={toolResultPanelClass}>
         <div className={toolResultHeaderRowClass}>
           <h2 className={toolSectionTitleClass}>Generated UUIDs</h2>
           {uuids.length > 0 ? (
             <ToolCopyButton
-              copied={Boolean(copiedStates[uuids.length])}
+              copied={copied === 'all'}
               onClick={handleCopyAll}
               idleLabel="Copy all"
               copiedLabel="Copied all!"
@@ -180,7 +159,7 @@ const UuidGenerator = () => {
                   {id}
                 </span>
                 <ToolCopyButton
-                  copied={Boolean(copiedStates[index])}
+                  copied={copied === `uuid-${index}`}
                   onClick={() => handleLocalCopy(index, id)}
                 />
               </li>
@@ -221,5 +200,3 @@ function formatUuid(uuid: string, options: UUIDOptions): string {
 
   return formatted
 }
-
-export default UuidGenerator
