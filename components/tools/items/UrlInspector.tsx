@@ -6,6 +6,7 @@ import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLine
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import {
   ClearButton,
+  RemoveButton,
   SecondaryButton
 } from '@/components/tools/_shared/ToolButtons'
 import {
@@ -282,7 +283,7 @@ function UrlInspectorInner() {
                   <th className="py-2 pr-3 font-medium">#</th>
                   <th className="py-2 pr-3 font-medium">Key</th>
                   <th className="py-2 pr-3 font-medium">Value</th>
-                  <th className="w-24 py-2 font-medium">
+                  <th className="w-28 py-2 font-medium">
                     <span className="sr-only">Remove</span>
                   </th>
                 </tr>
@@ -318,13 +319,7 @@ function UrlInspectorInner() {
                       />
                     </td>
                     <td className="py-2 align-middle">
-                      <button
-                        type="button"
-                        onClick={() => removeParam(row.id)}
-                        className="text-xs font-medium text-red-400/90 transition hover:text-red-300"
-                      >
-                        Remove
-                      </button>
+                      <RemoveButton onClick={() => removeParam(row.id)} />
                     </td>
                   </tr>
                 ))}
