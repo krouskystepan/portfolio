@@ -242,7 +242,7 @@ export const tools = [
   },
   {
     name: 'SVG blob / wave generator',
-    path: '', // 'blob-wave'
+    path: 'blob-wave',
     description:
       'Build organic blob and wave SVG shapes with brand presets, transparent export, and copy or download.',
     section: 'generators',
