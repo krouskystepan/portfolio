@@ -215,7 +215,7 @@ function MockDataGeneratorInner() {
       <ToolInputPanel
         intro={
           <p className={toolIntroTextClass}>
-            Fake names, emails, phones, and addresses in the browser — obviously
+            Fake names, emails, phones, and addresses in the browser - obviously
             fake (<code>555</code>, <code>example.com</code>), safe for
             fixtures. Schema is in the URL so you can share a setup. Use{' '}
             <strong>Custom</strong> with a regex like{' '}
