@@ -306,9 +306,9 @@ export const tools = [
   },
   {
     name: 'Mock / fake data generator',
-    path: '', // 'mock-data'
+    path: 'mock-data',
     description:
-      'Generate fake names, emails, phones, and addresses as a JSON array of records for fixtures and QA.',
+      'Generate fake names, emails, bank details, and custom regex patterns as a JSON array for fixtures and QA.',
     section: 'generators',
     keywords: [
       'fake',
@@ -318,7 +318,14 @@ export const tools = [
       'qa',
       'email',
       'phone',
-      'address'
+      'address',
+      'iban',
+      'bank',
+      'account',
+      'card',
+      'uuid',
+      'regex',
+      'pattern'
     ]
   },
   {

@@ -17,6 +17,7 @@ import { useAchievementContext } from '@/context/AchievementContext'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import {
   PrimaryButton,
+  RemoveButton,
   SecondaryButton
 } from '@/components/tools/_shared/ToolButtons'
 import {
@@ -752,8 +753,7 @@ function GradientGeneratorInner() {
                   />
                   <span className={toolHintMetaClass}>%</span>
                 </label>
-                <button
-                  type="button"
+                <RemoveButton
                   title={
                     stops.length <= MIN_STOPS
                       ? `Keep at least ${MIN_STOPS} stops`
@@ -761,11 +761,8 @@ function GradientGeneratorInner() {
                   }
                   aria-label={`Remove stop ${stop.hex}`}
                   disabled={stops.length <= MIN_STOPS}
-                  className="inline-flex size-8 shrink-0 items-center justify-center rounded-md bg-neutral-800 text-neutral-300 transition hover:bg-neutral-700 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
                   onClick={() => handleRemoveStop(stop.id)}
-                >
-                  <X className="size-3.5" />
-                </button>
+                />
               </li>
             )
           })}

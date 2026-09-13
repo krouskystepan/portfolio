@@ -4,6 +4,7 @@ import { Suspense, useMemo, useState } from 'react'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import {
   ClearButton,
+  RemoveButton,
   SecondaryButton
 } from '@/components/tools/_shared/ToolButtons'
 import {
@@ -327,13 +328,7 @@ function NumberBaseConverterInner() {
               onClick={() => handleCopy(row.id, row.base)}
               disabled={!canCopy(row.id, row.base)}
             />
-            <button
-              type="button"
-              onClick={() => removeExtra(row.id)}
-              className="rounded-lg px-2.5 py-1.5 text-xs font-medium text-neutral-400 transition hover:bg-neutral-800 hover:text-neutral-100"
-            >
-              Remove
-            </button>
+            <RemoveButton onClick={() => removeExtra(row.id)} />
           </div>
         </div>
         <input

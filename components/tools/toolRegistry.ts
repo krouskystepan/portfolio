@@ -31,7 +31,8 @@ const loaders = {
   'cidr-calculator': () => import('@/components/tools/items/CidrCalculator'),
   'cron-builder': () => import('@/components/tools/items/CronExpressionBuilder'),
   'hash-generator': () => import('@/components/tools/items/HashGenerator'),
-  'lorem-generator': () => import('@/components/tools/items/LoremGenerator')
+  'lorem-generator': () => import('@/components/tools/items/LoremGenerator'),
+  'mock-data': () => import('@/components/tools/items/MockDataGenerator')
 } as const satisfies Record<ToolPath, ToolLoader>
 
 export type { ToolPath }
