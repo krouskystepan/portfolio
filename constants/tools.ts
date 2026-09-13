@@ -261,7 +261,7 @@ export const tools = [
   },
   {
     name: 'CSS shadow generator',
-    path: '', // 'shadow-generator'
+    path: 'shadow-generator',
     description:
       'Build box-shadow and text-shadow with layers, inset, and alpha - preview live, export CSS or Tailwind.',
     section: 'generators',

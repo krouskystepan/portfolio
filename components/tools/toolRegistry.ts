@@ -28,6 +28,8 @@ const loaders = {
   'gradient-generator': () =>
     import('@/components/tools/items/GradientGenerator'),
   'blob-wave': () => import('@/components/tools/items/SvgBlobWaveGenerator'),
+  'shadow-generator': () =>
+    import('@/components/tools/items/ShadowGenerator'),
   'chmod-calculator': () => import('@/components/tools/items/ChmodCalculator'),
   'cidr-calculator': () => import('@/components/tools/items/CidrCalculator'),
   'cron-builder': () => import('@/components/tools/items/CronExpressionBuilder'),
