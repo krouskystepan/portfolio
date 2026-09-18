@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Suspense,
@@ -7,13 +7,13 @@ import {
   useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
-  type ReactNode,
-} from "react";
-import { createPortal } from "react-dom";
-import { HexColorPicker } from "react-colorful";
-import { useAchievementContext } from "@/context/AchievementContext";
-import ToolLayout from "@/components/tools/_shared/ToolLayout";
-import { SecondaryButton } from "@/components/tools/_shared/ToolButtons";
+  type ReactNode
+} from 'react'
+import { createPortal } from 'react-dom'
+import { HexColorPicker } from 'react-colorful'
+import { useAchievementContext } from '@/context/AchievementContext'
+import ToolLayout from '@/components/tools/_shared/ToolLayout'
+import { SecondaryButton } from '@/components/tools/_shared/ToolButtons'
 import {
   toolCheckboxLabelClass,
   toolCompactInputClass,
@@ -30,9 +30,9 @@ import {
   ToolChipButton,
   ToolChipRow,
   ToolCopyButton,
-  ToolInputPanel,
-} from "@/components/tools/_shared/toolUi";
-import { hexToRgb, rgbToHex } from "@/utils/colorUtils";
+  ToolInputPanel
+} from '@/components/tools/_shared/toolUi'
+import { hexToRgb, rgbToHex } from '@/utils/colorUtils'
 import {
   BLOB_WAVE_PRESETS,
   BLOB_WAVE_SHAPE_PRESETS,
@@ -60,16 +60,16 @@ import {
   rasterizeSvgToPng,
   shapePresetMatches,
   triggerDownload,
-  type BlobWaveShapePreset,
-} from "@/utils/svgBlobWave";
-import { useSvgBlobWave } from "@/hooks/tools/useSvgBlobWave";
+  type BlobWaveShapePreset
+} from '@/utils/svgBlobWave'
+import { useSvgBlobWave } from '@/hooks/tools/useSvgBlobWave'
 
 function ControlRow({
   label,
-  children,
+  children
 }: {
-  label: string;
-  children: ReactNode;
+  label: string
+  children: ReactNode
 }) {
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
@@ -80,7 +80,7 @@ function ControlRow({
         {children}
       </div>
     </div>
-  );
+  )
 }
 
 function ShapePresetThumb({ preset }: { preset: BlobWaveShapePreset }) {
@@ -95,28 +95,28 @@ function ShapePresetThumb({ preset }: { preset: BlobWaveShapePreset }) {
     frequency: preset.frequency,
     phase: preset.phase,
     edge: preset.edge,
-    fill: "solid",
-    color1: "#ffffff",
-    color2: "#ffffff",
+    fill: 'solid',
+    color1: '#ffffff',
+    color2: '#ffffff',
     background: TRANSPARENT,
     width: preset.width,
     height: preset.height,
     angle: 0,
     strokeWidth: 8,
     animate: false,
-    handles: null,
-  });
+    handles: null
+  })
   return (
     <svg
       viewBox={`0 0 ${preset.width} ${preset.height}`}
       className={
-        preset.mode === "wave" ? "h-6 w-10 shrink-0" : "size-6 shrink-0"
+        preset.mode === 'wave' ? 'h-6 w-10 shrink-0' : 'size-6 shrink-0'
       }
       aria-hidden
     >
       <path d={d} fill="currentColor" className="text-white/80" />
     </svg>
-  );
+  )
 }
 
 function SliderField({
@@ -125,14 +125,14 @@ function SliderField({
   min,
   max,
   onChange,
-  suffix,
+  suffix
 }: {
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  onChange: (n: number) => void;
-  suffix?: string;
+  label: string
+  value: number
+  min: number
+  max: number
+  onChange: (n: number) => void
+  suffix?: string
 }) {
   return (
     <ControlRow label={label}>
@@ -151,32 +151,32 @@ function SliderField({
         max={max}
         value={value}
         onChange={(e) => {
-          const n = Number.parseInt(e.target.value, 10);
-          if (!Number.isFinite(n)) return;
-          onChange(n);
+          const n = Number.parseInt(e.target.value, 10)
+          if (!Number.isFinite(n)) return
+          onChange(n)
         }}
         className={`${toolNumberInputClass} !w-[3.75rem] max-w-[3.75rem]`}
         aria-label={`${label} value`}
       />
       {suffix ? <span className={toolHintMetaClass}>{suffix}</span> : null}
     </ControlRow>
-  );
+  )
 }
 
-const PICKER_W = 260;
-const PICKER_H = 292;
+const PICKER_W = 260
+const PICKER_H = 292
 
 function placePicker(anchor: DOMRect) {
-  const pad = 8;
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  let left = anchor.right + pad;
-  if (left + PICKER_W > vw - pad) left = anchor.left - PICKER_W - pad;
-  if (left < pad) left = pad;
-  let top = anchor.top;
-  if (top + PICKER_H > vh - pad) top = vh - PICKER_H - pad;
-  if (top < pad) top = pad;
-  return { top, left };
+  const pad = 8
+  const vw = window.innerWidth
+  const vh = window.innerHeight
+  let left = anchor.right + pad
+  if (left + PICKER_W > vw - pad) left = anchor.left - PICKER_W - pad
+  if (left < pad) left = pad
+  let top = anchor.top
+  if (top + PICKER_H > vh - pad) top = vh - PICKER_H - pad
+  if (top < pad) top = pad
+  return { top, left }
 }
 
 function ColorSwatch({
@@ -186,64 +186,64 @@ function ColorSwatch({
   onToggle,
   onClose,
   onChange,
-  checker = false,
+  checker = false
 }: {
-  hex: string;
-  label: string;
-  open: boolean;
-  onToggle: () => void;
-  onClose: () => void;
-  onChange: (hex: string) => void;
-  checker?: boolean;
+  hex: string
+  label: string
+  open: boolean
+  onToggle: () => void
+  onClose: () => void
+  onChange: (hex: string) => void
+  checker?: boolean
 }) {
-  const btnRef = useRef<HTMLButtonElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
-  const [coords, setCoords] = useState({ top: 0, left: 0 });
-  const [draft, setDraft] = useState(hex);
+  const btnRef = useRef<HTMLButtonElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
+  const [coords, setCoords] = useState({ top: 0, left: 0 })
+  const [draft, setDraft] = useState(hex)
 
   useLayoutEffect(() => {
-    if (!open) return;
+    if (!open) return
     const update = () => {
-      const el = btnRef.current;
-      if (!el) return;
-      setCoords(placePicker(el.getBoundingClientRect()));
-    };
-    update();
-    window.addEventListener("resize", update);
-    window.addEventListener("scroll", update, true);
+      const el = btnRef.current
+      if (!el) return
+      setCoords(placePicker(el.getBoundingClientRect()))
+    }
+    update()
+    window.addEventListener('resize', update)
+    window.addEventListener('scroll', update, true)
     return () => {
-      window.removeEventListener("resize", update);
-      window.removeEventListener("scroll", update, true);
-    };
-  }, [open]);
+      window.removeEventListener('resize', update)
+      window.removeEventListener('scroll', update, true)
+    }
+  }, [open])
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
+      if (e.key === 'Escape') onClose()
+    }
     const onDown = (e: MouseEvent) => {
-      const t = e.target as Node;
-      if (btnRef.current?.contains(t) || panelRef.current?.contains(t)) return;
-      onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    document.addEventListener("mousedown", onDown);
+      const t = e.target as Node
+      if (btnRef.current?.contains(t) || panelRef.current?.contains(t)) return
+      onClose()
+    }
+    document.addEventListener('keydown', onKey)
+    document.addEventListener('mousedown', onDown)
     return () => {
-      document.removeEventListener("keydown", onKey);
-      document.removeEventListener("mousedown", onDown);
-    };
-  }, [open, onClose]);
+      document.removeEventListener('keydown', onKey)
+      document.removeEventListener('mousedown', onDown)
+    }
+  }, [open, onClose])
 
   useEffect(() => {
-    setDraft(hex);
-  }, [hex]);
+    setDraft(hex)
+  }, [hex])
 
   const commitDraft = (raw: string) => {
-    const value = raw.trim();
-    const rgb = hexToRgb(value.startsWith("#") ? value : `#${value}`);
-    if (rgb) onChange(rgbToHex(rgb.r, rgb.g, rgb.b).toLowerCase());
-  };
+    const value = raw.trim()
+    const rgb = hexToRgb(value.startsWith('#') ? value : `#${value}`)
+    if (rgb) onChange(rgbToHex(rgb.r, rgb.g, rgb.b).toLowerCase())
+  }
 
   return (
     <div className="flex items-center gap-2">
@@ -254,14 +254,14 @@ function ColorSwatch({
         aria-label={label}
         aria-expanded={open}
         className={`size-8 shrink-0 rounded-md border border-white/20 shadow-inner ${
-          checker ? checkerboardClass : ""
+          checker ? checkerboardClass : ''
         }`}
         style={checker ? undefined : { backgroundColor: hex }}
         onClick={onToggle}
       />
       <input
         type="text"
-        value={checker ? "" : draft}
+        value={checker ? '' : draft}
         placeholder="#rrggbb"
         aria-label={`${label} hex`}
         title="Edit hex"
@@ -269,16 +269,16 @@ function ColorSwatch({
         autoComplete="off"
         className={`${toolCompactInputClass} !w-[7.25rem] max-w-[7.25rem] shrink-0 font-mono tracking-wide`}
         onChange={(e) => {
-          const v = e.target.value;
-          setDraft(v);
-          commitDraft(v);
+          const v = e.target.value
+          setDraft(v)
+          commitDraft(v)
         }}
         onBlur={() => commitDraft(draft)}
         onKeyDown={(e) => {
-          if (e.key === "Enter") e.currentTarget.blur();
-          if (e.key === "Escape") {
-            setDraft(hex);
-            e.currentTarget.blur();
+          if (e.key === 'Enter') e.currentTarget.blur()
+          if (e.key === 'Escape') {
+            setDraft(hex)
+            e.currentTarget.blur()
           }
         }}
       />
@@ -291,91 +291,91 @@ function ColorSwatch({
           >
             <HexColorPicker color={hex} onChange={onChange} />
           </div>,
-          document.body,
+          document.body
         )}
     </div>
-  );
+  )
 }
 
 const checkerboardClass =
-  "bg-neutral-800 bg-[length:16px_16px] bg-[position:0_0,0_8px,8px_-8px,-8px_0] bg-[linear-gradient(45deg,#2a2a2a_25%,transparent_25%),linear-gradient(-45deg,#2a2a2a_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#2a2a2a_75%),linear-gradient(-45deg,transparent_75%,#2a2a2a_75%)]";
+  'bg-neutral-800 bg-[length:16px_16px] bg-[position:0_0,0_8px,8px_-8px,-8px_0] bg-[linear-gradient(45deg,#2a2a2a_25%,transparent_25%),linear-gradient(-45deg,#2a2a2a_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#2a2a2a_75%),linear-gradient(-45deg,transparent_75%,#2a2a2a_75%)]'
 
 function clientToViewBox(svg: SVGSVGElement, clientX: number, clientY: number) {
-  const ctm = svg.getScreenCTM();
-  if (!ctm) return null;
-  const pt = new DOMPoint(clientX, clientY).matrixTransform(ctm.inverse());
-  return { x: pt.x, y: pt.y };
+  const ctm = svg.getScreenCTM()
+  if (!ctm) return null
+  const pt = new DOMPoint(clientX, clientY).matrixTransform(ctm.inverse())
+  return { x: pt.x, y: pt.y }
 }
 
 function ShapePreview({
   svg,
   config,
   transparentBg,
-  onMoveHandle,
+  onMoveHandle
 }: {
-  svg: string;
-  config: Parameters<typeof previewHandles>[0];
-  transparentBg: boolean;
-  onMoveHandle: (index: number, x: number, y: number) => void;
+  svg: string
+  config: Parameters<typeof previewHandles>[0]
+  transparentBg: boolean
+  onMoveHandle: (index: number, x: number, y: number) => void
 }) {
-  const overlayRef = useRef<SVGSVGElement>(null);
+  const overlayRef = useRef<SVGSVGElement>(null)
   const dragRef = useRef<{
-    index: number;
-    startX: number;
-    startY: number;
-    grabX: number;
-    grabY: number;
-    originX: number;
-    originY: number;
-    moved: boolean;
-  } | null>(null);
-  const [active, setActive] = useState<number | null>(null);
-  const handles = previewHandles(config);
-  const unlocked = Boolean(config.handles);
+    index: number
+    startX: number
+    startY: number
+    grabX: number
+    grabY: number
+    originX: number
+    originY: number
+    moved: boolean
+  } | null>(null)
+  const [active, setActive] = useState<number | null>(null)
+  const handles = previewHandles(config)
+  const unlocked = Boolean(config.handles)
   const r = roundHandle(
-    Math.max(8, Math.min(config.width, config.height) * 0.018),
-  );
+    Math.max(8, Math.min(config.width, config.height) * 0.018)
+  )
 
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
-      const drag = dragRef.current;
-      if (!drag) return;
-      const dist = Math.hypot(e.clientX - drag.startX, e.clientY - drag.startY);
-      if (!drag.moved && dist < 10) return;
-      drag.moved = true;
-      e.preventDefault();
-      const el = overlayRef.current;
-      if (!el) return;
-      const pt = clientToViewBox(el, e.clientX, e.clientY);
-      if (!pt) return;
+      const drag = dragRef.current
+      if (!drag) return
+      const dist = Math.hypot(e.clientX - drag.startX, e.clientY - drag.startY)
+      if (!drag.moved && dist < 10) return
+      drag.moved = true
+      e.preventDefault()
+      const el = overlayRef.current
+      if (!el) return
+      const pt = clientToViewBox(el, e.clientX, e.clientY)
+      if (!pt) return
       onMoveHandle(
         drag.index,
         pt.x + (drag.grabX - drag.originX),
-        pt.y + (drag.grabY - drag.originY),
-      );
-    };
+        pt.y + (drag.grabY - drag.originY)
+      )
+    }
     const onUp = () => {
-      dragRef.current = null;
-      setActive(null);
-    };
-    window.addEventListener("pointermove", onMove);
-    window.addEventListener("pointerup", onUp);
-    window.addEventListener("pointercancel", onUp);
+      dragRef.current = null
+      setActive(null)
+    }
+    window.addEventListener('pointermove', onMove)
+    window.addEventListener('pointerup', onUp)
+    window.addEventListener('pointercancel', onUp)
     return () => {
-      window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("pointerup", onUp);
-      window.removeEventListener("pointercancel", onUp);
-    };
-  }, [onMoveHandle]);
+      window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('pointerup', onUp)
+      window.removeEventListener('pointercancel', onUp)
+    }
+  }, [onMoveHandle])
 
   const onHandleDown = (index: number, e: ReactPointerEvent<SVGGElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const el = overlayRef.current;
-    const handle = handles[index];
-    if (!el || !handle) return;
-    const pt = clientToViewBox(el, e.clientX, e.clientY);
-    if (!pt) return;
+    e.preventDefault()
+    e.stopPropagation()
+    const el = overlayRef.current
+    const handle = handles[index]
+    if (!el || !handle) return
+    const pt = clientToViewBox(el, e.clientX, e.clientY)
+    if (!pt) return
     dragRef.current = {
       index,
       startX: e.clientX,
@@ -384,10 +384,10 @@ function ShapePreview({
       grabY: handle.y,
       originX: pt.x,
       originY: pt.y,
-      moved: false,
-    };
-    setActive(index);
-  };
+      moved: false
+    }
+    setActive(index)
+  }
 
   return (
     <div className="rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-3 sm:p-4">
@@ -398,7 +398,7 @@ function ShapePreview({
       </p>
       <div
         className={`relative mx-auto mt-3 h-64 w-full overflow-hidden rounded-xl sm:h-72 md:h-80 ${
-          transparentBg ? checkerboardClass : ""
+          transparentBg ? checkerboardClass : ''
         }`}
         style={
           transparentBg ? undefined : { backgroundColor: config.background }
@@ -416,8 +416,8 @@ function ShapePreview({
           className="pointer-events-none absolute inset-0 size-full touch-none"
           aria-label={
             unlocked
-              ? "Unlocked from seed - drag the dots to reshape"
-              : "Seeded shape - drag a dot to unlock and reshape"
+              ? 'Unlocked from seed - drag the dots to reshape'
+              : 'Seeded shape - drag a dot to unlock and reshape'
           }
           role="img"
         >
@@ -425,7 +425,7 @@ function ShapePreview({
             <g
               key={i}
               className="cursor-grab touch-none"
-              style={{ pointerEvents: "all" }}
+              style={{ pointerEvents: 'all' }}
               onPointerDown={(e) => onHandleDown(i, e)}
             >
               <circle
@@ -438,14 +438,14 @@ function ShapePreview({
                 cx={p.x}
                 cy={p.y}
                 r={active === i ? roundHandle(r * 1.25) : r}
-                fill={active === i ? "#4169e1" : "#fff"}
+                fill={active === i ? '#4169e1' : '#fff'}
                 stroke="#4169e1"
                 strokeWidth={roundHandle(r * 0.28)}
               >
                 <title>
                   {unlocked
-                    ? "Drag to reshape"
-                    : "Drag to unlock the seed and reshape"}
+                    ? 'Drag to reshape'
+                    : 'Drag to unlock the seed and reshape'}
                 </title>
               </circle>
             </g>
@@ -453,11 +453,11 @@ function ShapePreview({
         </svg>
       </div>
     </div>
-  );
+  )
 }
 
 function SvgBlobWaveGeneratorInner() {
-  const { unlockAchievement } = useAchievementContext();
+  const { unlockAchievement } = useAchievementContext()
   const {
     config,
     svg,
@@ -488,39 +488,39 @@ function SvgBlobWaveGeneratorInner() {
     handleRandomize,
     handleApplyPreset,
     handleApplyShapePreset,
-    moveHandle,
-  } = useSvgBlobWave();
+    moveHandle
+  } = useSvgBlobWave()
 
-  const [pickerId, setPickerId] = useState<string | null>(null);
-  const [pngBusy, setPngBusy] = useState(false);
+  const [pickerId, setPickerId] = useState<string | null>(null)
+  const [pngBusy, setPngBusy] = useState(false)
 
   const handleCopy = (text: string, key: string) => {
-    navigator.clipboard.writeText(text);
-    flash(key);
-    unlockAchievement("clipboard-master");
-  };
+    navigator.clipboard.writeText(text)
+    flash(key)
+    unlockAchievement('clipboard-master')
+  }
 
   const handleDownloadSvg = () => {
-    downloadSvgDocument(svg);
-  };
+    downloadSvgDocument(svg)
+  }
 
   const handleDownloadPng = async () => {
-    if (pngBusy) return;
-    setPngBusy(true);
+    if (pngBusy) return
+    setPngBusy(true)
     try {
-      const blob = await rasterizeSvgToPng(svg, config.width, config.height);
-      triggerDownload(blob, "blob-wave.png");
+      const blob = await rasterizeSvgToPng(svg, config.width, config.height)
+      triggerDownload(blob, 'blob-wave.png')
     } catch {
       // Keep the tool usable if canvas encode fails
     } finally {
-      setPngBusy(false);
+      setPngBusy(false)
     }
-  };
+  }
 
-  const transparentBg = isTransparent(config.background);
-  const showSecondColor = config.fill === "gradient";
-  const showStroke = config.fill === "outline";
-  const showAngle = config.fill === "gradient";
+  const transparentBg = isTransparent(config.background)
+  const showSecondColor = config.fill === 'gradient'
+  const showStroke = config.fill === 'outline'
+  const showAngle = config.fill === 'gradient'
 
   return (
     <ToolLayout title="SVG blob / wave generator">
@@ -558,7 +558,7 @@ function SvgBlobWaveGeneratorInner() {
 
           <ControlRow label="Shape">
             {BLOB_WAVE_SHAPE_PRESETS.map((preset) => {
-              const active = shapePresetMatches(preset, config);
+              const active = shapePresetMatches(preset, config)
               return (
                 <button
                   key={preset.id}
@@ -567,20 +567,20 @@ function SvgBlobWaveGeneratorInner() {
                   onClick={() => handleApplyShapePreset(preset)}
                   className={`flex h-10 items-center gap-1.5 rounded-md px-2 text-xs font-medium text-neutral-100 transition ${
                     active
-                      ? "ring-2 ring-white/70 bg-white/10"
-                      : "ring-1 ring-white/15 hover:ring-white/35"
+                      ? 'ring-2 ring-white/70 bg-white/10'
+                      : 'ring-1 ring-white/15 hover:ring-white/35'
                   }`}
                 >
                   <ShapePresetThumb preset={preset} />
                   {preset.label}
                 </button>
-              );
+              )
             })}
           </ControlRow>
 
           <ControlRow label="Look">
             {BLOB_WAVE_PRESETS.map((preset) => {
-              const active = presetMatches(preset, config);
+              const active = presetMatches(preset, config)
               return (
                 <button
                   key={preset.id}
@@ -589,19 +589,19 @@ function SvgBlobWaveGeneratorInner() {
                   onClick={() => handleApplyPreset(preset)}
                   className={`h-8 min-w-[4.75rem] rounded-md px-2.5 text-xs font-medium text-white transition [text-shadow:0_1px_2px_rgb(0_0_0_/_75%)] ${
                     active
-                      ? "ring-2 ring-white/70"
-                      : "ring-1 ring-white/15 hover:ring-white/35"
+                      ? 'ring-2 ring-white/70'
+                      : 'ring-1 ring-white/15 hover:ring-white/35'
                   }`}
                   style={{
                     backgroundImage: `linear-gradient(135deg, ${preset.color1}, ${preset.color2})`,
                     backgroundColor: isTransparent(preset.background)
                       ? undefined
-                      : preset.background,
+                      : preset.background
                   }}
                 >
                   {preset.label}
                 </button>
-              );
+              )
             })}
           </ControlRow>
         </div>
@@ -628,37 +628,37 @@ function SvgBlobWaveGeneratorInner() {
                   min={0}
                   value={config.seed}
                   onChange={(e) => {
-                    const n = Number.parseInt(e.target.value, 10);
-                    if (!Number.isFinite(n)) return;
-                    setSeed(n);
+                    const n = Number.parseInt(e.target.value, 10)
+                    if (!Number.isFinite(n)) return
+                    setSeed(n)
                   }}
                   className={`${toolNumberInputClass} !max-w-36`}
                   aria-label="Shape seed"
                   title={
                     config.handles
-                      ? "Unlocked - changing seed generates a new shape"
-                      : "Shape seed"
+                      ? 'Unlocked - changing seed generates a new shape'
+                      : 'Shape seed'
                   }
                 />
                 <span
                   className={`rounded-md px-2 py-0.5 text-xs font-medium ${
                     config.handles
-                      ? "bg-amber-400/15 text-amber-200"
-                      : "bg-white/10 text-neutral-300"
+                      ? 'bg-amber-400/15 text-amber-200'
+                      : 'bg-white/10 text-neutral-300'
                   }`}
                 >
-                  {config.handles ? "Unlocked" : "Seeded"}
+                  {config.handles ? 'Unlocked' : 'Seeded'}
                 </span>
               </div>
               <p className={toolHintMetaClass}>
                 {config.handles
-                  ? "Dragging froze this silhouette. Seed no longer drives the path — change the seed or Randomize to generate again."
-                  : "Drag a dot to unlock this seed. Clicking without moving leaves the SVG as-is."}
+                  ? 'Dragging froze this silhouette. Seed no longer drives the path - change the seed or Randomize to generate again.'
+                  : 'Drag a dot to unlock this seed. Clicking without moving leaves the SVG as-is.'}
               </p>
             </div>
           </div>
 
-          {config.mode === "blob" ? (
+          {config.mode === 'blob' ? (
             <>
               <SliderField
                 label="Points"
@@ -744,12 +744,12 @@ function SvgBlobWaveGeneratorInner() {
             </ToolChipRow>
           </ControlRow>
 
-          <ControlRow label={showStroke ? "Stroke" : "Color"}>
+          <ControlRow label={showStroke ? 'Stroke' : 'Color'}>
             <ColorSwatch
               hex={config.color1}
-              label={showStroke ? "Stroke color" : "Fill color"}
-              open={pickerId === "c1"}
-              onToggle={() => setPickerId((id) => (id === "c1" ? null : "c1"))}
+              label={showStroke ? 'Stroke color' : 'Fill color'}
+              open={pickerId === 'c1'}
+              onToggle={() => setPickerId((id) => (id === 'c1' ? null : 'c1'))}
               onClose={() => setPickerId(null)}
               onChange={setColor1}
             />
@@ -757,9 +757,9 @@ function SvgBlobWaveGeneratorInner() {
               <ColorSwatch
                 hex={config.color2}
                 label="Gradient end color"
-                open={pickerId === "c2"}
+                open={pickerId === 'c2'}
                 onToggle={() =>
-                  setPickerId((id) => (id === "c2" ? null : "c2"))
+                  setPickerId((id) => (id === 'c2' ? null : 'c2'))
                 }
                 onClose={() => setPickerId(null)}
                 onChange={setColor2}
@@ -797,10 +797,10 @@ function SvgBlobWaveGeneratorInner() {
               Transparent
             </ToolChipButton>
             <ColorSwatch
-              hex={transparentBg ? "#0d1117" : config.background}
+              hex={transparentBg ? '#0d1117' : config.background}
               label="Background color"
-              open={pickerId === "bg"}
-              onToggle={() => setPickerId((id) => (id === "bg" ? null : "bg"))}
+              open={pickerId === 'bg'}
+              onToggle={() => setPickerId((id) => (id === 'bg' ? null : 'bg'))}
               onClose={() => setPickerId(null)}
               onChange={setBackground}
               checker={transparentBg}
@@ -816,9 +816,9 @@ function SvgBlobWaveGeneratorInner() {
                 max={MAX_SIZE}
                 value={config.width}
                 onChange={(e) => {
-                  const n = Number.parseInt(e.target.value, 10);
-                  if (!Number.isFinite(n)) return;
-                  setWidth(n);
+                  const n = Number.parseInt(e.target.value, 10)
+                  if (!Number.isFinite(n)) return
+                  setWidth(n)
                 }}
                 className={`${toolNumberInputClass} !w-[4.25rem] max-w-[4.25rem]`}
                 aria-label="ViewBox width"
@@ -832,9 +832,9 @@ function SvgBlobWaveGeneratorInner() {
                 max={MAX_SIZE}
                 value={config.height}
                 onChange={(e) => {
-                  const n = Number.parseInt(e.target.value, 10);
-                  if (!Number.isFinite(n)) return;
-                  setHeight(n);
+                  const n = Number.parseInt(e.target.value, 10)
+                  if (!Number.isFinite(n)) return
+                  setHeight(n)
                 }}
                 className={`${toolNumberInputClass} !w-[4.25rem] max-w-[4.25rem]`}
                 aria-label="ViewBox height"
@@ -864,11 +864,11 @@ function SvgBlobWaveGeneratorInner() {
               Download SVG
             </SecondaryButton>
             <SecondaryButton onClick={handleDownloadPng} disabled={pngBusy}>
-              {pngBusy ? "Rendering…" : "Download PNG"}
+              {pngBusy ? 'Rendering…' : 'Download PNG'}
             </SecondaryButton>
             <ToolCopyButton
-              copied={copied === "export"}
-              onClick={() => handleCopy(exportText, "export")}
+              copied={copied === 'export'}
+              onClick={() => handleCopy(exportText, 'export')}
             />
           </div>
         </div>
@@ -883,7 +883,7 @@ function SvgBlobWaveGeneratorInner() {
             </ToolChipButton>
           ))}
         </ToolChipRow>
-        {exportFormat === "clip" ? (
+        {exportFormat === 'clip' ? (
           <p className={`${toolHintMetaClass} mb-3`}>
             CSS <code>path()</code> uses these coordinates as pixels and does
             not scale with the box. Size the element to the viewBox, or use the
@@ -893,7 +893,7 @@ function SvgBlobWaveGeneratorInner() {
         <pre className={toolPreOutputClass}>{exportText}</pre>
       </div>
     </ToolLayout>
-  );
+  )
 }
 
 const SvgBlobWaveGenerator = () => (
@@ -906,6 +906,6 @@ const SvgBlobWaveGenerator = () => (
   >
     <SvgBlobWaveGeneratorInner />
   </Suspense>
-);
+)
 
-export default SvgBlobWaveGenerator;
+export default SvgBlobWaveGenerator
