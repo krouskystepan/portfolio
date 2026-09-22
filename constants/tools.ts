@@ -360,6 +360,25 @@ export const tools = [
     keywords: ['chmod', 'unix', 'permissions', 'octal', 'rwx', '755', '644']
   },
   {
+    name: 'Escape / unescape toolbox',
+    path: 'escape-unescape',
+    description:
+      'Escape or unescape strings for C, Python, and shell - turn log escapes into text and text into pasteable literals.',
+    section: 'network',
+    keywords: [
+      'escape',
+      'unescape',
+      'backslash',
+      'string literal',
+      'c',
+      'python',
+      'shell',
+      'bash',
+      'quoting',
+      'ansi-c'
+    ]
+  },
+  {
     name: 'CIDR / subnet calculator',
     path: 'cidr-calculator',
     description:
@@ -394,25 +413,6 @@ export const tools = [
       'timer',
       'interval',
       'croner'
-    ]
-  },
-  {
-    name: 'Escape / unescape toolbox',
-    path: '', // 'escape-unescape'
-    description:
-      'Escape or unescape strings for C, Python, and shell - turn log escapes into text and text into pasteable literals.',
-    section: 'network',
-    keywords: [
-      'escape',
-      'unescape',
-      'backslash',
-      'string literal',
-      'c',
-      'python',
-      'shell',
-      'bash',
-      'quoting',
-      'ansi-c'
     ]
   }
 ] as const satisfies readonly TTools[]

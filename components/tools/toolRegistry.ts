@@ -31,6 +31,8 @@ const loaders = {
   'shadow-generator': () =>
     import('@/components/tools/items/ShadowGenerator'),
   'chmod-calculator': () => import('@/components/tools/items/ChmodCalculator'),
+  'escape-unescape': () =>
+    import('@/components/tools/items/EscapeUnescapeToolbox'),
   'cidr-calculator': () => import('@/components/tools/items/CidrCalculator'),
   'cron-builder': () => import('@/components/tools/items/CronExpressionBuilder'),
   'hash-generator': () => import('@/components/tools/items/HashGenerator'),
