@@ -1,6 +1,8 @@
 import { TProject } from './types'
 
-export const PROJECT_FILTERS = ['live', 'all', 'demo'] as const
+export const PROJECT_STATUSES = ['active', 'legacy', 'demo'] as const
+
+export const PROJECT_FILTERS = ['active', 'all', 'demo'] as const
 
 export const PROJECTS: TProject[] = [
   {
@@ -27,7 +29,7 @@ export const PROJECTS: TProject[] = [
       'Vitest',
       'PM2'
     ],
-    availability: 'live'
+    availability: 'active'
   },
   {
     id: 'portfolio-platform',
@@ -48,7 +50,20 @@ export const PROJECTS: TProject[] = [
       'VPS',
       'GitHub Actions'
     ],
-    availability: 'live'
+    availability: 'active'
+  },
+  {
+    id: 'krousky-lab',
+    name: 'Krouský Lab',
+    description:
+      'A client-side lab of playable puzzles and the solvers that explain them: minesweeper, sudoku, wordle, rush hour, lights out, untangle, geo quiz, mental math, and tools that show why a cell is safe, a mate is forced, or an algebra step is legal. English and Czech, one Vite app.',
+    image: '/images/projects/krousky-lab.png',
+    link: {
+      type: 'internal',
+      url: '/projects/krousky-lab'
+    },
+    tags: ['React', 'TypeScript', 'Vite', 'Tailwind', 'React Router'],
+    availability: 'active'
   },
   {
     id: 'wassa',
@@ -61,7 +76,7 @@ export const PROJECTS: TProject[] = [
       url: 'https://wassa.eu'
     },
     tags: ['Next.js', 'Tailwind', 'Shadcn'],
-    availability: 'live'
+    availability: 'active'
   },
   {
     id: 'custom-overlays',
@@ -81,7 +96,7 @@ export const PROJECTS: TProject[] = [
       'Vite',
       'Monorepo'
     ],
-    availability: 'live'
+    availability: 'legacy'
   },
   {
     id: 'monkeycovers',

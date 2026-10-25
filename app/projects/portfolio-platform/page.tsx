@@ -156,6 +156,11 @@ const PortfolioCaseStudyPage = () => {
               via <code className="text-xs">krouskystepan.com/cv</code>.
             </>,
             <>
+              <code className="text-xs">lab.krouskystepan.com</code> - Krouský
+              Lab, a client-side collection of games and solvers. Documented in
+              its own case study.
+            </>,
+            <>
               <code className="text-xs">darts.krouskystepan.com</code> - a
               simple static darts score tracker (501 countdown).
             </>,

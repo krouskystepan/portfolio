@@ -134,7 +134,7 @@ const Project = ({ project, index }: { project: TProject; index: number }) => {
             priority={index < 2}
             unoptimized
             sizes="(min-width: 768px) 40vw, 100vw"
-            className="absolute inset-x-0 top-0 h-auto w-full max-w-none"
+            className="absolute inset-0 h-full w-full object-cover object-top"
           />
         </div>
       </div>
