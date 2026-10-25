@@ -36,11 +36,18 @@ const CustomOverlaysCaseStudyPage = () => {
         />
       </header>
 
-      <Alert
-        type="info"
-        title="Project Scope"
-        description="The platform focuses exclusively on real-time delivery. No persistence, no dashboards, and no historical data - only low-latency event flow from streaming platforms to on-screen overlays."
-      />
+      <div className="flex flex-col gap-4">
+        <Alert
+          type="note"
+          title="Legacy"
+          description="Built against an older streaming API and no longer in use. The write-up stays up as a case study."
+        />
+        <Alert
+          type="info"
+          title="Project Scope"
+          description="The platform focuses exclusively on real-time delivery. No persistence, no dashboards, and no historical data - only low-latency event flow from streaming platforms to on-screen overlays."
+        />
+      </div>
 
       {/* TOC */}
       <ProjectSubPageTableOfContents

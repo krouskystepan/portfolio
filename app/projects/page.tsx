@@ -11,7 +11,7 @@ import { getAvailabilityDetails } from '@/utils/utils'
 const Projects = () => {
   const [filter, setFilter] = useState<TProjectFilter>('all')
 
-  const ORDER: TProjectFilter[] = ['live', 'all', 'demo']
+  const ORDER: TProjectFilter[] = ['active', 'all', 'demo']
 
   const filteredProjects =
     filter === 'all'
