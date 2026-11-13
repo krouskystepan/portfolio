@@ -136,8 +136,12 @@ const JsonSchemaWorkbench = ({
       <ToolInputPanel
         intro={
           <p className={toolIntroTextClass}>
-            Generate a draft-07 schema from sample JSON, or validate an instance
-            against a schema. Processing stays in your browser.
+            Generate a{' '}
+            <span className="text-neutral-200">draft-07</span> schema from sample
+            JSON, or validate an instance against a schema (Ajv, loaded on
+            demand). Generated object schemas set{' '}
+            <code className="text-neutral-300">additionalProperties: false</code>{' '}
+            and mark present keys as required. Processing stays in your browser.
           </p>
         }
       >
