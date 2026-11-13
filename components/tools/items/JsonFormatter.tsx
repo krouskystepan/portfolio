@@ -13,6 +13,7 @@ import {
 import {
   toolEmptyHintClass,
   toolErrorBoxClass,
+  toolHintMetaClass,
   toolPreOutputClass,
   toolResultHeaderRowClass,
   toolResultPanelClass,
@@ -75,6 +76,19 @@ function unescapeJsonStringLiteral(text: string): string {
   throw new Error('Input is not a valid JSON string literal.')
 }
 
+const LARGE_JSON_CHARS = 100_000
+
+/** Yield to the browser so large paste/format work does not freeze the UI. */
+function yieldToUi(): Promise<void> {
+  return new Promise((resolve) => {
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(() => resolve())
+    } else {
+      setTimeout(resolve, 0)
+    }
+  })
+}
+
 const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
   const [url, setUrl] = useToolUrlState({
     json: str('', { text: true })
@@ -82,6 +96,7 @@ const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
   const input = url.json
   const [formatted, setFormatted] = useState('')
   const [issue, setIssue] = useState<ParseIssue>(null)
+  const [busy, setBusy] = useState(false)
   const { copied, flash } = useCopyFeedback()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -97,40 +112,38 @@ const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
     issue && (issue.singleQuotes || issue.unquotedKeys || issue.trailingComma)
   )
 
-  const handleFormat = () => {
+  const runParseTransform = async (
+    transform: (parsed: unknown) => string
+  ) => {
     if (!input.trim()) return
+    const large = input.length >= LARGE_JSON_CHARS
+    if (large) setBusy(true)
     try {
-      const parsed = JSON.parse(input)
-      setFormatted(JSON.stringify(parsed, null, 2))
+      if (large) await yieldToUi()
+      const parsed = JSON.parse(input) as unknown
+      if (large) await yieldToUi()
+      setFormatted(transform(parsed))
       setIssue(null)
     } catch (err) {
       setIssue(detectParseIssue((err as Error).message))
       setFormatted('')
+    } finally {
+      if (large) setBusy(false)
     }
+  }
+
+  const handleFormat = () => {
+    void runParseTransform((parsed) => JSON.stringify(parsed, null, 2))
   }
 
   const handleMinify = () => {
-    if (!input.trim()) return
-    try {
-      const parsed = JSON.parse(input)
-      setFormatted(JSON.stringify(parsed))
-      setIssue(null)
-    } catch (err) {
-      setIssue(detectParseIssue((err as Error).message))
-      setFormatted('')
-    }
+    void runParseTransform((parsed) => JSON.stringify(parsed))
   }
 
   const handleSortKeys = () => {
-    if (!input.trim()) return
-    try {
-      const parsed = JSON.parse(input)
-      setFormatted(JSON.stringify(sortKeysDeep(parsed), null, 2))
-      setIssue(null)
-    } catch (err) {
-      setIssue(detectParseIssue((err as Error).message))
-      setFormatted('')
-    }
+    void runParseTransform((parsed) =>
+      JSON.stringify(sortKeysDeep(parsed), null, 2)
+    )
   }
 
   const handleEscape = () => {
@@ -231,9 +244,17 @@ const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
     )
   }
 
+  const actionsDisabled = !input.trim() || busy
+
   return (
     <ToolLayout title="JSON Formatter & Validator" embedded={embedded}>
       <ToolInputPanel>
+        <p className={`${toolHintMetaClass} mb-3`}>
+          Duplicate object keys are collapsed by{' '}
+          <code className="text-neutral-400">JSON.parse</code> before this tool
+          runs — the last value wins, and a faithful “remove duplicates” pass is
+          not available after parse.
+        </p>
         <TextAreaWithLineNumbers
           value={input}
           setValue={setInput}
@@ -264,19 +285,22 @@ const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
           </div>
 
           <div className={toolFlexEndButtonsClass}>
-            <PrimaryButton onClick={handleFormat} disabled={!input.trim()}>
-              Format
+            <PrimaryButton onClick={handleFormat} disabled={actionsDisabled}>
+              {busy ? 'Working…' : 'Format'}
             </PrimaryButton>
-            <SecondaryButton onClick={handleMinify} disabled={!input.trim()}>
+            <SecondaryButton onClick={handleMinify} disabled={actionsDisabled}>
               Minify
             </SecondaryButton>
-            <SecondaryButton onClick={handleSortKeys} disabled={!input.trim()}>
+            <SecondaryButton onClick={handleSortKeys} disabled={actionsDisabled}>
               Sort keys
             </SecondaryButton>
-            <SecondaryButton onClick={handleEscape} disabled={!input}>
+            <SecondaryButton onClick={handleEscape} disabled={!input || busy}>
               Escape
             </SecondaryButton>
-            <SecondaryButton onClick={handleUnescape} disabled={!input.trim()}>
+            <SecondaryButton
+              onClick={handleUnescape}
+              disabled={actionsDisabled}
+            >
               Unescape
             </SecondaryButton>
             <ClearButton onClick={handleClear}>Clear</ClearButton>
