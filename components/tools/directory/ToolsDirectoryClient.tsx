@@ -3,11 +3,28 @@
 import Link from 'next/link'
 import { ArrowRight, Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import type { TTools } from '@/constants/types'
+import {
+  TOOL_SECTION_ORDER,
+  type TToolSectionId,
+  type TTools
+} from '@/constants/types'
 import { matchesToolQuery, groupToolsBySection } from '@/utils/toolUtils'
 
 type ToolsDirectoryClientProps = {
   tools: readonly TTools[]
+}
+
+/** Short labels for the filter row — full names stay on section headings. */
+const SECTION_FILTER_LABELS: Record<TToolSectionId, string> = {
+  data: 'Data',
+  text: 'Text',
+  web: 'Web',
+  encoding: 'Encoding',
+  generators: 'Generators',
+  design: 'Design',
+  datetime: 'Date & time',
+  network: 'Network',
+  qa: 'QA'
 }
 
 function ToolCard({ tool }: { tool: TTools }) {
@@ -34,9 +51,7 @@ function ToolCard({ tool }: { tool: TTools }) {
 
       <div className="relative text-xs font-medium sm:text-sm">
         {isComingSoon ? (
-          <span className="rounded-md border border-white/10 bg-white/[0.03] px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-neutral-400 sm:text-xs">
-            Coming soon
-          </span>
+          <span className="text-neutral-500">Coming soon</span>
         ) : (
           <span className="inline-flex items-center text-custom_blue">
             <span className="relative after:absolute after:-bottom-px after:left-0 after:h-px after:w-0 after:bg-current after:transition-all after:duration-300 group-hover:after:w-full">
@@ -71,59 +86,108 @@ export default function ToolsDirectoryClient({
   tools
 }: ToolsDirectoryClientProps) {
   const [query, setQuery] = useState('')
+  const [section, setSection] = useState<TToolSectionId | 'all'>('all')
+
+  const availableSections = useMemo(() => {
+    const present = new Set(tools.map((t) => t.section))
+    return TOOL_SECTION_ORDER.filter((id) => present.has(id))
+  }, [tools])
 
   const filtered = useMemo(
-    () => tools.filter((t) => matchesToolQuery(t, query)),
-    [query, tools]
+    () =>
+      tools.filter(
+        (t) =>
+          (section === 'all' || t.section === section) &&
+          matchesToolQuery(t, query)
+      ),
+    [query, section, tools]
   )
 
   const sections = useMemo(() => groupToolsBySection(filtered), [filtered])
 
+  const visibleSections = useMemo(
+    () => sections.filter(({ tools: group }) => group.length > 0),
+    [sections]
+  )
+
   return (
     <div className="relative z-20 space-y-8">
-      <form
-        role="search"
-        className="relative z-30 mx-auto max-w-xl"
-        onSubmit={(e) => e.preventDefault()}
-      >
-        <Search className="pointer-events-none absolute left-3 top-1/2 z-10 size-4 -translate-y-1/2 text-neutral-400" />
-        <input
-          type="text"
-          inputMode="search"
-          autoComplete="off"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search tools by name, path, or keyword…"
-          aria-label="Filter tools"
-          className="ring-custom_blue/40 relative z-20 w-full rounded-xl border border-white/10 bg-neutral-900/80 py-3 pl-10 pr-4 text-sm text-neutral-100 outline-none placeholder:text-neutral-500 focus:ring-2"
-        />
-      </form>
+      <div className="mx-auto max-w-xl space-y-4">
+        <form
+          role="search"
+          className="relative z-30"
+          onSubmit={(e) => e.preventDefault()}
+        >
+          <Search className="pointer-events-none absolute left-3 top-1/2 z-10 size-4 -translate-y-1/2 text-neutral-400" />
+          <input
+            type="text"
+            inputMode="search"
+            autoComplete="off"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search tools by name, path, or keyword…"
+            aria-label="Filter tools"
+            className="ring-custom_blue/40 relative z-20 w-full rounded-xl border border-white/10 bg-neutral-900/80 py-3 pl-10 pr-4 text-sm text-neutral-100 outline-none placeholder:text-neutral-500 focus:ring-2"
+          />
+        </form>
+
+        <nav
+          aria-label="Filter by category"
+          className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm"
+        >
+          <button
+            type="button"
+            onClick={() => setSection('all')}
+            className={
+              section === 'all'
+                ? 'text-white'
+                : 'text-neutral-500 hover:text-neutral-300'
+            }
+          >
+            All
+          </button>
+          {availableSections.map((id) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setSection(id)}
+              className={
+                section === id
+                  ? 'text-white'
+                  : 'text-neutral-500 hover:text-neutral-300'
+              }
+            >
+              {SECTION_FILTER_LABELS[id]}
+            </button>
+          ))}
+        </nav>
+      </div>
 
       {filtered.length === 0 ? (
         <p className="text-center text-sm text-neutral-400">
           No tools match that search.
         </p>
       ) : (
-        sections.map(({ section, label, tools: group }) =>
-          group.length === 0 ? null : (
-            <section key={section} aria-labelledby={`section-${section}`}>
-              <h3
-                id={`section-${section}`}
-                className="mb-4 text-sm font-semibold uppercase tracking-wide text-custom_blue"
-              >
-                {label}
-              </h3>
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {group.map((tool) => (
-                  <ToolCard
-                    key={tool.path || tool.name}
-                    tool={tool}
-                  />
-                ))}
-              </div>
-            </section>
-          )
-        )
+        visibleSections.map(({ section: id, label, tools: group }) => (
+          <section
+            key={id}
+            id={`section-${id}`}
+            aria-labelledby={`heading-${id}`}
+            className="scroll-mt-24"
+          >
+            <h3
+              id={`heading-${id}`}
+              className="mb-4 text-sm font-semibold uppercase tracking-wide text-custom_blue"
+            >
+              {label}
+            </h3>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {group.map((tool) => (
+                <ToolCard key={tool.path || tool.name} tool={tool} />
+              ))}
+            </div>
+          </section>
+        ))
       )}
     </div>
   )
