@@ -20,7 +20,10 @@ export const tools = [
       'schema',
       'json schema',
       'ajv',
-      'sort keys'
+      'sort keys',
+      'escape',
+      'delimiter',
+      'nullable'
     ]
   },
   {
