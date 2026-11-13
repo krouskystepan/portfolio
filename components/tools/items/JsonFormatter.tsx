@@ -1,11 +1,15 @@
 'use client'
 
 import { useAchievementContext } from '@/context/AchievementContext'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
-import { ClearButton, PrimaryButton, SecondaryButton } from '@/components/tools/_shared/ToolButtons'
+import {
+  ClearButton,
+  PrimaryButton,
+  SecondaryButton
+} from '@/components/tools/_shared/ToolButtons'
 import {
   toolEmptyHintClass,
   toolErrorBoxClass,
@@ -21,6 +25,8 @@ import {
 } from '@/components/tools/_shared/toolUi'
 import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
 import { str, useToolUrlState } from '@/hooks/useToolUrlState'
+import { downloadTextFile, readTextFile } from '@/utils/download'
+import { sortKeysDeep } from '@/utils/jsonSort'
 
 type ParseIssue = {
   message: string
@@ -48,6 +54,27 @@ function detectParseIssue(message: string): NonNullable<ParseIssue> {
   return { message, singleQuotes, unquotedKeys, trailingComma }
 }
 
+function escapeJsonStringLiteral(text: string): string {
+  return JSON.stringify(text)
+}
+
+function unescapeJsonStringLiteral(text: string): string {
+  const trimmed = text.trim()
+  try {
+    const parsed = JSON.parse(trimmed)
+    if (typeof parsed === 'string') return parsed
+  } catch {
+    // fall through — try wrapping
+  }
+  try {
+    const parsed = JSON.parse(`"${trimmed.replace(/^"|"$/g, '')}"`)
+    if (typeof parsed === 'string') return parsed
+  } catch {
+    throw new Error('Input is not a valid JSON string literal.')
+  }
+  throw new Error('Input is not a valid JSON string literal.')
+}
+
 const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
   const [url, setUrl] = useToolUrlState({
     json: str('', { text: true })
@@ -56,6 +83,7 @@ const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
   const [formatted, setFormatted] = useState('')
   const [issue, setIssue] = useState<ParseIssue>(null)
   const { copied, flash } = useCopyFeedback()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const { unlockAchievement } = useAchievementContext()
 
@@ -93,6 +121,40 @@ const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
     }
   }
 
+  const handleSortKeys = () => {
+    if (!input.trim()) return
+    try {
+      const parsed = JSON.parse(input)
+      setFormatted(JSON.stringify(sortKeysDeep(parsed), null, 2))
+      setIssue(null)
+    } catch (err) {
+      setIssue(detectParseIssue((err as Error).message))
+      setFormatted('')
+    }
+  }
+
+  const handleEscape = () => {
+    if (!input) return
+    setFormatted(escapeJsonStringLiteral(input))
+    setIssue(null)
+  }
+
+  const handleUnescape = () => {
+    if (!input.trim()) return
+    try {
+      setFormatted(unescapeJsonStringLiteral(input))
+      setIssue(null)
+    } catch (err) {
+      setIssue({
+        message: (err as Error).message,
+        singleQuotes: false,
+        unquotedKeys: false,
+        trailingComma: false
+      })
+      setFormatted('')
+    }
+  }
+
   const handleClear = () => {
     setInput('')
     setFormatted('')
@@ -124,10 +186,26 @@ const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
     flash()
   }
 
+  const handleDownload = () => {
+    if (!formatted) return
+    downloadTextFile(formatted, 'data.json', 'application/json;charset=utf-8')
+  }
+
+  const handleOpenFile = async (file: File | null) => {
+    if (!file) return
+    try {
+      const text = await readTextFile(file)
+      setInput(text)
+      setFormatted('')
+      setIssue(null)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to open file.')
+    }
+  }
+
   const highlightJson = (json: string): string => {
     if (!json) return ''
 
-    // escape HTML first
     const escaped = json
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
@@ -136,19 +214,15 @@ const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
     return escaped.replace(
       /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^"\\])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d+)?(?:[eE][+\-]?\d+)?)/g,
       (match) => {
-        // KEY (string ending with :)
         if (/^".*":$/.test(match)) {
           return `<span class="text-blue-400">${match}</span>`
         }
-        // STRING value
         if (/^"/.test(match)) {
           return `<span class="text-green-400">${match}</span>`
         }
-        // NUMBER
         if (/^-?\d/.test(match)) {
           return `<span class="text-purple-400">${match}</span>`
         }
-        // BOOLEAN or null
         if (/true|false|null/.test(match)) {
           return `<span class="text-amber-400">${match}</span>`
         }
@@ -166,22 +240,45 @@ const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
           placeholder="Paste your JSON here..."
         />
 
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json,.txt,application/json,text/plain"
+          className="hidden"
+          onChange={(e) => {
+            void handleOpenFile(e.target.files?.[0] ?? null)
+            e.target.value = ''
+          }}
+        />
+
         <div className={toolToolbarBetweenClass}>
-          {hasFixableIssue ? (
-            <ToolChipButton active tone="accent" onClick={handleFixIssues}>
-              Fix Common Issues
-            </ToolChipButton>
-          ) : null}
+          <div className="flex flex-wrap gap-1.5">
+            {hasFixableIssue ? (
+              <ToolChipButton active tone="accent" onClick={handleFixIssues}>
+                Fix Common Issues
+              </ToolChipButton>
+            ) : null}
+            <SecondaryButton onClick={() => fileInputRef.current?.click()}>
+              Open file
+            </SecondaryButton>
+          </div>
 
           <div className={toolFlexEndButtonsClass}>
             <PrimaryButton onClick={handleFormat} disabled={!input.trim()}>
               Format
             </PrimaryButton>
-
             <SecondaryButton onClick={handleMinify} disabled={!input.trim()}>
               Minify
             </SecondaryButton>
-
+            <SecondaryButton onClick={handleSortKeys} disabled={!input.trim()}>
+              Sort keys
+            </SecondaryButton>
+            <SecondaryButton onClick={handleEscape} disabled={!input}>
+              Escape
+            </SecondaryButton>
+            <SecondaryButton onClick={handleUnescape} disabled={!input.trim()}>
+              Unescape
+            </SecondaryButton>
             <ClearButton onClick={handleClear}>Clear</ClearButton>
           </div>
         </div>
@@ -192,7 +289,10 @@ const JsonFormatter = ({ embedded = false }: { embedded?: boolean } = {}) => {
           <h2 className={toolSectionTitleClass}>Result</h2>
 
           {formatted ? (
-            <ToolCopyButton copied={copied === true} onClick={handleCopy} />
+            <div className="flex flex-wrap gap-2">
+              <SecondaryButton onClick={handleDownload}>Download</SecondaryButton>
+              <ToolCopyButton copied={copied === true} onClick={handleCopy} />
+            </div>
           ) : null}
         </div>
 

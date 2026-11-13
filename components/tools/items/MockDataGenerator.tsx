@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { Suspense, useMemo, useState } from 'react'
 import { useAchievementContext } from '@/context/AchievementContext'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
@@ -30,18 +31,31 @@ import {
   custom,
   enumParam,
   int,
+  str,
   useToolUrlState
 } from '@/hooks/useToolUrlState'
+import { downloadTextFile } from '@/utils/download'
 import {
+  DEFAULT_ARRAY_MAX,
+  DEFAULT_ARRAY_MIN,
   DEFAULT_COUNT,
   DEFAULT_CUSTOM_PATTERN,
   DEFAULT_EXPORT,
   DEFAULT_KEY_FOR_TYPE,
+  DEFAULT_NUMBER_DECIMALS,
+  DEFAULT_NUMBER_MAX,
+  DEFAULT_NUMBER_MIN,
   DEFAULT_SCHEMA_SERIALIZED,
+  DEFAULT_SQL_DIALECT,
+  DEFAULT_SQL_TABLE,
   FIELD_TYPE_LABELS,
   FIELD_TYPES,
+  LARGE_COUNT_WARNING,
+  MAX_ARRAY_LENGTH,
   MAX_COUNT,
   MAX_FIELDS,
+  MAX_NUMBER_DECIMALS,
+  MIN_ARRAY_LENGTH,
   MIN_COUNT,
   MOCK_EXPORT_FORMATS,
   MOCK_PRESETS,
@@ -49,8 +63,12 @@ import {
   activePresetId,
   cloneFields,
   exportMock,
+  fieldForType,
   generateRecords,
+  isArrayRangeValid,
   isCountInRange,
+  parseEnumValues,
+  parseKeyPath,
   parseMockSchema,
   schemaIssue,
   serializeMockSchema,
@@ -58,10 +76,53 @@ import {
   uniqueKey,
   type MockExportFormat,
   type MockField,
-  type MockFieldType
+  type MockFieldType,
+  type MockRecord
 } from '@/utils/mockData'
+import {
+  SQL_DIALECT_LABELS,
+  SQL_DIALECTS,
+  tableNameIssue,
+  type SqlDialect
+} from '@/utils/sqlInsert'
 
-type SchemaRow = MockField & { id: string }
+/** Editor row: schema field plus UI-only state. */
+type SchemaRow = MockField & { id: string; valuesText?: string }
+
+const EXPORT_FORMAT_IDS = [
+  'json',
+  'csv',
+  'lines',
+  'sql'
+] as const satisfies readonly MockExportFormat[]
+
+const EXPORT_FILES: Record<MockExportFormat, { ext: string; mime: string }> = {
+  json: { ext: 'json', mime: 'application/json;charset=utf-8' },
+  csv: { ext: 'csv', mime: 'text/csv;charset=utf-8' },
+  lines: { ext: 'txt', mime: 'text/plain;charset=utf-8' },
+  sql: { ext: 'sql', mime: 'application/sql;charset=utf-8' }
+}
+
+/** Keep the <pre> responsive; copy / download always use the full text. */
+const PREVIEW_CHAR_LIMIT = 60_000
+
+function rowToField(row: SchemaRow): MockField {
+  const field: MockField = { key: row.key, type: row.type }
+  if (row.pattern != null) field.pattern = row.pattern
+  if (row.min != null) field.min = row.min
+  if (row.max != null) field.max = row.max
+  if (row.decimals != null) field.decimals = row.decimals
+  if (row.values != null) field.values = row.values
+  return field
+}
+
+function numberFromInput(raw: string): number {
+  return raw.trim() === '' ? Number.NaN : Number(raw)
+}
+
+function displayNumber(value: number | undefined): string | number {
+  return value != null && Number.isFinite(value) ? value : ''
+}
 
 let rowSeq = 0
 
@@ -71,7 +132,11 @@ function nextRowId() {
 }
 
 function rowsFromFields(fields: readonly MockField[]): SchemaRow[] {
-  return cloneFields(fields).map((field) => ({ ...field, id: nextRowId() }))
+  return cloneFields(fields).map((field) => ({
+    ...field,
+    id: nextRowId(),
+    ...(field.values ? { valuesText: field.values.join(', ') } : {})
+  }))
 }
 
 function MockDataGeneratorInner() {
@@ -83,43 +148,66 @@ function MockDataGeneratorInner() {
       { text: true }
     ),
     n: int(DEFAULT_COUNT, { min: 0, max: MAX_COUNT }),
-    f: enumParam<MockExportFormat>(DEFAULT_EXPORT, ['json', 'csv', 'lines'])
+    f: enumParam<MockExportFormat>(DEFAULT_EXPORT, EXPORT_FORMAT_IDS),
+    amin: int(DEFAULT_ARRAY_MIN, {
+      min: MIN_ARRAY_LENGTH,
+      max: MAX_ARRAY_LENGTH
+    }),
+    amax: int(DEFAULT_ARRAY_MAX, {
+      min: MIN_ARRAY_LENGTH,
+      max: MAX_ARRAY_LENGTH
+    }),
+    tbl: str(DEFAULT_SQL_TABLE),
+    d: enumParam<SqlDialect>(DEFAULT_SQL_DIALECT, SQL_DIALECTS)
   })
   const [schema, setSchema] = useState<SchemaRow[]>(() =>
     rowsFromFields(parseMockSchema(url.s))
   )
-  const [records, setRecords] = useState<Record<string, string>[] | null>(null)
+  const [records, setRecords] = useState<MockRecord[] | null>(null)
+  const [generateError, setGenerateError] = useState<string | null>(null)
   const { copied, flash } = useCopyFeedback()
   const { unlockAchievement } = useAchievementContext()
 
   const count = url.n
   const exportFormat = url.f
 
-  const schemaFields = useMemo(
-    () =>
-      schema.map(({ key, type, pattern }) => ({
-        key,
-        type,
-        ...(pattern != null ? { pattern } : {})
-      })),
-    [schema]
-  )
+  const schemaFields = useMemo(() => schema.map(rowToField), [schema])
   const presetId = activePresetId(schemaFields)
   const countOk = isCountInRange(count)
   const issue = schemaIssue(schemaFields)
   const schemaOk = issue == null
-  const isGenerateDisabled = !countOk || !schemaOk
+
+  const hasArrays = useMemo(
+    () =>
+      schemaFields.some((field) =>
+        parseKeyPath(field.key)?.some((segment) => segment.array)
+      ),
+    [schemaFields]
+  )
+  const arrayOk = !hasArrays || isArrayRangeValid(url.amin, url.amax)
+  const tableIssue = tableNameIssue(url.tbl)
+  const isGenerateDisabled = !countOk || !schemaOk || !arrayOk
 
   const exportText = useMemo(() => {
     if (!records) return ''
-    return exportMock(records, exportFormat)
-  }, [records, exportFormat])
+    return exportMock(records, exportFormat, {
+      table: url.tbl,
+      dialect: url.d
+    })
+  }, [records, exportFormat, url.tbl, url.d])
+
+  const previewText =
+    exportText.length > PREVIEW_CHAR_LIMIT
+      ? `${exportText.slice(0, PREVIEW_CHAR_LIMIT)}\n… preview truncated (${exportText.length.toLocaleString()} chars). Copy or download for the full output.`
+      : exportText
 
   const schemaHint = issue
     ? issue
     : !countOk
       ? `Count must be ${MIN_COUNT}–${MAX_COUNT}.`
-      : `${schema.length}/${MAX_FIELDS} fields`
+      : !arrayOk
+        ? `Array length must be ${MIN_ARRAY_LENGTH}–${MAX_ARRAY_LENGTH} (min ≤ max).`
+        : `${schema.length}/${MAX_FIELDS} fields`
 
   const commitSchema = (next: SchemaRow[]) => {
     setSchema(next)
@@ -165,15 +253,36 @@ function MockDataGeneratorInner() {
 
       return rows.map((row) => {
         if (row.id !== id) return row
-        const next: SchemaRow = { ...row, type, key }
-        if (type === 'custom') {
-          next.pattern = row.pattern || DEFAULT_CUSTOM_PATTERN
-        } else {
-          delete next.pattern
+        const base = fieldForType(type, key)
+        if (type === 'custom' && row.pattern) base.pattern = row.pattern
+        return {
+          ...base,
+          id: row.id,
+          ...(base.values ? { valuesText: base.values.join(', ') } : {})
         }
-        return next
       })
     })
+  }
+
+  const handleNumberChange = (
+    id: string,
+    prop: 'min' | 'max' | 'decimals',
+    raw: string
+  ) => {
+    const value = numberFromInput(raw)
+    updateSchema((rows) =>
+      rows.map((row) => (row.id === id ? { ...row, [prop]: value } : row))
+    )
+  }
+
+  const handleEnumChange = (id: string, text: string) => {
+    updateSchema((rows) =>
+      rows.map((row) =>
+        row.id === id
+          ? { ...row, valuesText: text, values: parseEnumValues(text) }
+          : row
+      )
+    )
   }
 
   const handlePatternChange = (id: string, pattern: string) => {
@@ -191,16 +300,43 @@ function MockDataGeneratorInner() {
   const handleAddField = () => {
     if (schema.length >= MAX_FIELDS) return
     const next = suggestedField(schemaFields)
-    updateSchema((rows) => [...rows, { ...next, id: nextRowId() }])
+    updateSchema((rows) => [
+      ...rows,
+      {
+        ...next,
+        id: nextRowId(),
+        ...(next.values ? { valuesText: next.values.join(', ') } : {})
+      }
+    ])
   }
 
   const handleGenerate = () => {
     if (isGenerateDisabled) return
-    setRecords(generateRecords(schemaFields, count))
+    try {
+      setRecords(
+        generateRecords(schemaFields, count, {
+          arrayMin: url.amin,
+          arrayMax: url.amax
+        })
+      )
+      setGenerateError(null)
+    } catch (err) {
+      setRecords(null)
+      setGenerateError(
+        err instanceof Error ? err.message : 'Could not generate records.'
+      )
+    }
   }
 
   const handleClear = () => {
     setRecords(null)
+    setGenerateError(null)
+  }
+
+  const handleDownload = () => {
+    if (!exportText) return
+    const { ext, mime } = EXPORT_FILES[exportFormat]
+    downloadTextFile(exportText, `mock-data.${ext}`, mime)
   }
 
   const handleCopy = async () => {
@@ -217,7 +353,9 @@ function MockDataGeneratorInner() {
           <p className={toolIntroTextClass}>
             Fake names, emails, phones, and addresses in the browser - obviously
             fake (<code>555</code>, <code>example.com</code>), safe for
-            fixtures. Schema is in the URL so you can share a setup. Use{' '}
+            fixtures. Schema is in the URL so you can share a setup. Use dotted
+            keys like <code>customer.name</code> for nested objects and{' '}
+            <code>items[].sku</code> for arrays of objects. Use{' '}
             <strong>Custom</strong> with a regex like{' '}
             <code>{'[A-Z]{3}-\\d{4}'}</code> for everything else.
           </p>
@@ -263,7 +401,7 @@ function MockDataGeneratorInner() {
                     onChange={(e) => handleKeyChange(row.id, e.target.value)}
                     spellCheck={false}
                     className={`${toolCompactInputClass} max-w-48 font-mono`}
-                    placeholder="key"
+                    placeholder="key or path.to.key"
                     aria-label={`Field key ${index + 1}`}
                   />
                   <RemoveButton
@@ -315,9 +453,109 @@ function MockDataGeneratorInner() {
                     </p>
                   </div>
                 ) : null}
+                {row.type === 'number' ? (
+                  <div className="flex flex-wrap items-end gap-3">
+                    <label className="flex flex-col gap-1 text-xs text-neutral-400">
+                      Min
+                      <input
+                        type="number"
+                        value={displayNumber(row.min ?? DEFAULT_NUMBER_MIN)}
+                        onChange={(e) =>
+                          handleNumberChange(row.id, 'min', e.target.value)
+                        }
+                        className={toolNumberInputClass}
+                        aria-label={`Minimum for ${row.key || 'field'}`}
+                      />
+                    </label>
+                    <label className="flex flex-col gap-1 text-xs text-neutral-400">
+                      Max
+                      <input
+                        type="number"
+                        value={displayNumber(row.max ?? DEFAULT_NUMBER_MAX)}
+                        onChange={(e) =>
+                          handleNumberChange(row.id, 'max', e.target.value)
+                        }
+                        className={toolNumberInputClass}
+                        aria-label={`Maximum for ${row.key || 'field'}`}
+                      />
+                    </label>
+                    <label className="flex flex-col gap-1 text-xs text-neutral-400">
+                      Decimals
+                      <input
+                        type="number"
+                        min={0}
+                        max={MAX_NUMBER_DECIMALS}
+                        value={displayNumber(
+                          row.decimals ?? DEFAULT_NUMBER_DECIMALS
+                        )}
+                        onChange={(e) =>
+                          handleNumberChange(row.id, 'decimals', e.target.value)
+                        }
+                        className={toolNumberInputClass}
+                        aria-label={`Decimals for ${row.key || 'field'}`}
+                      />
+                    </label>
+                  </div>
+                ) : null}
+                {row.type === 'enum' ? (
+                  <div className="space-y-1">
+                    <input
+                      value={row.valuesText ?? (row.values ?? []).join(', ')}
+                      onChange={(e) => handleEnumChange(row.id, e.target.value)}
+                      spellCheck={false}
+                      placeholder="active, inactive, pending"
+                      className={toolCompactInputClass}
+                      aria-label={`Enum values for ${row.key || 'field'}`}
+                    />
+                    <p className={toolHintMetaClass}>
+                      Comma-separated; one value is picked per record.
+                    </p>
+                  </div>
+                ) : null}
               </li>
             ))}
           </ul>
+          {hasArrays ? (
+            <div className="mt-3 flex flex-wrap items-end gap-3">
+              <label className="flex flex-col gap-1 text-xs text-neutral-400">
+                Array min
+                <input
+                  type="number"
+                  min={MIN_ARRAY_LENGTH}
+                  max={MAX_ARRAY_LENGTH}
+                  value={url.amin}
+                  onChange={(e) =>
+                    setUrl((current) => ({
+                      ...current,
+                      amin: parseInt(e.target.value) || 0
+                    }))
+                  }
+                  className={toolNumberInputClass}
+                  aria-label="Minimum array length"
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-xs text-neutral-400">
+                Array max
+                <input
+                  type="number"
+                  min={MIN_ARRAY_LENGTH}
+                  max={MAX_ARRAY_LENGTH}
+                  value={url.amax}
+                  onChange={(e) =>
+                    setUrl((current) => ({
+                      ...current,
+                      amax: parseInt(e.target.value) || 0
+                    }))
+                  }
+                  className={toolNumberInputClass}
+                  aria-label="Maximum array length"
+                />
+              </label>
+              <p className={`${toolHintMetaClass} pb-1.5`}>
+                Length of every <code>[]</code> array, picked per record.
+              </p>
+            </div>
+          ) : null}
         </div>
 
         <div className="mt-4 flex flex-wrap items-end justify-between gap-3">
@@ -337,13 +575,19 @@ function MockDataGeneratorInner() {
                   n: parseInt(e.target.value) || 0
                 }))
               }
-              className={`${toolNumberInputClass} !w-14`}
+              className={`${toolNumberInputClass} !w-20`}
               aria-label={`Count ${MIN_COUNT} to ${MAX_COUNT}`}
             />
           </div>
 
           <div className="flex min-w-0 flex-1 flex-col items-end gap-2">
             <p className={toolHintMetaClass}>{schemaHint}</p>
+            {count > LARGE_COUNT_WARNING && countOk ? (
+              <p className="text-xs text-amber-300/90">
+                Large run ({count} records): generation is instant, but the
+                preview is truncated - use Copy or Download for the full set.
+              </p>
+            ) : null}
             <div className="flex flex-wrap justify-end gap-1.5">
               <PrimaryButton
                 onClick={handleGenerate}
@@ -361,7 +605,12 @@ function MockDataGeneratorInner() {
         <div className={toolResultHeaderRowClass}>
           <h2 className={toolSectionTitleClass}>Export</h2>
           {records ? (
-            <ToolCopyButton copied={copied === true} onClick={handleCopy} />
+            <div className="flex items-center gap-2">
+              <SecondaryButton onClick={handleDownload}>
+                Download
+              </SecondaryButton>
+              <ToolCopyButton copied={copied === true} onClick={handleCopy} />
+            </div>
           ) : null}
         </div>
         <ToolChipRow className="mb-3">
@@ -378,8 +627,61 @@ function MockDataGeneratorInner() {
             </ToolChipButton>
           ))}
         </ToolChipRow>
+        {exportFormat === 'sql' ? (
+          <div className="mb-3 space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <label
+                htmlFor="mock-sql-table"
+                className="text-xs text-neutral-400"
+              >
+                Table
+              </label>
+              <input
+                id="mock-sql-table"
+                value={url.tbl}
+                onChange={(e) =>
+                  setUrl((current) => ({ ...current, tbl: e.target.value }))
+                }
+                spellCheck={false}
+                className={`${toolCompactInputClass} max-w-56 font-mono`}
+                placeholder={DEFAULT_SQL_TABLE}
+              />
+              <ToolChipRow>
+                {SQL_DIALECTS.map((dialect) => (
+                  <ToolChipButton
+                    key={dialect}
+                    active={url.d === dialect}
+                    onClick={() =>
+                      setUrl((current) => ({ ...current, d: dialect }))
+                    }
+                  >
+                    {SQL_DIALECT_LABELS[dialect]}
+                  </ToolChipButton>
+                ))}
+              </ToolChipRow>
+            </div>
+            <p className={toolHintMetaClass}>
+              {tableIssue ?? (
+                <>
+                  Nested objects and arrays become JSON text columns. For JSON /
+                  CSV you already have, use the{' '}
+                  <Link
+                    href="/t/sql-insert-generator"
+                    className="text-custom_blue underline-offset-2 hover:underline"
+                  >
+                    SQL Insert Generator
+                  </Link>
+                  .
+                </>
+              )}
+            </p>
+          </div>
+        ) : null}
+        {generateError ? (
+          <p className="mb-3 text-sm text-red-400">{generateError}</p>
+        ) : null}
         <pre className={`${toolPreOutputClass} !break-words`}>
-          {exportText || (
+          {previewText || (
             <span className="text-neutral-500">
               Generate records, then pick a format. Switch formats without
               regenerating.

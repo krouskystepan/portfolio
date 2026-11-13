@@ -5,10 +5,15 @@ import yaml from 'js-yaml'
 import { useAchievementContext } from '@/context/AchievementContext'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
-import { ClearButton, PrimaryButton } from '@/components/tools/_shared/ToolButtons'
+import {
+  ClearButton,
+  PrimaryButton,
+  SecondaryButton
+} from '@/components/tools/_shared/ToolButtons'
 import {
   toolEmptyHintClass,
   toolErrorBoxClass,
+  toolIntroTextClass,
   toolPreOutputClass,
   toolResultHeaderRowClass,
   toolResultPanelClass,
@@ -19,6 +24,7 @@ import {
 } from '@/components/tools/_shared/toolUi'
 import { str, useToolUrlState } from '@/hooks/useToolUrlState'
 import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
+import { downloadTextFile } from '@/utils/download'
 
 const YamlJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) => {
   const [url, setUrl] = useToolUrlState({
@@ -60,6 +66,30 @@ const YamlJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) =>
     }
   }
 
+  const handleValidateYaml = () => {
+    if (!input.trim()) return
+    try {
+      yaml.load(input)
+      setOutput('YAML is valid.')
+      setError(null)
+    } catch (err) {
+      setError((err as Error).message)
+      setOutput('')
+    }
+  }
+
+  const handleFormatYaml = () => {
+    if (!input.trim()) return
+    try {
+      const doc = yaml.load(input)
+      setOutput(yaml.dump(doc, { indent: 2, lineWidth: 120 }))
+      setError(null)
+    } catch (err) {
+      setError((err as Error).message)
+      setOutput('')
+    }
+  }
+
   const handleClear = () => {
     setInput('')
     setOutput('')
@@ -74,7 +104,14 @@ const YamlJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) =>
 
   return (
     <ToolLayout title="YAML ↔ JSON" embedded={embedded}>
-      <ToolInputPanel>
+      <ToolInputPanel
+        intro={
+          <p className={toolIntroTextClass}>
+            Convert between YAML and JSON, or validate and reformat YAML in the
+            browser.
+          </p>
+        }
+      >
         <TextAreaWithLineNumbers
           value={input}
           setValue={setInput}
@@ -88,6 +125,15 @@ const YamlJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) =>
           <PrimaryButton onClick={handleJsonToYaml} disabled={!input.trim()}>
             JSON → YAML
           </PrimaryButton>
+          <SecondaryButton
+            onClick={handleValidateYaml}
+            disabled={!input.trim()}
+          >
+            Validate YAML
+          </SecondaryButton>
+          <SecondaryButton onClick={handleFormatYaml} disabled={!input.trim()}>
+            Format YAML
+          </SecondaryButton>
           <ClearButton onClick={handleClear}>Clear</ClearButton>
         </div>
       </ToolInputPanel>
@@ -97,7 +143,22 @@ const YamlJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) =>
           <h2 className={toolSectionTitleClass}>Result</h2>
 
           {output ? (
-            <ToolCopyButton copied={copied === true} onClick={handleCopy} />
+            <div className="flex flex-wrap gap-2">
+              <SecondaryButton
+                onClick={() =>
+                  downloadTextFile(
+                    output,
+                    output.trimStart().startsWith('{') ||
+                      output.trimStart().startsWith('[')
+                      ? 'data.json'
+                      : 'data.yaml'
+                  )
+                }
+              >
+                Download
+              </SecondaryButton>
+              <ToolCopyButton copied={copied === true} onClick={handleCopy} />
+            </div>
           ) : null}
         </div>
 

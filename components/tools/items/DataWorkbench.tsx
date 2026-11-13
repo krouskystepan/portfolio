@@ -6,10 +6,16 @@ import JsonFormatter from './JsonFormatter'
 import CsvJsonConverter from './CsvJsonConverter'
 import YamlJsonConverter from './YamlJsonConverter'
 import JsonToTsGenerator from './JsonToTsGenerator'
-import { ToolChipButton, ToolChipRow } from '@/components/tools/_shared/toolUi'
+import JsonSchemaWorkbench from './JsonSchemaWorkbench'
+import {
+  toolIntroTextClass,
+  ToolChipButton,
+  ToolChipRow
+} from '@/components/tools/_shared/toolUi'
 import { enumParam, useToolUrlState } from '@/hooks/useToolUrlState'
+import Link from 'next/link'
 
-const TAB_IDS = ['formatter', 'csv', 'yaml', 'ts'] as const
+const TAB_IDS = ['formatter', 'csv', 'yaml', 'ts', 'schema'] as const
 type TabId = (typeof TAB_IDS)[number]
 
 function DataWorkbenchInner() {
@@ -27,6 +33,17 @@ function DataWorkbenchInner() {
 
   return (
     <ToolLayout title="JSON & data workbench">
+      <p className={toolIntroTextClass}>
+        Format, convert, and schema-check JSON locally. Need JSONPath or
+        JSONata? Try the{' '}
+        <Link
+          href="/t/json-query"
+          className="text-custom_blue underline-offset-2 hover:underline"
+        >
+          JSON Query & Transform
+        </Link>{' '}
+        tool.
+      </p>
       <div
         className="mb-6"
         role="tablist"
@@ -38,7 +55,8 @@ function DataWorkbenchInner() {
               ['formatter', 'JSON format'],
               ['csv', 'CSV ↔ JSON'],
               ['yaml', 'YAML ↔ JSON'],
-              ['ts', 'JSON → TS']
+              ['ts', 'JSON → TS'],
+              ['schema', 'JSON Schema']
             ] as const
           ).map(([id, label]) => (
             <ToolChipButton
@@ -57,6 +75,7 @@ function DataWorkbenchInner() {
         {tab === 'csv' && <CsvJsonConverter embedded />}
         {tab === 'yaml' && <YamlJsonConverter embedded />}
         {tab === 'ts' && <JsonToTsGenerator embedded />}
+        {tab === 'schema' && <JsonSchemaWorkbench embedded />}
       </div>
     </ToolLayout>
   )

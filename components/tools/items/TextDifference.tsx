@@ -8,6 +8,7 @@ import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import {
   toolCheckboxLabelClass,
   toolEmptyHintClass,
+  toolErrorBoxClass,
   toolIntroTextClass,
   toolLabelClass,
   toolResultHeaderRowClass,
@@ -17,7 +18,23 @@ import {
   ToolChipRow,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
-import { bool, str, useToolUrlState } from '@/hooks/useToolUrlState'
+import { bool, enumParam, str, useToolUrlState } from '@/hooks/useToolUrlState'
+import { stableStringify } from '@/utils/jsonSort'
+
+type DiffMode = 'text' | 'json'
+const DIFF_MODES = ['text', 'json'] as const satisfies readonly DiffMode[]
+
+type JsonSide = { text: string; error: string | null }
+
+/** Parse one JSON pane and re-serialise with deep-sorted keys. Empty input is allowed. */
+function normalizeJsonSide(raw: string): JsonSide {
+  if (!raw.trim()) return { text: '', error: null }
+  try {
+    return { text: stableStringify(JSON.parse(raw) as unknown, 2), error: null }
+  } catch (err) {
+    return { text: '', error: (err as Error).message || 'Invalid JSON.' }
+  }
+}
 
 /** Matches portfolio tool surfaces (neutral-950, dashed cards, emerald / red accents) */
 const diffVariables = {
@@ -51,15 +68,30 @@ function TextDifferenceInner() {
     b: str('', { text: true }),
     split: bool(true),
     diffOnly: bool(true),
-    words: bool(false)
+    words: bool(false),
+    mode: enumParam<DiffMode>('text', DIFF_MODES)
   })
   const {
     a: textA,
     b: textB,
     split: splitView,
     diffOnly: showDiffOnly,
-    words: highlightWords
+    words: highlightWords,
+    mode: diffMode
   } = url
+  const isJson = diffMode === 'json'
+
+  const jsonA = useMemo(
+    () => (isJson ? normalizeJsonSide(textA) : null),
+    [isJson, textA]
+  )
+  const jsonB = useMemo(
+    () => (isJson ? normalizeJsonSide(textB) : null),
+    [isJson, textB]
+  )
+  const jsonHasError = Boolean(jsonA?.error || jsonB?.error)
+  const diffOld = isJson ? (jsonA?.text ?? '') : textA
+  const diffNew = isJson ? (jsonB?.text ?? '') : textB
 
   const diffStyles = useMemo(
     () => ({
@@ -120,7 +152,7 @@ function TextDifferenceInner() {
   const hasAnyText = textA.length > 0 || textB.length > 0
 
   return (
-    <ToolLayout title="Text Compare / Diff Tool">
+    <ToolLayout title={isJson ? 'JSON Compare / Diff Tool' : 'Text Compare / Diff Tool'}>
       <ToolInputPanel
         intro={
           <p className={toolIntroTextClass}>
@@ -133,6 +165,28 @@ function TextDifferenceInner() {
           </p>
         }
       >
+        <div className="mb-4" role="tablist" aria-label="Compare mode">
+          <ToolChipRow>
+            <ToolChipButton
+              active={!isJson}
+              onClick={() => setUrl((s) => ({ ...s, mode: 'text' }))}
+            >
+              Text
+            </ToolChipButton>
+            <ToolChipButton
+              active={isJson}
+              onClick={() => setUrl((s) => ({ ...s, mode: 'json' }))}
+            >
+              JSON
+            </ToolChipButton>
+          </ToolChipRow>
+          {isJson ? (
+            <p className="mt-2 text-xs leading-relaxed text-neutral-500">
+              Both sides are parsed and re-printed with sorted keys, so key order
+              and whitespace differences are ignored.
+            </p>
+          ) : null}
+        </div>
         <div className="grid min-h-64 grid-cols-1 gap-5 md:h-96 md:grid-cols-2">
           <div className="flex max-h-96 min-h-64 min-w-0 flex-col md:h-full md:max-h-none">
             <div className={toolLabelClass}>Original</div>
@@ -167,6 +221,24 @@ function TextDifferenceInner() {
             </div>
           </div>
         </div>
+        {isJson && (jsonA?.error || jsonB?.error) ? (
+          <div className="mt-4 grid grid-cols-1 gap-5 md:grid-cols-2">
+            <div>
+              {jsonA?.error ? (
+                <div className={toolErrorBoxClass}>
+                  <span className="font-semibold">Original:</span> {jsonA.error}
+                </div>
+              ) : null}
+            </div>
+            <div>
+              {jsonB?.error ? (
+                <div className={toolErrorBoxClass}>
+                  <span className="font-semibold">Modified:</span> {jsonB.error}
+                </div>
+              ) : null}
+            </div>
+          </div>
+        ) : null}
       </ToolInputPanel>
 
       <div className={`${toolResultPanelClass} z-10`}>
@@ -217,7 +289,13 @@ function TextDifferenceInner() {
         </div>
 
         <div className="max-h-[min(70vh,720px)] min-h-48 overflow-auto rounded-lg border border-white/10 bg-neutral-900/50">
-          {!hasAnyText ? (
+          {isJson && jsonHasError ? (
+            <div className="flex min-h-48 items-center justify-center px-6 py-10">
+              <p className={`${toolEmptyHintClass} text-center`}>
+                Fix the JSON errors above to see the diff.
+              </p>
+            </div>
+          ) : !hasAnyText ? (
             <div className="flex min-h-48 items-center justify-center px-6 py-10">
               <p className={`${toolEmptyHintClass} text-center`}>
                 Add text in Original and/or Modified to see the diff.
@@ -226,8 +304,8 @@ function TextDifferenceInner() {
           ) : (
             <div className="w-full min-w-0 p-1 font-mono sm:p-2">
               <ReactDiffViewer
-                oldValue={textA}
-                newValue={textB}
+                oldValue={diffOld}
+                newValue={diffNew}
                 splitView={splitView}
                 compareMethod={
                   highlightWords
