@@ -1,106 +1,24 @@
 'use client'
 
-import Link from 'next/link'
-import { ArrowRight, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import {
-  TOOL_SECTION_ORDER,
-  type TToolSectionId,
-  type TTools
-} from '@/constants/types'
+import { TOOL_SECTION_ORDER, type TTools } from '@/constants/types'
 import { matchesToolQuery, groupToolsBySection } from '@/utils/toolUtils'
+import ToolCard from './ToolCard'
+import ToolsCategoryNav from './ToolsCategoryNav'
 
 type ToolsDirectoryClientProps = {
   tools: readonly TTools[]
-}
-
-/** Short labels for the filter row — full names stay on section headings. */
-const SECTION_FILTER_LABELS: Record<TToolSectionId, string> = {
-  data: 'Data',
-  text: 'Text',
-  web: 'Web',
-  encoding: 'Encoding',
-  generators: 'Generators',
-  design: 'Design',
-  datetime: 'Date & time',
-  network: 'Network',
-  qa: 'QA'
-}
-
-function ToolCard({ tool }: { tool: TTools }) {
-  const isComingSoon = tool.path === ''
-
-  const body = (
-    <div className="flex h-full flex-col justify-between gap-3">
-      <div>
-        <div
-          className={`text-base font-semibold sm:text-lg md:text-xl ${
-            isComingSoon ? 'text-neutral-300' : 'text-white'
-          }`}
-        >
-          {tool.name}
-        </div>
-        <p
-          className={`mt-1 line-clamp-2 text-xs leading-relaxed sm:text-sm ${
-            isComingSoon ? 'text-neutral-500' : 'text-neutral-300'
-          }`}
-        >
-          {tool.description}
-        </p>
-      </div>
-
-      <div className="relative text-xs font-medium sm:text-sm">
-        {isComingSoon ? (
-          <span className="text-neutral-500">Coming soon</span>
-        ) : (
-          <span className="inline-flex items-center text-custom_blue">
-            <span className="relative after:absolute after:-bottom-px after:left-0 after:h-px after:w-0 after:bg-current after:transition-all after:duration-300 group-hover:after:w-full">
-              Open
-            </span>
-            <ArrowRight className="ml-1 size-4 transition-transform delay-[50ms] duration-300 group-hover:translate-x-1" />
-          </span>
-        )}
-      </div>
-    </div>
-  )
-
-  if (isComingSoon) {
-    return (
-      <div className="relative cursor-default overflow-hidden rounded-2xl border border-dashed border-white/10 bg-neutral-950/30 p-6 backdrop-blur-sm">
-        {body}
-      </div>
-    )
-  }
-
-  return (
-    <Link
-      href={`/t/${tool.path}`}
-      className="group relative block overflow-hidden rounded-2xl border border-dashed border-white/15 bg-neutral-950/40 p-6 backdrop-blur-sm transition-all duration-200 hover:border-custom_blue"
-    >
-      {body}
-    </Link>
-  )
 }
 
 export default function ToolsDirectoryClient({
   tools
 }: ToolsDirectoryClientProps) {
   const [query, setQuery] = useState('')
-  const [section, setSection] = useState<TToolSectionId | 'all'>('all')
-
-  const availableSections = useMemo(() => {
-    const present = new Set(tools.map((t) => t.section))
-    return TOOL_SECTION_ORDER.filter((id) => present.has(id))
-  }, [tools])
 
   const filtered = useMemo(
-    () =>
-      tools.filter(
-        (t) =>
-          (section === 'all' || t.section === section) &&
-          matchesToolQuery(t, query)
-      ),
-    [query, section, tools]
+    () => tools.filter((t) => matchesToolQuery(t, query)),
+    [query, tools]
   )
 
   const sections = useMemo(() => groupToolsBySection(filtered), [filtered])
@@ -108,6 +26,14 @@ export default function ToolsDirectoryClient({
   const visibleSections = useMemo(
     () => sections.filter(({ tools: group }) => group.length > 0),
     [sections]
+  )
+
+  const jumpSectionIds = useMemo(
+    () =>
+      TOOL_SECTION_ORDER.filter((id) =>
+        visibleSections.some((s) => s.section === id)
+      ),
+    [visibleSections]
   )
 
   return (
@@ -131,36 +57,7 @@ export default function ToolsDirectoryClient({
           />
         </form>
 
-        <nav
-          aria-label="Filter by category"
-          className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm"
-        >
-          <button
-            type="button"
-            onClick={() => setSection('all')}
-            className={
-              section === 'all'
-                ? 'text-white'
-                : 'text-neutral-500 hover:text-neutral-300'
-            }
-          >
-            All
-          </button>
-          {availableSections.map((id) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => setSection(id)}
-              className={
-                section === id
-                  ? 'text-white'
-                  : 'text-neutral-500 hover:text-neutral-300'
-              }
-            >
-              {SECTION_FILTER_LABELS[id]}
-            </button>
-          ))}
-        </nav>
+        <ToolsCategoryNav sections={jumpSectionIds} />
       </div>
 
       {filtered.length === 0 ? (
@@ -173,7 +70,7 @@ export default function ToolsDirectoryClient({
             key={id}
             id={`section-${id}`}
             aria-labelledby={`heading-${id}`}
-            className="scroll-mt-24"
+            className="scroll-mt-28"
           >
             <h3
               id={`heading-${id}`}
