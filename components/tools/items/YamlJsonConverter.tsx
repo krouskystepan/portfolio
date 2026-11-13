@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import yaml from 'js-yaml'
+import { toast } from 'sonner'
 import { useAchievementContext } from '@/context/AchievementContext'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
@@ -18,13 +19,14 @@ import {
   toolResultHeaderRowClass,
   toolResultPanelClass,
   toolSectionTitleClass,
-  toolToolbarEndClass,
+  toolToolbarBetweenClass,
+  toolFlexEndButtonsClass,
   ToolCopyButton,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
 import { str, useToolUrlState } from '@/hooks/useToolUrlState'
 import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
-import { downloadTextFile } from '@/utils/download'
+import { downloadTextFile, readTextFile } from '@/utils/download'
 
 const YamlJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) => {
   const [url, setUrl] = useToolUrlState({
@@ -34,6 +36,7 @@ const YamlJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) =>
   const [output, setOutput] = useState('')
   const [error, setError] = useState<string | null>(null)
   const { copied, flash } = useCopyFeedback()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const { unlockAchievement } = useAchievementContext()
 
@@ -42,6 +45,19 @@ const YamlJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) =>
       ...s,
       yaml: typeof v === 'function' ? v(s.yaml) : v
     }))
+
+  const handleOpenFile = async (file: File | null) => {
+    if (!file) return
+    try {
+      const text = await readTextFile(file)
+      setInput(text)
+      setOutput('')
+      setError(null)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to open file.')
+    }
+  }
+
   const handleYamlToJson = () => {
     if (!input.trim()) return
     try {
@@ -118,23 +134,39 @@ const YamlJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) =>
           placeholder="Paste YAML or JSON here..."
         />
 
-        <div className={toolToolbarEndClass}>
-          <PrimaryButton onClick={handleYamlToJson} disabled={!input.trim()}>
-            YAML → JSON
-          </PrimaryButton>
-          <PrimaryButton onClick={handleJsonToYaml} disabled={!input.trim()}>
-            JSON → YAML
-          </PrimaryButton>
-          <SecondaryButton
-            onClick={handleValidateYaml}
-            disabled={!input.trim()}
-          >
-            Validate YAML
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".yaml,.yml,.json,.txt,text/yaml,text/plain,application/json"
+          className="hidden"
+          onChange={(e) => {
+            void handleOpenFile(e.target.files?.[0] ?? null)
+            e.target.value = ''
+          }}
+        />
+
+        <div className={toolToolbarBetweenClass}>
+          <SecondaryButton onClick={() => fileInputRef.current?.click()}>
+            Open file
           </SecondaryButton>
-          <SecondaryButton onClick={handleFormatYaml} disabled={!input.trim()}>
-            Format YAML
-          </SecondaryButton>
-          <ClearButton onClick={handleClear}>Clear</ClearButton>
+          <div className={toolFlexEndButtonsClass}>
+            <PrimaryButton onClick={handleYamlToJson} disabled={!input.trim()}>
+              YAML → JSON
+            </PrimaryButton>
+            <PrimaryButton onClick={handleJsonToYaml} disabled={!input.trim()}>
+              JSON → YAML
+            </PrimaryButton>
+            <SecondaryButton
+              onClick={handleValidateYaml}
+              disabled={!input.trim()}
+            >
+              Validate YAML
+            </SecondaryButton>
+            <SecondaryButton onClick={handleFormatYaml} disabled={!input.trim()}>
+              Format YAML
+            </SecondaryButton>
+            <ClearButton onClick={handleClear}>Clear</ClearButton>
+          </div>
         </div>
       </ToolInputPanel>
 

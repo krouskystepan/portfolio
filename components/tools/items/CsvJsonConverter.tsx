@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { toast } from 'sonner'
 import { useAchievementContext } from '@/context/AchievementContext'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
@@ -10,10 +11,8 @@ import {
   SecondaryButton
 } from '@/components/tools/_shared/ToolButtons'
 import {
-  toolCheckboxLabelClass,
   toolEmptyHintClass,
   toolErrorBoxClass,
-  toolLabelClass,
   toolPreOutputClass,
   toolResultHeaderRowClass,
   toolResultPanelClass,
@@ -21,12 +20,13 @@ import {
   toolToolbarBetweenClass,
   toolFlexEndButtonsClass,
   ToolChipButton,
+  ToolChipRow,
   ToolCopyButton,
   ToolInputPanel
 } from '@/components/tools/_shared/toolUi'
 import { bool, enumParam, str, useToolUrlState } from '@/hooks/useToolUrlState'
 import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
-import { downloadTextFile } from '@/utils/download'
+import { downloadTextFile, readTextFile } from '@/utils/download'
 
 type CellValue = string | number | boolean | null
 
@@ -129,6 +129,7 @@ const CsvJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) => 
   const [output, setOutput] = useState('')
   const [error, setError] = useState<string | null>(null)
   const { copied, flash } = useCopyFeedback()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const { unlockAchievement } = useAchievementContext()
 
@@ -137,6 +138,18 @@ const CsvJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) => 
       ...s,
       csv: typeof v === 'function' ? v(s.csv) : v
     }))
+
+  const handleOpenFile = async (file: File | null) => {
+    if (!file) return
+    try {
+      const text = await readTextFile(file)
+      setInput(text)
+      setOutput('')
+      setError(null)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to open file.')
+    }
+  }
 
   const convertCSVToJSON = () => {
     if (!input.trim()) return
@@ -251,41 +264,52 @@ const CsvJsonConverter = ({ embedded = false }: { embedded?: boolean } = {}) => 
           placeholder="Paste your CSV here..."
         />
 
-        <div className={toolToolbarBetweenClass}>
-          <div className="flex flex-wrap items-center gap-3">
-            <div>
-              <span className={toolLabelClass}>Delimiter</span>
-              <div className="flex flex-wrap gap-1.5">
-                {DELIM_OPTIONS.map((d) => (
-                  <ToolChipButton
-                    key={d}
-                    active={url.delim === d}
-                    onClick={() => setUrl((s) => ({ ...s, delim: d }))}
-                  >
-                    {d === 'comma'
-                      ? 'Comma'
-                      : d === 'semicolon'
-                        ? 'Semicolon'
-                        : d === 'tab'
-                          ? 'Tab'
-                          : 'Pipe'}
-                  </ToolChipButton>
-                ))}
-              </div>
-            </div>
-            <label className={`${toolCheckboxLabelClass} mt-5`}>
-              <input
-                type="checkbox"
-                checked={coerceTypes}
-                onChange={(e) =>
-                  setUrl((s) => ({ ...s, coerce: e.target.checked }))
-                }
-                className="size-4 rounded border-white/20 bg-neutral-900"
-              />
-              Coerce numbers / booleans / null
-            </label>
-          </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values,text/plain,application/json"
+          className="hidden"
+          onChange={(e) => {
+            void handleOpenFile(e.target.files?.[0] ?? null)
+            e.target.value = ''
+          }}
+        />
 
+        <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <div className="flex flex-wrap items-center gap-2 text-sm text-neutral-300">
+            <span className="shrink-0">Delimiter</span>
+            <ToolChipRow>
+              {(
+                [
+                  ['comma', 'Comma'],
+                  ['semicolon', 'Semicolon'],
+                  ['tab', 'Tab'],
+                  ['pipe', 'Pipe']
+                ] as const
+              ).map(([id, label]) => (
+                <ToolChipButton
+                  key={id}
+                  active={url.delim === id}
+                  onClick={() => setUrl((s) => ({ ...s, delim: id }))}
+                >
+                  {label}
+                </ToolChipButton>
+              ))}
+            </ToolChipRow>
+          </div>
+          <ToolChipButton
+            active={coerceTypes}
+            onClick={() => setUrl((s) => ({ ...s, coerce: !s.coerce }))}
+            title="Parse numbers, booleans, and null from cell text"
+          >
+            Coerce types
+          </ToolChipButton>
+        </div>
+
+        <div className={toolToolbarBetweenClass}>
+          <SecondaryButton onClick={() => fileInputRef.current?.click()}>
+            Open file
+          </SecondaryButton>
           <div className={toolFlexEndButtonsClass}>
             <PrimaryButton onClick={convertCSVToJSON} disabled={!input.trim()}>
               CSV to JSON
