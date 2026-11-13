@@ -1,10 +1,13 @@
 import { tools } from '@/constants'
 import { isToolPath, loadTool } from '@/components/tools/toolRegistry'
+import { isToolComingSoon } from '@/utils/toolUtils'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-const getToolById = (toolId: string) => {
-  return tools.find((tool) => tool.path === toolId)
+const getLiveToolById = (toolId: string) => {
+  const tool = tools.find((entry) => entry.path === toolId)
+  if (!tool || isToolComingSoon(tool)) return undefined
+  return tool
 }
 
 export async function generateMetadata({
@@ -13,19 +16,19 @@ export async function generateMetadata({
   params: Promise<{ toolId: string }>
 }): Promise<Metadata> {
   const { toolId } = await params
-  const tool = getToolById(toolId)
+  const tool = getLiveToolById(toolId)
 
   if (!tool) notFound()
 
   return {
     title: `${tool.name} | Stepan Krousky`,
-    description: tool?.description
+    description: tool.description
   }
 }
 
 export async function generateStaticParams() {
   return tools
-    .filter((tool) => Boolean(tool.path))
+    .filter((tool) => !isToolComingSoon(tool))
     .map((tool) => ({
       toolId: tool.path
     }))
@@ -38,7 +41,7 @@ const ToolsPage = async ({
 }) => {
   const { toolId } = await params
 
-  const tool = getToolById(toolId)
+  const tool = getLiveToolById(toolId)
 
   if (!tool) notFound()
 

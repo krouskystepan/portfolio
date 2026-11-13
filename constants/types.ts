@@ -66,6 +66,8 @@ export const TOOL_SECTION_LABELS: Record<TToolSectionId, string> = {
   qa: 'QA & Testing'
 }
 
+export type TToolStatus = 'live' | 'coming-soon'
+
 export type TTools = {
   name: string
   path: string
@@ -73,4 +75,9 @@ export type TTools = {
   section: TToolSectionId
   /** Lowercase tokens for search / filter on the tools index */
   keywords: string[]
+  /**
+   * Explicit lifecycle. Prefer `path: ''` for coming-soon (no registry entry).
+   * If set to `coming-soon`, treat as unavailable even when a path is present.
+   */
+  status?: TToolStatus
 }

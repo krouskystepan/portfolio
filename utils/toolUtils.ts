@@ -1,6 +1,11 @@
 import { TOOL_SECTION_ORDER, TOOL_SECTION_LABELS } from '@/constants'
 import { TTools } from '@/constants/types'
 
+/** Coming soon = empty path (catalog-only) or explicit status. */
+export function isToolComingSoon(tool: TTools): boolean {
+  return tool.status === 'coming-soon' || tool.path === ''
+}
+
 function searchHaystacks(tool: TTools): string[] {
   const keywords = tool.keywords ?? []
   return [
