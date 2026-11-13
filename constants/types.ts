@@ -44,20 +44,26 @@ export const TOOL_SECTION_ORDER = [
   'data',
   'text',
   'web',
+  'encoding',
   'generators',
-  'converters',
-  'network'
+  'design',
+  'datetime',
+  'network',
+  'qa'
 ] as const
 
 export type TToolSectionId = (typeof TOOL_SECTION_ORDER)[number]
 
 export const TOOL_SECTION_LABELS: Record<TToolSectionId, string> = {
-  data: 'Data & serialization',
-  text: 'Text & patterns',
-  web: 'Web & encoding',
-  generators: 'Generators',
-  converters: 'Converters',
-  network: 'Network & Unix'
+  data: 'Data & Serialization',
+  text: 'Text & Code',
+  web: 'Web & API',
+  encoding: 'Encoding & Cryptography',
+  generators: 'Generators & Mock Data',
+  design: 'Design & CSS',
+  datetime: 'Date, Time & Numbers',
+  network: 'Network & System',
+  qa: 'QA & Testing'
 }
 
 export type TTools = {
