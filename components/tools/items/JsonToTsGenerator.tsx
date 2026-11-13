@@ -6,7 +6,8 @@ import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLine
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import {
   ClearButton,
-  PrimaryButton
+  PrimaryButton,
+  SecondaryButton
 } from '@/components/tools/_shared/ToolButtons'
 import {
   toolEmptyHintClass,
@@ -26,6 +27,31 @@ import {
 } from '@/components/tools/_shared/toolUi'
 import { enumParam, str, useToolUrlState } from '@/hooks/useToolUrlState'
 import { useCopyFeedback } from '@/hooks/tools/useCopyFeedback'
+import { downloadTextFile } from '@/utils/download'
+
+type NullMode = 'union' | 'optional' | 'both'
+
+const NULL_MODE_OPTIONS: {
+  value: NullMode
+  label: string
+  hint: string
+}[] = [
+  {
+    value: 'union',
+    label: 'T | null',
+    hint: 'Keep null in the type union (e.g. string | null). Missing keys across array samples stay optional with ?.'
+  },
+  {
+    value: 'optional',
+    label: 'T?',
+    hint: 'Treat null as optional: drop null from the union and mark the property with ? (e.g. name?: string).'
+  },
+  {
+    value: 'both',
+    label: 'T? | null',
+    hint: 'Both optional and nullable: property?: string | null.'
+  }
+]
 
 type PrimitiveShape = { kind: 'primitive'; ts: string }
 type ArrayShape = { kind: 'array'; items: Shape[] }
@@ -210,20 +236,46 @@ const EXPORT_MODE_OPTIONS: {
   }
 ]
 
+/** Apply null-as union / optional / both policy to a property type string. */
+function applyNullMode(
+  typeStr: string,
+  optional: boolean,
+  nullMode: NullMode
+): { typeStr: string; optional: boolean } {
+  if (nullMode === 'union') return { typeStr, optional }
+
+  const parts = primitiveTypeParts(typeStr)
+  if (!parts.includes('null')) return { typeStr, optional }
+
+  const withoutNull = parts.filter((p) => p !== 'null')
+  const base = withoutNull.length > 0 ? withoutNull.join(' | ') : 'unknown'
+
+  if (nullMode === 'optional') {
+    return { typeStr: base, optional: true }
+  }
+
+  // both: keep null and mark optional
+  const withNull = withoutNull.length > 0 ? `${base} | null` : 'null'
+  return { typeStr: withNull, optional: true }
+}
+
 function emitNamedObject(
   name: string,
   properties: Record<string, { optional: boolean; shape: Shape }>,
   ctx: EmitCtx,
-  objectSyntax: 'interface' | 'type'
+  objectSyntax: 'interface' | 'type',
+  nullMode: NullMode
 ): void {
   const lines = Object.entries(properties).map(([key, { optional, shape }]) => {
     const childType = emitType(
       shape,
       childTypeHintForProperty(name, key),
       ctx,
-      objectSyntax
+      objectSyntax,
+      nullMode
     )
-    return `  ${formatPropKey(key)}${optional ? '?' : ''}: ${childType};`
+    const applied = applyNullMode(childType, optional, nullMode)
+    return `  ${formatPropKey(key)}${applied.optional ? '?' : ''}: ${applied.typeStr};`
   })
   if (objectSyntax === 'interface') {
     ctx.decls.push(`export interface ${name} {\n${lines.join('\n')}\n}`)
@@ -236,7 +288,8 @@ function emitType(
   shape: Shape,
   hint: string,
   ctx: EmitCtx,
-  objectSyntax: 'interface' | 'type'
+  objectSyntax: 'interface' | 'type',
+  nullMode: NullMode
 ): string {
   if (shape.kind === 'primitive') return shape.ts
   if (shape.kind === 'array') {
@@ -246,23 +299,28 @@ function emitType(
       merged,
       arrayElementTypeHint(hint, ctx),
       ctx,
-      objectSyntax
+      objectSyntax,
+      nullMode
     )
     const needsParens =
       inner.includes('|') || (inner.includes('&') && !inner.startsWith('('))
     return needsParens ? `(${inner})[]` : `${inner}[]`
   }
   const name = ctx.allocName(hint)
-  emitNamedObject(name, shape.properties, ctx, objectSyntax)
+  emitNamedObject(name, shape.properties, ctx, objectSyntax, nullMode)
   return name
 }
 
-function formatInlinedType(shape: Shape, baseIndent: string): string {
+function formatInlinedType(
+  shape: Shape,
+  baseIndent: string,
+  nullMode: NullMode
+): string {
   if (shape.kind === 'primitive') return shape.ts
   if (shape.kind === 'array') {
     if (shape.items.length === 0) return 'unknown[]'
     const merged = mergeShapesList(shape.items)
-    const inner = formatInlinedType(merged, `${baseIndent}  `)
+    const inner = formatInlinedType(merged, `${baseIndent}  `, nullMode)
     const needsParens =
       inner.includes('|') || (inner.includes('&') && !inner.startsWith('('))
     return needsParens ? `(${inner})[]` : `${inner}[]`
@@ -270,8 +328,9 @@ function formatInlinedType(shape: Shape, baseIndent: string): string {
   const innerIndent = `${baseIndent}  `
   const lines = Object.entries(shape.properties).map(
     ([key, { optional, shape: child }]) => {
-      const t = formatInlinedType(child, innerIndent)
-      return `${innerIndent}${formatPropKey(key)}${optional ? '?' : ''}: ${t};`
+      const t = formatInlinedType(child, innerIndent, nullMode)
+      const applied = applyNullMode(t, optional, nullMode)
+      return `${innerIndent}${formatPropKey(key)}${applied.optional ? '?' : ''}: ${applied.typeStr};`
     }
   )
   return `{\n${lines.join('\n')}\n${baseIndent}}`
@@ -280,13 +339,14 @@ function formatInlinedType(shape: Shape, baseIndent: string): string {
 function generateTypeScript(
   json: unknown,
   rootName: string,
-  mode: TsExportMode
+  mode: TsExportMode,
+  nullMode: NullMode
 ): string {
   const shape = jsonToShape(json)
   const safeRoot = rootTypeNameFromInput(rootName)
 
   if (mode === 'compact') {
-    const inlined = formatInlinedType(shape, '  ')
+    const inlined = formatInlinedType(shape, '  ', nullMode)
     return `export type ${safeRoot} = ${inlined};`
   }
 
@@ -296,9 +356,9 @@ function generateTypeScript(
 
   if (shape.kind === 'object') {
     ctx.usedNames.add(safeRoot)
-    emitNamedObject(safeRoot, shape.properties, ctx, objectSyntax)
+    emitNamedObject(safeRoot, shape.properties, ctx, objectSyntax, nullMode)
   } else {
-    const typeStr = emitType(shape, safeRoot, ctx, objectSyntax)
+    const typeStr = emitType(shape, safeRoot, ctx, objectSyntax, nullMode)
     ctx.decls.push(`export type ${safeRoot} = ${typeStr};`)
   }
 
@@ -315,11 +375,17 @@ const JsonToTsGenerator = ({
       'automatic',
       'compact',
       'type'
+    ] as const),
+    nullAs: enumParam<NullMode>('union', [
+      'union',
+      'optional',
+      'both'
     ] as const)
   })
   const input = url.ts
   const rootName = url.root
   const exportMode = url.export
+  const nullMode = url.nullAs
   const [output, setOutput] = useState('')
   const [error, setError] = useState<string | null>(null)
   const { copied, flash } = useCopyFeedback()
@@ -336,7 +402,7 @@ const JsonToTsGenerator = ({
     if (!input.trim()) return
     try {
       const parsed = JSON.parse(input) as unknown
-      const ts = generateTypeScript(parsed, rootName, exportMode)
+      const ts = generateTypeScript(parsed, rootName, exportMode, nullMode)
       setOutput(ts)
       setError(null)
     } catch (e) {
@@ -349,14 +415,14 @@ const JsonToTsGenerator = ({
     if (!input.trim()) return
     try {
       const parsed = JSON.parse(input) as unknown
-      setOutput(generateTypeScript(parsed, rootName, exportMode))
+      setOutput(generateTypeScript(parsed, rootName, exportMode, nullMode))
       setError(null)
     } catch {
       // keep existing error/output from last explicit Generate
     }
-    // Only refresh when style or root name changes; JSON edits use Generate.
+    // Only refresh when style / root / null policy changes; JSON edits use Generate.
     // eslint-disable-next-line react-hooks/exhaustive-deps -- input intentionally omitted
-  }, [exportMode, rootName])
+  }, [exportMode, rootName, nullMode])
 
   const handleClear = () => {
     setUrl((s) => ({ ...s, ts: '' }))
@@ -401,6 +467,22 @@ const JsonToTsGenerator = ({
           {EXPORT_MODE_OPTIONS.find((o) => o.value === exportMode)?.hint}
         </p>
 
+        <p className={toolLabelClass}>Null handling</p>
+        <ToolChipRow className="mb-2">
+          {NULL_MODE_OPTIONS.map((opt) => (
+            <ToolChipButton
+              key={opt.value}
+              active={nullMode === opt.value}
+              onClick={() => setUrl((s) => ({ ...s, nullAs: opt.value }))}
+            >
+              {opt.label}
+            </ToolChipButton>
+          ))}
+        </ToolChipRow>
+        <p className={`${toolHintMetaClass} mb-4`}>
+          {NULL_MODE_OPTIONS.find((o) => o.value === nullMode)?.hint}
+        </p>
+
         <TextAreaWithLineNumbers
           value={input}
           setValue={setInput}
@@ -420,7 +502,20 @@ const JsonToTsGenerator = ({
           <h2 className={toolSectionTitleClass}>TypeScript</h2>
 
           {output ? (
-            <ToolCopyButton copied={copied === true} onClick={handleCopy} />
+            <div className="flex flex-wrap gap-2">
+              <SecondaryButton
+                onClick={() =>
+                  downloadTextFile(
+                    output,
+                    `${rootTypeNameFromInput(rootName)}.ts`,
+                    'text/typescript;charset=utf-8'
+                  )
+                }
+              >
+                Download
+              </SecondaryButton>
+              <ToolCopyButton copied={copied === true} onClick={handleCopy} />
+            </div>
           ) : null}
         </div>
 
