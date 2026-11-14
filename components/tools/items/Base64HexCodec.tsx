@@ -1,6 +1,7 @@
 'use client'
 
 import { Suspense, useMemo } from 'react'
+import Link from 'next/link'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import { ClearButton } from '@/components/tools/_shared/ToolButtons'
@@ -71,7 +72,15 @@ function Base64HexCodecInner() {
             <strong>Base64URL</strong> (no padding, <code>-</code> and{' '}
             <code>_</code>), or <strong>Hex</strong>. Both directions update as
             you type. Hex input may include spaces, <code>0x</code> prefixes,
-            or <code>\x</code> escapes. Everything runs in your browser.
+            or <code>\x</code> escapes. Everything runs in your browser. To
+            inspect a JWT header/payload, use the{' '}
+            <Link
+              href="/t/jwt-decoder"
+              className="text-custom_blue underline-offset-2 hover:underline"
+            >
+              JWT decoder
+            </Link>
+            .
           </p>
         }
       >

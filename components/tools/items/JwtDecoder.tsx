@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import {
@@ -9,6 +10,7 @@ import {
 } from '@/components/tools/_shared/ToolButtons'
 import {
   toolErrorBoxClass,
+  toolIntroTextClass,
   toolPreOutputClass,
   toolResultHeaderRowClass,
   toolResultPanelClass,
@@ -90,10 +92,29 @@ export default function JwtDecoder() {
     <ToolLayout title="JWT decode (no verification)">
       <ToolInputPanel
         intro={
-          <p className={toolWarningIntroClass}>
-            Decodes Base64URL segments only. Signature is <strong>not</strong>{' '}
-            verified - never paste production secrets here.
-          </p>
+          <>
+            <p className={toolWarningIntroClass}>
+              Decodes Base64URL segments only. Signature is <strong>not</strong>{' '}
+              verified - never paste production secrets here.
+            </p>
+            <p className={toolIntroTextClass}>
+              For plain Base64 / Base64URL / hex (not JWT), use the{' '}
+              <Link
+                href="/t/base64-hex"
+                className="text-custom_blue underline-offset-2 hover:underline"
+              >
+                Base64 / Hex codec
+              </Link>
+              . To send a Bearer token in a request, open the{' '}
+              <Link
+                href="/t/http-request-builder"
+                className="text-custom_blue underline-offset-2 hover:underline"
+              >
+                HTTP request builder
+              </Link>
+              .
+            </p>
+          </>
         }
       >
         <TextAreaWithLineNumbers
