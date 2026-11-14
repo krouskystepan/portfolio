@@ -1,6 +1,7 @@
 'use client'
 
 import { Suspense, useMemo } from 'react'
+import Link from 'next/link'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import { ClearButton } from '@/components/tools/_shared/ToolButtons'
 import {
@@ -64,7 +65,14 @@ function HttpStatusCodesInner() {
           <p className={toolIntroTextClass}>
             Offline reference for common HTTP status codes. Search by number
             (<code>404</code>, <code>4</code>), name, or behaviour (
-            <code>rate limit</code>, <code>redirect</code>).
+            <code>rate limit</code>, <code>redirect</code>). Pair with the{' '}
+            <Link
+              href="/t/api-response-validator"
+              className="text-custom_blue underline-offset-2 hover:underline"
+            >
+              API response validator
+            </Link>{' '}
+            when checking status plus body shape.
           </p>
         }
       >

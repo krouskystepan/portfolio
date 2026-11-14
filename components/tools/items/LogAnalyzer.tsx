@@ -7,6 +7,7 @@ import {
   useRef,
   useState
 } from 'react'
+import Link from 'next/link'
 import { toast } from 'sonner'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
@@ -221,7 +222,15 @@ function LogAnalyzerInner() {
           <p className={toolIntroTextClass}>
             Paste or open a log file (plain text or JSON lines), filter by level
             and keyword, spot repeated messages, and export what matches.
-            Parsing happens locally - nothing is uploaded.
+            Parsing happens locally - nothing is uploaded. For complex patterns,
+            refine expressions in the{' '}
+            <Link
+              href="/t/regex-tester"
+              className="text-custom_blue underline-offset-2 hover:underline"
+            >
+              Regex tester
+            </Link>
+            .
           </p>
         }
       >
