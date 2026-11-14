@@ -35,12 +35,12 @@ import {
   evaluateJsonPath,
   evaluateJsonata,
   formatQueryResult,
+  formatQueryResultForDisplay,
   JSON_QUERY_EXAMPLES,
   type JsonQueryMode
 } from '@/utils/jsonQuery'
 
 const MODES = ['jsonpath', 'jsonata'] as const
-const DISPLAY_CAP = 200_000
 
 function JsonQueryTransformInner() {
   const [url, setUrl] = useToolUrlState({
@@ -49,7 +49,9 @@ function JsonQueryTransformInner() {
     expr: str(JSON_QUERY_EXAMPLES[0].expression, { text: true }),
     live: bool(false)
   })
-  const [output, setOutput] = useState('')
+  const [exportText, setExportText] = useState('')
+  const [displayText, setDisplayText] = useState('')
+  const [displayNote, setDisplayNote] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [timing, setTiming] = useState<number | null>(null)
   const [busy, setBusy] = useState(false)
@@ -69,14 +71,22 @@ function JsonQueryTransformInner() {
       setTiming(result.ms)
       if (!result.ok) {
         setError(result.error)
-        setOutput('')
+        setExportText('')
+        setDisplayText('')
+        setDisplayNote(null)
         return
       }
-      setOutput(formatQueryResult(result.value))
+      const full = formatQueryResult(result.value)
+      const display = formatQueryResultForDisplay(result.value)
+      setExportText(full)
+      setDisplayText(display.text)
+      setDisplayNote(display.note)
     } catch (err) {
       setTiming(null)
       setError(err instanceof Error ? err.message : 'Invalid JSON input')
-      setOutput('')
+      setExportText('')
+      setDisplayText('')
+      setDisplayNote(null)
     } finally {
       setBusy(false)
     }
@@ -89,6 +99,20 @@ function JsonQueryTransformInner() {
     }, 350)
     return () => window.clearTimeout(timer)
   }, [url.live, url.json, url.expr, url.mode, run])
+
+  const loadExample = (ex: (typeof JSON_QUERY_EXAMPLES)[number]) => {
+    setUrl((s) => ({
+      ...s,
+      mode: ex.mode,
+      json: ex.json,
+      expr: ex.expression
+    }))
+    setError(null)
+    setExportText('')
+    setDisplayText('')
+    setDisplayNote(null)
+    setTiming(null)
+  }
 
   return (
     <ToolLayout title="JSON Query & Transform">
@@ -128,7 +152,9 @@ function JsonQueryTransformInner() {
             <input
               type="checkbox"
               checked={url.live}
-              onChange={(e) => setUrl((s) => ({ ...s, live: e.target.checked }))}
+              onChange={(e) =>
+                setUrl((s) => ({ ...s, live: e.target.checked }))
+              }
               className="size-4 rounded border-white/20 bg-neutral-900"
             />
             Live evaluate
@@ -143,14 +169,7 @@ function JsonQueryTransformInner() {
                 key={ex.id}
                 active={false}
                 tone="accent"
-                onClick={() =>
-                  setUrl((s) => ({
-                    ...s,
-                    mode: ex.mode,
-                    json: ex.json,
-                    expr: ex.expression
-                  }))
-                }
+                onClick={() => loadExample(ex)}
               >
                 {ex.label}
               </ToolChipButton>
@@ -212,7 +231,9 @@ function JsonQueryTransformInner() {
             <ClearButton
               onClick={() => {
                 setUrl((s) => ({ ...s, json: '', expr: '' }))
-                setOutput('')
+                setExportText('')
+                setDisplayText('')
+                setDisplayNote(null)
                 setError(null)
                 setTiming(null)
               }}
@@ -226,12 +247,12 @@ function JsonQueryTransformInner() {
       <div className={toolResultPanelClass}>
         <div className={toolResultHeaderRowClass}>
           <h2 className={toolSectionTitleClass}>Result</h2>
-          {output ? (
+          {exportText ? (
             <div className="flex flex-wrap gap-2">
               <SecondaryButton
                 onClick={() =>
                   downloadTextFile(
-                    output,
+                    exportText,
                     'query-result.json',
                     'application/json;charset=utf-8'
                   )
@@ -242,7 +263,7 @@ function JsonQueryTransformInner() {
               <ToolCopyButton
                 copied={copied === true}
                 onClick={() => {
-                  navigator.clipboard.writeText(output)
+                  navigator.clipboard.writeText(exportText)
                   unlockAchievement('clipboard-master')
                   flash()
                 }}
@@ -255,12 +276,13 @@ function JsonQueryTransformInner() {
           <div className={toolErrorBoxClass}>
             <strong>Error:</strong> {error}
           </div>
-        ) : output ? (
-          <pre className={toolPreOutputClass}>
-            {output.length > DISPLAY_CAP
-              ? `${output.slice(0, DISPLAY_CAP)}\n… (${output.length.toLocaleString()} chars total)`
-              : output}
-          </pre>
+        ) : displayText ? (
+          <>
+            {displayNote ? (
+              <p className={`${toolHintMetaClass} mb-2`}>{displayNote}</p>
+            ) : null}
+            <pre className={toolPreOutputClass}>{displayText}</pre>
+          </>
         ) : (
           <div className={toolEmptyHintClass}>
             Run an expression to see the result here.
