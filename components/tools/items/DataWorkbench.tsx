@@ -42,7 +42,14 @@ function DataWorkbenchInner() {
         >
           JSON Query & Transform
         </Link>{' '}
-        tool.
+        tool. To assert API responses against a sample or schema, use the{' '}
+        <Link
+          href="/t/api-response-validator"
+          className="text-custom_blue underline-offset-2 hover:underline"
+        >
+          API response validator
+        </Link>
+        .
       </p>
       <div
         className="mb-6"

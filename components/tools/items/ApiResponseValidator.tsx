@@ -1,6 +1,7 @@
 'use client'
 
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import Link from 'next/link'
 import { toast } from 'sonner'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
@@ -180,6 +181,21 @@ function ApiResponseValidatorInner() {
             Compare an actual API response with an expected sample structure,
             and optionally validate it against a JSON Schema. Issues are
             reported with a path such as <code>$.data.items[2].id</code>.
+            Author schemas in the{' '}
+            <Link
+              href="/t/data-workbench?tab=schema"
+              className="text-custom_blue underline-offset-2 hover:underline"
+            >
+              Data Workbench
+            </Link>
+            , or turn paths into{' '}
+            <Link
+              href="/t/json-assertion-builder"
+              className="text-custom_blue underline-offset-2 hover:underline"
+            >
+              JSON assertions
+            </Link>
+            .
           </p>
         }
       >

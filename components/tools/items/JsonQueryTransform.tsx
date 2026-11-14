@@ -129,6 +129,13 @@ function JsonQueryTransformInner() {
             >
               Data Workbench
             </Link>
+            . Building test checks? Try the{' '}
+            <Link
+              href="/t/json-assertion-builder"
+              className="text-custom_blue underline-offset-2 hover:underline"
+            >
+              JSON assertion builder
+            </Link>
             . All evaluation stays in your browser.
           </p>
         }

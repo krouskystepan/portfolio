@@ -1,6 +1,7 @@
 'use client'
 
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import Link from 'next/link'
 import { toast } from 'sonner'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
@@ -179,6 +180,21 @@ function JsonAssertionBuilderInner() {
             <code>user.items[0].id</code>) or JSONPath (<code>$.items[*].sku</code>
             ). JSONPath checks use the first match. Output is copyable as
             Jest/Vitest-style <code>expect</code> lines or generic assertions.
+            Explore paths in{' '}
+            <Link
+              href="/t/json-query"
+              className="text-custom_blue underline-offset-2 hover:underline"
+            >
+              JSON Query
+            </Link>
+            , or diff a full response in the{' '}
+            <Link
+              href="/t/api-response-validator"
+              className="text-custom_blue underline-offset-2 hover:underline"
+            >
+              API response validator
+            </Link>
+            .
           </p>
         }
       >
