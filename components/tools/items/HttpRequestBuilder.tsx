@@ -413,6 +413,21 @@ function HttpRequestBuilderInner() {
               never written to the page URL or storage, and disappear on
               refresh. Method and URL may be saved in the page URL for sharing
               (skipped automatically when the URL looks like it holds a token).
+              Browse a spec in the{' '}
+              <Link
+                href="/t/openapi-viewer"
+                className="text-custom_blue underline-offset-2 hover:underline"
+              >
+                OpenAPI viewer
+              </Link>
+              , or look up response codes in the{' '}
+              <Link
+                href="/t/http-status-codes"
+                className="text-custom_blue underline-offset-2 hover:underline"
+              >
+                HTTP status reference
+              </Link>
+              .
             </p>
           </>
         }

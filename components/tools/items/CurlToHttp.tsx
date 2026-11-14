@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import Link from 'next/link'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import { ClearButton } from '@/components/tools/_shared/ToolButtons'
@@ -78,7 +79,15 @@ export default function CurlToHttp() {
           <p className={toolIntroTextClass}>
             Paste curl from DevTools or docs and get a live fetch, axios, or
             Python <code>requests</code> snippet you can drop into an app or the
-            console. Conversion is one-way and stays in the browser.
+            console. Conversion is one-way and stays in the browser. To compose
+            and send a request interactively, use the{' '}
+            <Link
+              href="/t/http-request-builder"
+              className="text-custom_blue underline-offset-2 hover:underline"
+            >
+              HTTP request builder
+            </Link>
+            .
           </p>
         }
       >
