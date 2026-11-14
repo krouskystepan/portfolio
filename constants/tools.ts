@@ -342,7 +342,7 @@ export const tools = [
     name: 'Mock / fake data generator',
     path: 'mock-data',
     description:
-      'Generate nested fake fixtures with uuid, enums, and SQL INSERT export for QA.',
+      'Generate nested fake fixtures from fields or JSON Schema, with uuid, enums, and SQL INSERT export.',
     section: 'generators',
     keywords: [
       'fake',
@@ -361,7 +361,11 @@ export const tools = [
       'regex',
       'pattern',
       'sql',
-      'nested'
+      'nested',
+      'json schema',
+      'enum',
+      'boolean',
+      'array'
     ]
   },
   {

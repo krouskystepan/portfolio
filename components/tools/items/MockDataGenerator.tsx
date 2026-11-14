@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { Suspense, useMemo, useState } from 'react'
 import { useAchievementContext } from '@/context/AchievementContext'
+import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
 import {
   ClearButton,
@@ -64,7 +65,7 @@ import {
   cloneFields,
   exportMock,
   fieldForType,
-  generateRecords,
+  generateRecordsProgressive,
   isArrayRangeValid,
   isCountInRange,
   parseEnumValues,
@@ -80,6 +81,12 @@ import {
   type MockRecord
 } from '@/utils/mockData'
 import {
+  SAMPLE_MOCK_JSON_SCHEMA,
+  emptySchemaConvertHint,
+  jsonSchemaTextIssue,
+  parseJsonSchemaToMockFields
+} from '@/utils/mockJsonSchema'
+import {
   SQL_DIALECT_LABELS,
   SQL_DIALECTS,
   tableNameIssue,
@@ -88,6 +95,9 @@ import {
 
 /** Editor row: schema field plus UI-only state. */
 type SchemaRow = MockField & { id: string; valuesText?: string }
+
+const EDITOR_MODES = ['fields', 'schema'] as const
+type EditorMode = (typeof EDITOR_MODES)[number]
 
 const EXPORT_FORMAT_IDS = [
   'json',
@@ -158,18 +168,27 @@ function MockDataGeneratorInner() {
       max: MAX_ARRAY_LENGTH
     }),
     tbl: str(DEFAULT_SQL_TABLE),
-    d: enumParam<SqlDialect>(DEFAULT_SQL_DIALECT, SQL_DIALECTS)
+    d: enumParam<SqlDialect>(DEFAULT_SQL_DIALECT, SQL_DIALECTS),
+    m: enumParam<EditorMode>('fields', EDITOR_MODES),
+    js: str('', { text: true })
   })
   const [schema, setSchema] = useState<SchemaRow[]>(() =>
     rowsFromFields(parseMockSchema(url.s))
   )
   const [records, setRecords] = useState<MockRecord[] | null>(null)
   const [generateError, setGenerateError] = useState<string | null>(null)
+  const [schemaWarnings, setSchemaWarnings] = useState<string[]>([])
+  const [schemaConvertError, setSchemaConvertError] = useState<string | null>(
+    null
+  )
+  const [busy, setBusy] = useState(false)
   const { copied, flash } = useCopyFeedback()
   const { unlockAchievement } = useAchievementContext()
 
   const count = url.n
   const exportFormat = url.f
+  const editorMode = url.m
+  const jsonSchemaText = url.js
 
   const schemaFields = useMemo(() => schema.map(rowToField), [schema])
   const presetId = activePresetId(schemaFields)
@@ -186,7 +205,13 @@ function MockDataGeneratorInner() {
   )
   const arrayOk = !hasArrays || isArrayRangeValid(url.amin, url.amax)
   const tableIssue = tableNameIssue(url.tbl)
-  const isGenerateDisabled = !countOk || !schemaOk || !arrayOk
+  const jsonSchemaIssue = jsonSchemaTextIssue(jsonSchemaText)
+  const isGenerateDisabled =
+    busy ||
+    !countOk ||
+    (editorMode === 'fields'
+      ? !schemaOk || !arrayOk
+      : jsonSchemaIssue != null)
 
   const exportText = useMemo(() => {
     if (!records) return ''
@@ -201,13 +226,20 @@ function MockDataGeneratorInner() {
       ? `${exportText.slice(0, PREVIEW_CHAR_LIMIT)}\n… preview truncated (${exportText.length.toLocaleString()} chars). Copy or download for the full output.`
       : exportText
 
-  const schemaHint = issue
-    ? issue
-    : !countOk
-      ? `Count must be ${MIN_COUNT}–${MAX_COUNT}.`
-      : !arrayOk
-        ? `Array length must be ${MIN_ARRAY_LENGTH}–${MAX_ARRAY_LENGTH} (min ≤ max).`
-        : `${schema.length}/${MAX_FIELDS} fields`
+  const schemaHint =
+    editorMode === 'schema'
+      ? jsonSchemaIssue
+        ? jsonSchemaIssue
+        : !countOk
+          ? `Count must be ${MIN_COUNT}–${MAX_COUNT}.`
+          : emptySchemaConvertHint()
+      : issue
+        ? issue
+        : !countOk
+          ? `Count must be ${MIN_COUNT}–${MAX_COUNT}.`
+          : !arrayOk
+            ? `Array length must be ${MIN_ARRAY_LENGTH}–${MAX_ARRAY_LENGTH} (min ≤ max).`
+            : `${schema.length}/${MAX_FIELDS} fields`
 
   const commitSchema = (next: SchemaRow[]) => {
     setSchema(next)
@@ -228,8 +260,37 @@ function MockDataGeneratorInner() {
     })
   }
 
+  const applyJsonSchema = (
+    text: string
+  ): { fields: MockField[]; arrayMin: number; arrayMax: number } | null => {
+    try {
+      const converted = parseJsonSchemaToMockFields(text)
+      setSchemaWarnings(converted.warnings)
+      setSchemaConvertError(null)
+      setSchema(rowsFromFields(converted.fields))
+      setUrl((current) => ({
+        ...current,
+        amin: converted.arrayMin,
+        amax: converted.arrayMax,
+        s: serializeMockSchema(converted.fields)
+      }))
+      return {
+        fields: converted.fields,
+        arrayMin: converted.arrayMin,
+        arrayMax: converted.arrayMax
+      }
+    } catch (err) {
+      setSchemaWarnings([])
+      setSchemaConvertError(
+        err instanceof Error ? err.message : 'Could not convert schema.'
+      )
+      return null
+    }
+  }
+
   const handlePreset = (fields: readonly MockField[]) => {
     commitSchema(rowsFromFields(fields))
+    setUrl((current) => ({ ...current, m: 'fields' }))
   }
 
   const handleKeyChange = (id: string, nextKey: string) => {
@@ -310,27 +371,49 @@ function MockDataGeneratorInner() {
     ])
   }
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (isGenerateDisabled) return
+    setBusy(true)
+    setGenerateError(null)
     try {
-      setRecords(
-        generateRecords(schemaFields, count, {
-          arrayMin: url.amin,
-          arrayMax: url.amax
-        })
-      )
-      setGenerateError(null)
+      let fields = schemaFields
+      let arrayMin = url.amin
+      let arrayMax = url.amax
+      if (editorMode === 'schema') {
+        const converted = applyJsonSchema(jsonSchemaText)
+        if (!converted) return
+        fields = converted.fields
+        arrayMin = converted.arrayMin
+        arrayMax = converted.arrayMax
+      }
+      const next = await generateRecordsProgressive(fields, count, {
+        arrayMin,
+        arrayMax
+      })
+      setRecords(next)
     } catch (err) {
       setRecords(null)
       setGenerateError(
         err instanceof Error ? err.message : 'Could not generate records.'
       )
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const handleApplySchema = () => {
+    if (jsonSchemaIssue != null) return
+    const converted = applyJsonSchema(jsonSchemaText)
+    if (converted) {
+      setUrl((current) => ({ ...current, m: 'fields' }))
     }
   }
 
   const handleClear = () => {
     setRecords(null)
     setGenerateError(null)
+    setSchemaConvertError(null)
+    setSchemaWarnings([])
   }
 
   const handleDownload = () => {
@@ -353,15 +436,39 @@ function MockDataGeneratorInner() {
           <p className={toolIntroTextClass}>
             Fake names, emails, phones, and addresses in the browser - obviously
             fake (<code>555</code>, <code>example.com</code>), safe for
-            fixtures. Schema is in the URL so you can share a setup. Use dotted
-            keys like <code>customer.name</code> for nested objects and{' '}
-            <code>items[].sku</code> for arrays of objects. Use{' '}
-            <strong>Custom</strong> with a regex like{' '}
-            <code>{'[A-Z]{3}-\\d{4}'}</code> for everything else.
+            fixtures. Build a field schema (dotted keys like{' '}
+            <code>customer.name</code>, arrays like <code>items[].sku</code>) or
+            paste a JSON Schema subset. Generation is client-side and
+            non-deterministic (CSPRNG; no seed). Large runs yield so the UI stays
+            responsive.
           </p>
         }
       >
         <div>
+          <p className={`${toolLabelClass} mb-2`}>Mode</p>
+          <ToolChipRow>
+            <ToolChipButton
+              active={editorMode === 'fields'}
+              onClick={() =>
+                setUrl((current) => ({ ...current, m: 'fields' }))
+              }
+            >
+              Fields
+            </ToolChipButton>
+            <ToolChipButton
+              active={editorMode === 'schema'}
+              onClick={() =>
+                setUrl((current) => ({ ...current, m: 'schema' }))
+              }
+            >
+              JSON Schema
+            </ToolChipButton>
+          </ToolChipRow>
+        </div>
+
+        {editorMode === 'fields' ? (
+          <>
+        <div className="mt-4">
           <p className={`${toolLabelClass} mb-2`}>Presets</p>
           <ToolChipRow>
             {MOCK_PRESETS.map((preset) => (
@@ -557,6 +664,54 @@ function MockDataGeneratorInner() {
             </div>
           ) : null}
         </div>
+          </>
+        ) : (
+          <div className="mt-4 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className={`${toolLabelClass} mb-0`}>JSON Schema</p>
+              <div className="flex flex-wrap gap-1.5">
+                <SecondaryButton
+                  onClick={() =>
+                    setUrl((current) => ({
+                      ...current,
+                      js: SAMPLE_MOCK_JSON_SCHEMA
+                    }))
+                  }
+                >
+                  Sample
+                </SecondaryButton>
+                <SecondaryButton
+                  onClick={handleApplySchema}
+                  disabled={jsonSchemaIssue != null}
+                >
+                  Apply to fields
+                </SecondaryButton>
+              </div>
+            </div>
+            <TextAreaWithLineNumbers
+              value={jsonSchemaText}
+              setValue={(value) =>
+                setUrl((current) => ({
+                  ...current,
+                  js:
+                    typeof value === 'function' ? value(current.js) : value
+                }))
+              }
+              placeholder="Paste a draft-07 subset schema (root type object)…"
+            />
+            <p className={toolHintMetaClass}>{emptySchemaConvertHint()}</p>
+            {schemaConvertError ? (
+              <p className="text-sm text-red-400">{schemaConvertError}</p>
+            ) : null}
+            {schemaWarnings.length > 0 ? (
+              <ul className="space-y-1 text-xs text-amber-300/90">
+                {schemaWarnings.map((warning) => (
+                  <li key={warning}>{warning}</li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+        )}
 
         <div className="mt-4 flex flex-wrap items-end justify-between gap-3">
           <div className="flex w-fit max-w-full flex-col gap-1">
@@ -584,16 +739,17 @@ function MockDataGeneratorInner() {
             <p className={toolHintMetaClass}>{schemaHint}</p>
             {count > LARGE_COUNT_WARNING && countOk ? (
               <p className="text-xs text-amber-300/90">
-                Large run ({count} records): generation is instant, but the
-                preview is truncated - use Copy or Download for the full set.
+                Large run ({count} records): generation yields in chunks so the
+                UI stays responsive; preview is truncated - use Copy or Download
+                for the full set.
               </p>
             ) : null}
             <div className="flex flex-wrap justify-end gap-1.5">
               <PrimaryButton
-                onClick={handleGenerate}
+                onClick={() => void handleGenerate()}
                 disabled={isGenerateDisabled}
               >
-                Generate
+                {busy ? 'Generating…' : 'Generate'}
               </PrimaryButton>
               <ClearButton onClick={handleClear}>Clear</ClearButton>
             </div>
