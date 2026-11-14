@@ -1005,11 +1005,15 @@ export type GenerateOptions = {
   arrayMax?: number
 }
 
-export function generateRecords(
+function prepareGeneration(
   schema: readonly MockField[],
   count: number,
   options?: GenerateOptions
-): MockRecord[] {
+): {
+  fields: ParsedField[]
+  arrayMin: number
+  arrayMax: number
+} {
   if (!isCountInRange(count)) {
     throw new Error(
       `Count must be an integer between ${MIN_COUNT} and ${MAX_COUNT}`
@@ -1035,6 +1039,19 @@ export function generateRecords(
     }
   })
 
+  return { fields, arrayMin, arrayMax }
+}
+
+export function generateRecords(
+  schema: readonly MockField[],
+  count: number,
+  options?: GenerateOptions
+): MockRecord[] {
+  const { fields, arrayMin, arrayMax } = prepareGeneration(
+    schema,
+    count,
+    options
+  )
   const used = new Set<string>()
   const records: MockRecord[] = []
 
@@ -1052,6 +1069,59 @@ export function generateRecords(
       place(record, parsed, 0, '', seed, ctx)
     }
     records.push(record)
+  }
+
+  return records
+}
+
+const PROGRESSIVE_CHUNK = 50
+
+function yieldToUi(): Promise<void> {
+  return new Promise((resolve) => {
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(() => resolve())
+    } else {
+      setTimeout(resolve, 0)
+    }
+  })
+}
+
+/**
+ * Same as `generateRecords`, but yields to the UI every chunk when count is
+ * large so the page stays responsive. Always client-side / non-deterministic
+ * (CSPRNG); no seed parameter.
+ */
+export async function generateRecordsProgressive(
+  schema: readonly MockField[],
+  count: number,
+  options?: GenerateOptions
+): Promise<MockRecord[]> {
+  const { fields, arrayMin, arrayMax } = prepareGeneration(
+    schema,
+    count,
+    options
+  )
+  const used = new Set<string>()
+  const records: MockRecord[] = []
+  const progressive = count > LARGE_COUNT_WARNING
+
+  for (let i = 0; i < count; i++) {
+    const ctx: GenContext = {
+      used,
+      arrayMin,
+      arrayMax,
+      lengths: new Map(),
+      seeds: new Map()
+    }
+    const seed = makeSeed()
+    const record: MockRecord = {}
+    for (const parsed of fields) {
+      place(record, parsed, 0, '', seed, ctx)
+    }
+    records.push(record)
+    if (progressive && (i + 1) % PROGRESSIVE_CHUNK === 0) {
+      await yieldToUi()
+    }
   }
 
   return records
