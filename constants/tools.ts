@@ -198,7 +198,10 @@ export const tools = [
       'headers',
       'cors',
       'request',
-      'postman'
+      'postman',
+      'bearer',
+      'basic auth',
+      'playground'
     ]
   },
   {
@@ -207,7 +210,17 @@ export const tools = [
     description:
       'Paste or upload an OpenAPI 3 spec to browse endpoints, parameters, and schemas client-side.',
     section: 'web',
-    keywords: ['openapi', 'swagger', 'api', 'spec', 'yaml', 'endpoints']
+    keywords: [
+      'openapi',
+      'swagger',
+      'api',
+      'spec',
+      'yaml',
+      'endpoints',
+      'parameters',
+      'schemas',
+      'oas'
+    ]
   },
 
   // ── Encoding & Cryptography ───────────────────────────────────────
@@ -258,7 +271,8 @@ export const tools = [
       'blob',
       'token',
       'payload',
-      'dump'
+      'dump',
+      'utf-8'
     ]
   },
   {
