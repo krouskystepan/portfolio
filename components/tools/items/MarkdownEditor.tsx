@@ -1,7 +1,7 @@
 'use client'
 
 import { Suspense } from 'react'
-import ReactMarkdown from 'react-markdown'
+import ReactMarkdown, { defaultUrlTransform } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { useAchievementContext } from '@/context/AchievementContext'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
@@ -121,7 +121,13 @@ function MarkdownEditorInner() {
             <div className={toolLabelClass}>Preview</div>
             <div className={previewClass}>
               {markdown.trim() ? (
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  // Strip javascript:/vbscript:/etc. — defaultUrlTransform keeps http(s), mailto, relative.
+                  urlTransform={defaultUrlTransform}
+                >
+                  {markdown}
+                </ReactMarkdown>
               ) : (
                 <p className="text-neutral-500">The rendered preview appears here.</p>
               )}
