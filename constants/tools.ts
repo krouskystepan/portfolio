@@ -88,7 +88,7 @@ export const tools = [
     name: 'Unicode / ASCII converter',
     path: 'unicode-ascii',
     description:
-      'Turn text into ASCII/decimal/hex codes and back, or fold accents to plain letters.',
+      'Turn text into ASCII/decimal/hex/U+ codepoints and back, or fold accents to plain letters — not HTML entities.',
     section: 'text',
     keywords: [
       'unicode',
@@ -96,7 +96,6 @@ export const tools = [
       'escape',
       'codepoint',
       'utf-8',
-      'entities',
       'transliterate'
     ]
   },
@@ -128,9 +127,18 @@ export const tools = [
     name: 'HTML entity encoder / decoder',
     path: 'html-entities',
     description:
-      'Encode or decode HTML entities (named, decimal, or hex) for safe markup paste.',
+      'Encode or decode HTML named/decimal/hex entities (&amp;, &eacute;, &#x…). Distinct from Unicode codepoint tools.',
     section: 'text',
-    keywords: ['html', 'entities', 'amp', 'lt', 'gt', 'encode', 'decode']
+    keywords: [
+      'html',
+      'entities',
+      'amp',
+      'lt',
+      'gt',
+      'encode',
+      'decode',
+      'character reference'
+    ]
   },
 
   // ── Web & API ─────────────────────────────────────────────────────

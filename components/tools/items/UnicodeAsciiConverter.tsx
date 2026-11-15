@@ -1,6 +1,7 @@
 'use client'
 
 import { useAchievementContext } from '@/context/AchievementContext'
+import Link from 'next/link'
 import { Suspense, useMemo } from 'react'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
@@ -48,7 +49,15 @@ function UnicodeAsciiConverterInner() {
           <p className={toolIntroTextClass}>
             Paste text or ASCII codes. Hello becomes 72 101 108 108 111, and
             those numbers become Hello. Also handles <code>{'\\u00E9'}</code>,
-            hex, and <code>U+0048</code>.
+            hex, and <code>U+0048</code>. For named HTML entities like{' '}
+            <code>&amp;eacute;</code> use the{' '}
+            <Link
+              href="/t/html-entities"
+              className="text-custom_blue underline-offset-2 hover:underline"
+            >
+              HTML entity encoder
+            </Link>
+            .
           </p>
         }
       >

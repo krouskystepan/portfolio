@@ -1,6 +1,7 @@
 'use client'
 
 import { Suspense, useMemo } from 'react'
+import Link from 'next/link'
 import { useAchievementContext } from '@/context/AchievementContext'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
@@ -107,7 +108,21 @@ function HtmlEntityCodecInner() {
             <code>&amp;eacute;</code> and <code>&amp;#x1F600;</code> back into
             characters. Decoding uses a built-in table of {HTML_ENTITY_COUNT}{' '}
             common names plus all numeric references; it never parses HTML or touches
-            the DOM.
+            the DOM. For codepoints and <code>{'\\u'}</code> escapes use the{' '}
+            <Link
+              href="/t/unicode-ascii"
+              className="text-custom_blue underline-offset-2 hover:underline"
+            >
+              Unicode / ASCII converter
+            </Link>
+            ; for C/Python/shell string literals use the{' '}
+            <Link
+              href="/t/escape-unescape"
+              className="text-custom_blue underline-offset-2 hover:underline"
+            >
+              Escape / unescape toolbox
+            </Link>
+            .
           </p>
         }
       >
