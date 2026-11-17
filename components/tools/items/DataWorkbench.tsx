@@ -42,7 +42,14 @@ function DataWorkbenchInner() {
         >
           JSON Query & Transform
         </Link>{' '}
-        tool. To assert API responses against a sample or schema, use the{' '}
+        tool. Working with XML instead? Use the{' '}
+        <Link
+          href="/t/xml-workbench"
+          className="text-custom_blue underline-offset-2 hover:underline"
+        >
+          XML workbench
+        </Link>
+        . To assert API responses against a sample or schema, use the{' '}
         <Link
           href="/t/api-response-validator"
           className="text-custom_blue underline-offset-2 hover:underline"

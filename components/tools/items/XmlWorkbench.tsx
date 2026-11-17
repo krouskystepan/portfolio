@@ -1,6 +1,7 @@
 'use client'
 
 import { Suspense, useDeferredValue, useMemo, useState } from 'react'
+import Link from 'next/link'
 import { useAchievementContext } from '@/context/AchievementContext'
 import TextAreaWithLineNumbers from '@/components/tools/_shared/TextAreaWithLineNumbers'
 import ToolLayout from '@/components/tools/_shared/ToolLayout'
@@ -31,6 +32,7 @@ import {
   JSON_SAMPLE,
   XML_MAX_INPUT_CHARS,
   XML_SAMPLE,
+  XML_SOAP_SAMPLE,
   formatXml,
   jsonToXml,
   minifyXml,
@@ -181,8 +183,16 @@ function XmlWorkbenchInner() {
               Format, minify and check XML for{' '}
               <strong className="font-medium text-neutral-200">well-formedness</strong>{' '}
               (no XSD / DTD validation), or convert between XML and JSON. Everything
-              runs in your browser. Entity declarations are blocked to avoid XXE and
-              entity-expansion attacks.
+              runs in your browser. Entity declarations and external DTDs are blocked
+              to avoid XXE and entity-expansion attacks. For JSON / CSV / YAML /
+              Schema, use the{' '}
+              <Link
+                href="/t/data-workbench"
+                className="text-custom_blue underline-offset-2 hover:underline"
+              >
+                JSON &amp; data workbench
+              </Link>
+              .
             </p>
             <p className="mt-2">
               <strong className="font-medium text-neutral-200">
@@ -300,6 +310,11 @@ function XmlWorkbenchInner() {
             <SecondaryButton onClick={() => setInput(sample)}>
               Load sample
             </SecondaryButton>
+            {!isJsonInput ? (
+              <SecondaryButton onClick={() => setInput(XML_SOAP_SAMPLE)}>
+                Load SOAP sample
+              </SecondaryButton>
+            ) : null}
             <SecondaryButton onClick={() => void handleImport()}>
               Import file
             </SecondaryButton>

@@ -48,7 +48,22 @@ export const tools = [
     description:
       'Format, minify, and validate XML, and convert between XML and JSON in the browser.',
     section: 'data',
-    keywords: ['xml', 'format', 'minify', 'validate', 'json', 'soap', 'parser']
+    keywords: [
+      'xml',
+      'format',
+      'minify',
+      'validate',
+      'json',
+      'soap',
+      'parser',
+      'xmlns',
+      'namespace',
+      'well-formed',
+      'dtd',
+      'enterprise',
+      'automotive',
+      'envelope'
+    ]
   },
 
   // ── Text & Code ───────────────────────────────────────────────────
