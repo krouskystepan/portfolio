@@ -42,7 +42,7 @@ function fail(message: string, line?: number, col?: number): { ok: false; error:
 /**
  * XXE / entity-expansion guard. fast-xml-parser never resolves external
  * entities, but we also refuse custom entity declarations (billion-laughs
- * style expansion) and external DTD subsets outright.
+ * style expansion) and external DTD references outright.
  */
 function guardInput(xml: string): XmlIssue | null {
   if (xml.length > XML_MAX_INPUT_CHARS) {
@@ -54,6 +54,16 @@ function guardInput(xml: string): XmlIssue | null {
     return {
       message:
         'Entity declarations (<!ENTITY …>) are blocked for safety (XXE / entity expansion). Remove them to continue.'
+    }
+  }
+  // External subset via SYSTEM / PUBLIC — never fetch remote DTDs in-browser either.
+  if (
+    /<!DOCTYPE\b[^>]*\bSYSTEM\b/i.test(xml) ||
+    /<!DOCTYPE\b[^>]*\bPUBLIC\b/i.test(xml)
+  ) {
+    return {
+      message:
+        'External DTD references (SYSTEM / PUBLIC) are blocked for safety (XXE). Remove the DOCTYPE to continue.'
     }
   }
   return null
@@ -106,7 +116,21 @@ export function validateXml(xml: string): XmlValidationResult {
   if (blocked) return { valid: false, error: blocked }
 
   const result = XMLValidator.validate(xml)
+  // Browser DOMParser catches multi-root / some namespace issues and usually
+  // worded clearer than fast-xml-parser — prefer it when both fail.
+  const dom = typeof DOMParser !== 'undefined' ? domWellFormed(xml) : null
+
   if (result !== true) {
+    if (dom) {
+      return {
+        valid: false,
+        error: {
+          message: dom.message,
+          line: dom.line ?? result.err.line,
+          col: dom.col ?? result.err.col
+        }
+      }
+    }
     return {
       valid: false,
       error: {
@@ -117,8 +141,6 @@ export function validateXml(xml: string): XmlValidationResult {
     }
   }
 
-  // Second opinion: the browser parser also checks namespaces and single root.
-  const dom = domWellFormed(xml)
   if (dom) return { valid: false, error: dom }
 
   const notes: string[] = []
@@ -308,6 +330,19 @@ export const XML_SAMPLE = `<?xml version="1.0" encoding="UTF-8"?>
   <item id="1" featured="true"><name>Widget &amp; Co</name><price currency="EUR">9.99</price></item>
   <item id="2"><name>Gadget</name><price currency="EUR">24.5</price><tags><tag>new</tag><tag>sale</tag></tags></item>
 </catalog>`
+
+/** Generic SOAP 1.1 envelope (no vendor-specific schemas). */
+export const XML_SOAP_SAMPLE = `<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ex="urn:example:service">
+  <soap:Header>
+    <ex:RequestId>req-42</ex:RequestId>
+  </soap:Header>
+  <soap:Body>
+    <ex:GetStatus>
+      <ex:DeviceId>DEV-100</ex:DeviceId>
+    </ex:GetStatus>
+  </soap:Body>
+</soap:Envelope>`
 
 export const JSON_SAMPLE = `{
   "catalog": {
