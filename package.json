@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test:xml": "node --experimental-strip-types --test utils/xmlWorkbench.test.ts"
   },
   "dependencies": {
     "@babel/generator": "^8.0.0",
